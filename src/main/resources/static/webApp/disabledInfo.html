@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../css/init.css">
+	<link rel="stylesheet" href="../css/search_form.css">
+	<style>
+		/*能力评估样式*/
+		#quotaTable tbody tr td,
+		#quotaTable thead tr th,
+		#evaledTable tbody tr td,
+		#evaledTable thead tr th {
+			text-align: center;
+		}
+
+
+		.layui-form-radio{
+			display: block;
+			text-align: left;
+		}
+		.layui-form-radio>div{
+			display: inline;
+		}
+
+		.quota-title{
+			font-size:18px;
+			font-weight:bold;
+		}
+	</style>
+</head>
+<body>
+<!--<div class="layui-row path-bar">-->
+<!--<div class="layui-col-xs11">-->
+<!--<div class="path">基本信息 / 老年人基本信息</div>-->
+<!--</div>-->
+<!--<div class="layui-col-xs1">-->
+<!--<div>1</div>-->
+<!--</div>-->
+<!--</div>-->
+<div class="search-box">
+	<form class="layui-form" lay-filter="search-form">
+		<div class="layui-form-item">
+			<!--<div class="layui-inline">-->
+				<!--<label class="layui-form-label">乡镇</label>-->
+				<!--<div class="layui-input-inline">-->
+					<!--<select class="towns" name="town" lay-filter="changer" keyCode="search">-->
+						<!--<option value="吉林市">吉林市</option>-->
+						<!--<option value="长春市">长春市</option>-->
+						<!--<option value="四平市">四平市</option>-->
+						<!--<option value="通化市">通化市</option>-->
+						<!--<option value="白城市">白城市</option>-->
+						<!--<option value="辽源市">辽源市</option>-->
+						<!--<option value="松原市">松原市</option>-->
+						<!--<option value="白山市">白山市</option>-->
+						<!--<option value="延边朝鲜族自治州">延边朝鲜族自治州</option>-->
+						<!--<option value="长白山管委会">长白山管委会</option>-->
+					<!--</select>-->
+				<!--</div>-->
+			<!--</div>-->
+			<!--<div class="layui-inline">-->
+				<!--<label class="layui-form-label">行政村</label>-->
+				<!--<div class="layui-input-inline">-->
+					<!--<select name="village" class="village search-village">-->
+						<!--<option value="吉林市">吉林市</option>-->
+						<!--<option value="长春市">长春市</option>-->
+						<!--<option value="四平市">四平市</option>-->
+					<!--</select>-->
+				<!--</div>-->
+			<!--</div>-->
+			<div class="layui-inline">
+				<label class="layui-form-label">残疾人姓名</label>
+				<div class="layui-input-inline">
+					<input id="oldname" type="text" name="name" autocomplete="off" class="layui-input">
+					
+				</div>
+			</div>
+			<div class="layui-inline">
+				<button id="refreshTab" type="button" class="layui-btn layui-btn-sm layui-btn"><i
+						class="layui-icon  layui-icon-search"></i>检索
+				</button>
+			</div>
+		</div>
+		<div class="layui-form-item operate-bar" style="margin:0;">
+			<div class="layui-input-block">
+
+				<!--<button type="reset" class="layui-btn layui-btn-sm layui-btn-warm"><i class="layui-icon">&#xe65c;</i>清空-->
+				<!--</button>-->
+				<button type="button" class="layui-btn layui-btn-sm layui-btn-normal layui-btn-sm" data-type="addNew"><i
+						class="layui-icon layui-icon-add-1"></i>新增
+				</button>
+				<button id="export" type="button" class="layui-btn layui-btn-sm layui-btn-normal layui-btn-sm"><i
+						class="layui-icon layui-icon-add-1"></i>导出
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+<div id="tableBox">
+	<table class="layui-hide" id="mainTable" lay-filter="test"></table>
+</div>
+
+<!--新增模态框-->
+<div id="addPanel" class="modal" style="display: none">
+	<form id="addForm" class="layui-form " lay-filter="add-form" target="asyncFormSunmit" method="post"
+		  enctype="multipart/form-data" style="margin-top:15px;">
+		<div class="layui-form-item">
+			<label class="layui-form-label">残疾人姓名</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入姓名"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">身份证号</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="age" lay-verify="required" placeholder="请输入身份证号" autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">残疾证号</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="age" lay-verify="required" placeholder="请输入残疾证号" autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">残疾类别</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="status">
+					<option value="一级">一级</option>
+					<option value="二级">二级</option>
+					<option value="三级">三级</option>
+					<option value="四级">四级</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">残疾等级</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="status">
+					<option value="一级">一级</option>
+					<option value="二级">二级</option>
+					<option value="三级">三级</option>
+					<option value="四级">四级</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">家庭住址</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="age" lay-verify="required" placeholder="请输入家庭住址" autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">联系电话</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="children" lay-verify="required" placeholder="请输入联系电话" min="0" step="1"
+					   autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="margin:30px 0;text-align: center">
+				<button type="button" class="layui-btn" lay-submit="" lay-filter="addNew">添加</button>
+				<!--<button type="submit" class="layui-btn">添加</button>-->
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--修改模态框-->
+<div id="editPanel" class="modal" style="display: none">
+	<form class="layui-form layui-form-pane" lay-filter="edit-form" action="" target="asyncSubmieForm"
+		  style="margin-top:15px;">
+		<div class="layui-form-item">
+			<label class="layui-form-label">姓名</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入姓名"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">年龄</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="age" lay-verify="required" placeholder="请输入年龄" autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">性别</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="radio" name="sex" value="男" title="男" checked="">
+				<input type="radio" name="sex" value="女" title="女">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">身份证号</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="card" lay-verify="required" placeholder="请输入身份证号" autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">困难情况</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="status">
+					<option value="空巢">空巢</option>
+					<option value="高龄">高龄</option>
+					<option value="失能">失能</option>
+					<option value="特困">特困</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">配偶是否健在</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="radio" name="alone" value="是" title="是" checked="">
+				<input type="radio" name="alone" value="否" title="否">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">子女个数</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="children" lay-verify="required" placeholder="请输入子女个数" min="0" step="1"
+					   autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">月均生活费</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="test" name="cost" lay-verify="required" placeholder="月均生活费" min="0" step="1"
+					   autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">来源</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="source" lay-verify="required" placeholder="请输入来源" min="0" step="1"
+					   autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">身体状况</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="health">
+					<option value="优">优</option>
+					<option value="良">良</option>
+					<option value="差">差</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">照料情况</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="care">
+					<option value="自我照顾">自我照顾</option>
+					<option value="他人照顾">他人照顾</option>
+					<option value="无人照顾">无人照顾</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">存在困难</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="radio" name="difficult" value="是" title="是" checked="">
+				<input type="radio" name="difficult" value="否" title="否" checked="">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">经度</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="jd" lay-verify="required" placeholder="请输入经度" min="0" step="1"
+					   autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">纬度</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="wd" lay-verify="required" placeholder="请输入纬度" min="0" step="1"
+					   autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">乡镇</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select class="towns" name="town" lay-filter="changer" keyCode="edit">
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">行政村</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select class="village edit-village" name="village" lay-filter="edit-village">
+
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">地址</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="address" lay-verify="required" placeholder="请输入详细地址" min="0" step="1"
+					   autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">身份证照片</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="file" name="photo" lay-verify="required">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="margin:30px 0;text-align: center">
+				<button type="button" class="layui-btn" lay-submit="" lay-filter="edit">修改</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--查看部分-->
+<!--<div id="detailPanel" class="modal"></div>-->
+
+
+<!--能力评估部分-->
+<div id="evaluateBox" class="modal" style="display: none;">
+	<form class="layui-form" action="">
+		<table id="quotaTable" class="layui-table" lay-even lay-skin="nob">
+			<thead>
+			<tr>
+				<th>指标名称</th>
+				<th>指标评价</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="margin:30px 0;text-align: center">
+				<button type="button" class="layui-btn" lay-submit="" lay-filter="evaluate">提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+
+	</form>
+</div>
+<!--已评估-->
+<div id="evaledBox" class="modal" style="display: none;">
+	<form class="layui-form" action="" lay-filter="evaled">
+		<table id="evaledTable" class="layui-table" lay-even lay-skin="nob">
+			<thead>
+			<tr>
+				<th>指标名称</th>
+				<th>指标评价</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</form>
+</div>
+
+<div id="relationBox" class="modal" style="display: none;">
+	<table class="layui-hide" id="relationTable" lay-filter="relation"></table>
+</div>
+
+<iframe name="asyncFormSunmit" style="display: none;" src="" frameborder="0"></iframe>
+
+<script src="../js/jquery.min.js"></script>
+<!--获取地区列表的函数以及切换城市的地区切换函数-->
+<script src="../js/beforeInit.js"></script>
+<script src="../layui/layui.js"></script>
+<script src="../js/heightClient.js"></script>
+
+<script type="text/html" id="barDemo">
+	<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">详情</a>
+	<!--<a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>-->
+	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+	<a class="layui-btn layui-btn-xs" lay-event="location">定位</a>
+</script>
+<script>
+    var jsons = {
+        "total": 8,
+        "rows": [
+            {"id": 1, "number": "001", "type": "日常生活活动", "name": "进食", "weight": 2},
+            {
+                "id": 2,
+                "number": "002",
+                "type": "日常生活活动",
+                "name": "洗澡",
+                "weight": 3
+            }, {"id": 3, "number": "003", "type": "日常生活活动", "name": "修饰", "weight": 3}, {
+                "id": 4,
+                "number": "004",
+                "type": "日常生活活动",
+                "name": "穿衣",
+                "weight": 4
+            }, {"id": 5, "number": "005", "type": "日常生活活动", "name": "大便", "weight": 3}, {
+                "id": 6,
+                "number": "006",
+                "type": "日常生活活动",
+                "name": "小便",
+                "weight": 3
+            }, {"id": 7, "number": "007", "type": "日常生活活动", "name": "床位转移", "weight": 3}, {
+                "id": 8,
+                "number": "008",
+                "type": "日常生活活动",
+                "name": "行走",
+                "weight": 3
+            }]
+    }
+
+    $("#export").click(function () {
+        $.ajax({
+            type: "post",
+            url: "/old/export",
+            success: function () {
+
+            }
+        });
+    })
+
+    var addForm = $("#addPanel").html();
+    var editForm = $("#editForm").html();
+    var locationLayer = '';
+    var relationTable = '<table class="layui-hide" id="relationTable" lay-filter="relation"></table>';
+    var getQuota = function () {
+        $.ajax({
+            type: "post",
+            url: "/index/list",
+            data: {
+                pageNumber: 1,
+                pageSize: 100
+            },
+            success: function (data) {
+                var str = "";
+                var evaledStr = "";
+                var typeArr=[];
+                // var rows = data.rows;
+                for(var key in data){
+                    typeArr.push(key)
+                }
+
+                for(var i=0,len=typeArr.length;i<len;i++){
+                    str+="<tr><td colspan='2' class='quota-title'>"+typeArr[i]+"评估</td></tr>";
+                    var quotaArr=[];
+                    for(var key in data[typeArr[i]]){
+                        quotaArr.push(key);
+                    }
+
+                    for(var n=0,length=quotaArr.length;n<length;n++){
+                        var quotalist=data[typeArr[i]][quotaArr[n]];
+
+                        str+="<tr><td>"+quotalist[0].name+"</td><td>";
+                        for(var m=0;m<quotalist.length;m++) {
+                            var quota=quotalist[m];
+                            str += "<input type='radio' name='" + quota.name + "' value='" + quota.description + "'title='" + quota.description + "' point='" + quota.score + "'quotaType='"+typeArr[i]+"' quotaId='"+quota.id+"' weight='" + quota.weight + "'>" ;
+                        }
+                        str+="</td></tr>";
+                    }
+                }
+
+                console.log(typeArr);
+                // for (var i = 0; i < data.total; i++) {
+                //
+                //      str += "<tr><td>" + rows[i].name + "</td><td>" + rows[i].type + "</td><td><input type='radio' name='" + rows[i].number + "' value='优秀'title='优秀' point='5' weight='" + rows[i].weight + "'>" +
+                //          "<input type='radio' name='" + rows[i].number + "' value='中'title='中' point='3' weight='" + rows[i].weight + "'>" +
+                //          "<input type='radio' name='" + rows[i].number + "' value='差'title='差' point='1' weight='" + rows[i].weight + "'></td></tr>";
+                //      evaledStr += "<tr><td>" + rows[i].name + "</td><td>" + rows[i].type + "</td><td><input type='radio' name='" + rows[i].number + "' value='优秀'title='优秀' disabled>" +
+                //          "<input type='radio' name='" + rows[i].number + "' value='中'title='中' disabled>" +
+                //          "<input type='radio' name='" + rows[i].number + "' value='差'title='差' disabled></td></tr>";
+                //  }
+
+                $("#quotaTable tbody").html(str);
+                $("#evaledTable tbody").html(evaledStr);
+            }
+        })
+    }
+    getQuota();
+    layui.use(['table', 'form', 'layer', "upload"], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var upload = layui.upload;
+        $ = layui.$;
+
+        var options = {
+            elem: '#mainTable'
+            , url: '/old/list?name='+($("#oldname").val()||"")
+            , request: {
+                pageName: 'pageNumber', //页码的参数名称，默认：page
+                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            }
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": 200, //解析接口状态
+//                    "msg": res.message, //解析提示文本
+                    "count": res.total, //解析数据长度
+                    "data": res.rows //解析数据列表
+                };
+            }
+            , title: '用户数据表'
+            , cols: [[
+//                {type: 'checkbox', fixed: 'left'},
+                {
+                    field: 'name', title: '序号', align: 'center', width: 60, fixed: 'left', unresize: true,
+                    templet: function (data) {
+                        return data.LAY_INDEX
+                    }
+                },
+                {field: 'name', title: '残疾人姓名', align: 'center', width: 120, fixed: 'left', unresize: true},
+                {field: 'sex', title: '身份证号', align: 'center', width: 90, unresize: true},
+                {field: 'age', title: '残疾证号', align: 'center', width: 90, unresize: true},
+                {field: 'card', title: '残疾类别', align: 'center', unresize: true},
+                {field: 'qc', title: '残疾等级', align: 'center', width: 120, unresize: true},
+                {field: 'status', title: '家庭住址', align: 'center', unresize: true},
+				{field: 'status', title: '联系电话', align: 'center', unresize: true},
+                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 250}
+            ]]
+            , page: true
+        }
+
+
+        form.on("select(changer)", function (data) {
+            var formFilter = data.elem.getAttribute("keyCode") + '-form';
+            var disFilter = data.elem.getAttribute("keyCode") + '-village';
+            before.getVillages(data.value, disFilter);
+            form.render("select", formFilter);
+        })
+		
+
+
+        var tableIns =table.render(options);
+
+        $("#refreshTab").click(function () {
+            tableIns.reload({url: '/old/list?name='+($("#oldname").val()||"")});
+        })
+
+
+        var pageFuncs = {
+            reloadTable: function () {
+                var demoReload = $('#mainTable');
+                table.reload('mainTable', {
+                    where: {
+                        key: {
+                            field: demoReload.val()
+                        }
+                    }
+                });
+            }
+        }
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var rowdata = obj.data;
+            sessionStorage.setItem("detailData", JSON.stringify(obj.data));
+            switch (obj.event) {
+                case 'del':
+                    layer.confirm('确定删除？', function (index) {
+                        $.ajax({
+                            type: "post",
+                            url: "/old/delete",
+                            data: {
+                                id: rowdata.uid
+                            },
+                            success: function (data) {
+                                obj.del();
+                                layer.close(index);
+                            }
+                        })
+                    });
+                    break;
+                case 'edit':
+                    sessionStorage.setItem("operateCode", "edit");
+                    layer.open({
+                        type: 1,
+                        title: "信息修改",
+                        content: $("#editPanel").html(),
+                        area: ['600px', '500px']
+                    });
+                    form.render();
+                    form.val("edit-form", rowdata);
+                    break;
+                case 'detail':
+                    layer.open({
+                        type: 2,
+                        title: "详情",
+                        content: "detailInfo_1.html",
+                        area: ['800px', '350px']
+                    });
+                    break;
+                case 'relation':
+                    layer.open({
+                        type: 2,
+                        title: "关系人",
+                        content: "relationTable.html",
+                        area: ['1000px', '600px']
+                    });
+//                    $.ajax({
+//	                    type:"POST",
+//	                    url: '/old/relation',
+//	                    data:{
+//	                        uid:rowdata.uid
+//	                    },
+//	                    success:function(res){
+//	                        var tableData=[];
+//	                        for(var key in res){
+//                                console.log(key);
+//                                var secLength=res[key].length;
+//                                if(secLength){
+//                                    for(var i=0;i<secLength;i++){
+//                                        res[key][i].relationship=key;
+//                                        tableData.push(res[key][i]);
+//                                    }
+//                                }
+//                            }
+//                            table.render({
+//                                elem: '#relationTable',
+//                                data:tableData
+//                                , title: '用户数据表'
+//                                , cols: [[
+//                                    {
+//                                        field: 'username', title: '老人', align: 'center', width: 120,fixed: 'left', unresize: true,
+//                                        templet: function (data) {
+//                                            return rowdata.name
+//                                        }
+//                                    },
+//                                    {field: 'relationship', title: '关系', align: 'center',width: 140,  fixed: 'left', unresize: true},
+//                                    {field: 'name', title: '姓名', align: 'center',width: 120, fixed: 'left', unresize: true},
+//                                    {field: 'sex', title: '性别', align: 'center', width: 80, unresize: true,},
+//                                    {field: 'cardid', title: '身份证', align: 'center', unresize: true, sort: true},
+//                                    {field: 'contact', title: '联系方式', align: 'center', unresize: true},
+//                                ]]
+//                                , page: true,
+//                                done: function () {
+//                                    console.log(233);
+////                                    alarmTableRowSpan("username", 1);
+////                                    alarmTableRowSpan("name", 2);
+//                                }
+//                            });
+//                        }
+//                    })
+
+                    break;
+                case 'evaluate':
+                    var quotaIndex = layer.open({
+                        type: 1,
+                        title: "能力评估 : " + rowdata.name,
+                        content: $("#evaluateBox").html(),
+                        area: ['1200px', '630px']
+                    });
+                    form.render();
+                    form.on("submit(evaluate)", function (data) {
+                        var dataForm = data.form;
+                        var quotaArr = [];
+                        var userPoint = 0;
+                        var radios = $(dataForm).find("input:checked");
+                        for (var m = 0; m < radios.length; m++) {
+                            // var singlePoint = $(radios[m]).attr("point");
+                            // var singleWeight = $(radios[m]).attr("weight");
+                            // userPoint += parseFloat(singlePoint);
+
+                            var obj={};
+                            obj.id=$(radios[m]).attr("quotaid");
+                            obj.score=$(radios[m]).attr("point");
+                            obj.type=$(radios[m]).attr("quotatype");
+                            quotaArr.push(obj);
+                        }
+
+
+                        // var field = data.field;
+                        // for (var key in field) {
+                        //     var obj = {};
+                        //     obj[key] = field[key];
+                        //     quotaArr.push(obj);
+                        // }
+                        // var str = "{'id':'" + rowdata.uid + "','score':" + userPoint + ",'index':" + JSON.stringify(quotaArr) + "}";
+                        var str = "{'oid':'" + rowdata.uid + "','index':" + JSON.stringify(quotaArr)+ "}";
+
+
+
+                        $.ajax({
+                            type: "post",
+                            url: "/index/eval",
+                            data: {
+                                s: str
+                            },
+                            success: function (data) {
+                                if (data.status == 200) {
+                                    layer.close(quotaIndex);
+                                    layer.alert(data.msg, {icon: 1});
+                                    pageFuncs.reloadTable();
+                                } else {
+                                    layer.alert(data.msg, {icon: 2})
+                                }
+                            }
+                        })
+                    })
+                    break;
+                case "evaled" :
+                    $.ajax({
+                        type: "post",
+                        url: "/index/record",
+                        data: {
+                            oid: rowdata.uid
+                        },
+                        success: function (data) {
+
+                            var res = JSON.parse(data[0].record);
+                            console.log(res);
+                            var resObj = {};
+                            for (var n = 0; n < res.length; n++) {
+                                for (var key in res[n]) {
+                                    resObj[key] = res[n][key];
+                                }
+                            }
+                            console.log(resObj);
+                            var quotaIndex = layer.open({
+                                type: 1,
+                                title: "能力评估 : " + rowdata.name,
+                                content: $("#evaledBox").html(),
+                                area: ['680px', '580px']
+                            });
+//                            form.render();
+                            form.val("evaled", resObj);
+                        }
+                    })
+
+                    break;
+                case
+                'location'
+                :
+                    locationLayer = layer.open({
+                        type: 2,
+                        title: "定位",
+                        content: 'locationPanel.html',
+                        area: ['1000px', '600px'],
+                        end: function () {//关闭后调用的事件
+                            if (sessionStorage.successCode == 1) {
+                                pageFuncs.reloadTable();
+                                layer.alert("定位成功");
+                                sessionStorage.successCode = 0;
+                            }
+                        }
+                    });
+                    break;
+            }
+        })
+        ;
+        //    各事件事件
+        var $ = layui.$, active = {
+            addNew: function () {
+//                document.remove($("#addPanel"));
+                var my = document.getElementById("addPanel");
+                var parent = $(my).parent()[0];
+                if (parent != null)
+                    my.parentNode.removeChild(my);
+
+                var addIndex = layer.open({
+                    type: 1,
+                    title: "新增信息",
+                    shadeClose: true,
+                    area: ["600px", "500px"],
+                    content: addForm
+                });
+                form.render();
+//                upload.render({
+//                    elem: '#addPhoto'
+//                    , url: '/upload/'
+//                    , auto: false
+//                    , done: function (res) {
+//                        console.log(res)
+//                    }
+//                });
+                form.on("submit(addNew)", function (data) {
+                    var _obj = data.field;
+                    //绑定原始文件域
+                    console.log(document.getElementById("addPhoto").files[0]);
+                    var formData = new FormData();
+                    formData.append("fileName", document.getElementById("addPhoto").files[0]);
+                    for(var key in _obj){
+                        formData.append(key, _obj[key]);
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/old/add",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            console.log(data);
+                            if (data.status == 200) {
+                                layer.close(addIndex);
+                                layer.alert(data.msg, {icon: 1})
+                                pageFuncs.reloadTable();
+                            } else {
+                                layer.alert(data.msg, {icon: 2})
+                            }
+                        }
+                    })
+                })
+            }
+        };
+
+        //事件监听
+        $('.operate-bar .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    })
+    ;
+
+
+</script>
+</body>
+</html>
