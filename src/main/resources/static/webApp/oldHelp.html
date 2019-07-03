@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../css/init.css">
+	<link rel="stylesheet" href="../css/search_form.css">
+	<style>
+		/*主体部分样式*/
+		.section-container {
+			width: 30%;
+			height: 100%;
+			float: left;
+		}
+
+		.echarts-box {
+			height: 33.3%;
+		}
+
+		.shown-box {
+			position: absolute;
+			right: 40px;
+			top: 20px;
+		}
+
+		.num {
+			font-size: 20px;
+			color: red;
+			margin-left: 5px;
+		}
+
+		.total-num {
+			color: deepskyblue;
+		}
+
+		.need{
+			vertical-align: middle;
+			margin:30px 0;
+			padding-left:50px;
+		}
+		.need .name{
+			font-size:16px;
+			color:deepskyblue;
+			display: inline-block;
+			margin-right:20px;
+		}
+		.need span{
+			display: inline-block;
+			width:20px;
+			height:20px;
+			border-radius: 50%;
+			border:1px solid deepskyblue;
+			vertical-align: middle;
+			margin:0 10px;
+		}
+		.need span.fill{
+			background: deepskyblue;
+		}
+
+	</style>
+</head>
+<body>
+<div class="section-container" style="width:70%;overflow-y: hidden">
+	<div class="search-box" style="position:relative">
+		<form class="layui-form" lay-filter="search-form">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">乡镇</label>
+					<div class="layui-input-inline">
+						<select class="towns" name="town" lay-filter="changer" keyCode="search">
+							<option value="吉林市">吉林市</option>
+							<option value="长春市">长春市</option>
+							<option value="四平市">四平市</option>
+							<option value="通化市">通化市</option>
+							<option value="白城市">白城市</option>
+							<option value="辽源市">辽源市</option>
+							<option value="松原市">松原市</option>
+							<option value="白山市">白山市</option>
+							<option value="延边朝鲜族自治州">延边朝鲜族自治州</option>
+							<option value="长白山管委会">长白山管委会</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">行政村</label>
+					<div class="layui-input-inline">
+						<select name="village" class="village search-village">
+							<option value="吉林市">吉林市</option>
+							<option value="长春市">长春市</option>
+							<option value="四平市">四平市</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</form>
+		<form class="layui-form" lay-filter="search-form">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">名称</label>
+					<div class="layui-input-inline">
+						<input type="text" name="keyword" autocomplete="off" class="layui-input"
+						       placeholder="请输入要查询的村或人名">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<button type="button" class="layui-btn layui-btn-sm layui-btn" lay-submit="" lay-filter="search">
+						<i class="layui-icon  layui-icon-search"></i>检索
+					</button>
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-normal layui-btn-sm"
+					        data-type="addNew">
+						<i class="layui-icon layui-icon-read"></i>查询报告生成
+					</button>
+				</div>
+			</div>
+		</form>
+
+		<div class="shown-box">
+			<div>自然村总数 <span class="num total-num">192</span>个</div>
+			<div>困难老人总数 <span class="num total-num">3218</span></div>
+		</div>
+	</div>
+	<div id="tableBox">
+		<div id="map" style="width:100%;height:100%;"></div>
+	</div>
+</div>
+<div id="echartsBox" class="section-container">
+	<div id="echart1" class="echarts-box"></div>
+	<div id="echart2" class="echarts-box"></div>
+	<div class="echarts-box">
+		<div class="title" style="font-size:18px;font-weight:600;margin-left:30px;">
+			困难老人需求分析
+		</div>
+		<div class="need"><div class="name">NO.1 渴望陪伴 </div><span class="fill"></span><span class="fill"></span><span class="fill"> </span><span class="fill"></span><span class="empty"></span></div>
+		<div class="need"><div class="name">NO.2 了解社会 </div><span class="fill"></span><span class="fill"></span><span class="fill"> </span><span class="empty"></span><span class="empty"></span></div>
+		<div class="need"><div class="name">NO.3 物质保障 </div><span class="fill"></span><span class="fill"></span><span class="empty"> </span><span class="empty"></span><span class="empty"></span></div>
+	</div>
+</div>
+
+<script src="../js/jquery.min.js"></script>
+<!--获取地区列表的函数以及切换城市的地区切换函数-->
+<script src="../js/beforeInit.js"></script>
+<script src="../layui/layui.js"></script>
+<script src="../js/heightClient.js"></script>
+<script src="../js/echarts.common.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=E4805d16520de693a3fe707cdc962045"></script>
+<script>
+    var markers = [
+        {
+            lng: 119.183662, lat: 31.954324, msg: "我的坐标是句容市"
+        }, {
+            lng: 119.192501, lat: 31.943355, msg: "我的坐标是句容市"
+        }, {
+            lng: 119.161815, lat: 31.951137, msg: "我的坐标是句容市"
+        }, {
+            lng: 119.189051, lat: 31.938881, msg: "我的坐标是句容市"
+        }, {
+            lng: 119.195663, lat: 31.957694, msg: "我的坐标是句容市"
+        }, {
+            lng: 119.179925, lat: 31.958061, msg: "我的坐标是句容市"
+        }, {
+            lng: 119.162749, lat: 31.961493, msg: "我的坐标是句容市"
+        }, {
+            lng: 119.17396, lat: 31.9462353, msg: "我的坐标是句容市"
+        }
+    ]
+    //  地图部分设置
+    var map = new BMap.Map("map");
+    //设置中心点
+    var centerPoint = new BMap.Point(119.175433, 31.950923);
+    map.centerAndZoom(centerPoint, 15);
+    map.enableScrollWheelZoom(true);
+    //信息窗口参数
+    var opts = {
+        width: 250,     // 信息窗口宽度
+        height: 100,     // 信息窗口高度
+        title: "详细信息", // 信息窗口标题
+        enableMessage: true//设置允许信息窗发送短息
+    };
+    //循环加点及其点击函数
+    for (var i = 0; i < markers.length; i++) {
+        var marker = new BMap.Marker(new BMap.Point(markers[i].lng, markers[i].lat));  // 创建标注
+        var content = "<p>" + markers[i].msg + "</p><p>经度 : " + markers[i].lng + "</p><p>纬度 : " + markers[i].lat + "</p>";
+        map.addOverlay(marker);               // 将标注添加到地图中
+        addClickHandler(content, marker);
+    }
+
+    function addClickHandler(content, marker) {
+        marker.addEventListener("click", function (e) {
+                openInfo(content, e)
+            }
+        );
+    }
+
+    //marker点击函数信息窗体
+    function openInfo(content, e) {
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow, point); //开启信息窗口
+    }
+
+
+    //	echarts图表
+    var eObj = {
+        bar: function () {
+            var myChart = echarts.init(document.getElementById('echart1'));
+            var option = {
+                title: {
+                    text: "困难老人年龄分布",
+                    left: 30,
+                    top: "5%"
+                },
+                color: ['#3398DB'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                grid: {
+                    left: '10%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: ['60-69', '70-79', '80-89', '90及以上'],
+                        axisTick: {
+                            alignWithLabel: true
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: '直接访问',
+                        type: 'bar',
+                        barWidth: '60%',
+                        data: [52, 20, 33, 10]
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        },
+        pie: function () {
+            var myChart = echarts.init(document.getElementById('echart2'));
+            var option = {
+                title: {
+                    text: "困难老人情况分布",
+                    left: 30,
+                    top: "5%"
+                },
+	            color:["#4A76C5","#ED7D32","#A6A6A6","#FFC102"],
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                grid: {
+                    left: '10%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: '10%',
+                    y: 'center',
+                    data: ['空巢', '高龄', '失能', '特困']
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        selectedMode: 'single',
+                        radius: [0, '80%'],
+                        center : ['65%', '50%'],
+                        label: {
+                            normal: {
+                                position: 'inner',
+                                formatter: '{b}\n{d}%',
+                            }
+                        },
+
+                        data: [
+                            {value: 29, name: '空巢', selected: true},
+                            {value: 12, name: '高龄' },
+                            {value: 5, name: '失能' },
+                            {value: 4, name: '特困' }
+                        ]
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+    }
+    eObj.bar();
+    eObj.pie();
+
+    //layui
+    layui.use(['form', 'layer'], function () {
+        var layer = layui.layer;
+        var form = layui.form;
+
+
+        form.on("select(changer)", function (data) {
+            var formFilter = data.elem.getAttribute("keyCode") + '-form';
+            var disFilter = data.elem.getAttribute("keyCode") + '-village';
+            before.getVillages(data.value, disFilter);
+
+            form.render("select", formFilter);
+        })
+
+
+        //表格生成部分
+        //        table.render({
+        //            elem: '#mainTable'
+        //            , url: '/old/list'
+        //            , request: {
+        //                pageName: 'pageNumber', //页码的参数名称，默认：page
+        //                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+        //            }
+        //            , response: {
+        //                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+        //            }
+        //            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+        //                return {
+        //                    "code": 200, //解析接口状态
+        ////                    "msg": res.message, //解析提示文本
+        //                    "count": res.total, //解析数据长度
+        //                    "data": res.rows //解析数据列表
+        //                };
+        //            }
+        //            , title: '用户数据表'
+        //            , cols: [[
+        ////                {type: 'checkbox', fixed: 'left'},
+        //                {
+        //                    field: 'name', title: '序号', align: 'center', width: 80, fixed: 'left', unresize: true,
+        //                    templet: function (data) {
+        //                        return data.LAY_INDEX
+        //                    }
+        //                },
+        //                {field: 'name', title: '姓名', align: 'center', width: 150, fixed: 'left', unresize: true},
+        //                {field: 'sex', title: '性别', align: 'center', width: 120, unresize: true,},
+        //                {field: 'age', title: '年龄', align: 'center', width: 120, unresize: true, sort: true},
+        //                {field: 'card', title: '身份证号', align: 'center', unresize: true},
+        //                {field: 'town', title: '乡镇', align: 'center', unresize: true},
+        //                {field: 'village', title: '村名', align: 'center', unresize: true, sort: true},
+        //                {field: 'status', title: '困难情况', align: 'center', unresize: true,},
+        //                {
+        //                    field: 'retirePlace', title: '评估详情', align: 'center', unresize: true, width: 150,
+        //                    templet: function (data) {
+        //                        return '<a class="layui-btn layui-btn-xs" lay-event="evaluate">评估详情</a>'
+        //                    }
+        //                },
+        //                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 250}
+        //            ]]
+        //            , page: true
+        //        });
+
+        form.on("submit(search)", function (data) {
+            console.log(data);
+        })
+        var pageFuncs = {
+            reloadTable: function () {
+                var demoReload = $('#mainTable');
+                table.reload('mainTable', {
+                    where: {
+                        key: {
+                            field: demoReload.val()
+                        }
+                    }
+                });
+            }
+        }
+
+        //监听行工具事件
+//        table.on('tool(test)', function (obj) {
+//            var data = obj.data;
+//            sessionStorage.setItem("detailData", JSON.stringify(obj.data));
+//            switch (obj.event) {
+//                case 'del':
+//                    layer.confirm('确定删除？', function (index) {
+//                        obj.del();
+//                        layer.close(index);
+//                    });
+//                    break;
+//                case 'edit':
+//                    sessionStorage.setItem("operateCode", "edit");
+//                    layer.open({
+//                        type: 1,
+//                        title: "信息修改",
+//                        content: $("#editPanel").html(),
+//                        area: ['600px', '500px']
+//                    });
+//                    form.render();
+//                    form.val("edit-form", data);
+//                    break;
+//                case 'detail':
+//                    layer.open({
+//                        type: 2,
+//                        title: "详情",
+//                        content: "detailInfo_1.html",
+//                        area: ['800px', '650px']
+//                    });
+//                    break;
+//                case 'evaluate':
+//                    layer.open({
+//                        type: 1,
+//                        title: "指标选择",
+//                        content: $("#quotaBox").html(),
+//                        area: ['800px', '650px']
+//                    });
+//                    form.render();
+//                    break;
+//                case 'location':
+//                    locationLayer=layer.open({
+//                        type: 2,
+//                        title: "定位",
+//                        content:'locationPanel.html',
+//                        area: ['1000px', '600px'],
+//                        end:function(){//关闭后调用的事件
+//                            pageFuncs.reloadTable();
+//                            layer.alert("定位成功")
+//                        }
+//                    });
+//                    break;
+//            }
+//        });
+        //    各事件事件
+        var $ = layui.$, active = {
+            addNew: function () {
+//                document.remove($("#addPanel"));
+                var my = document.getElementById("addPanel");
+                var parent = $(my).parent()[0];
+                if (parent != null)
+                    my.parentNode.removeChild(my);
+
+                var addIndex = layer.open({
+                    type: 1,
+                    title: "新增信息",
+                    shadeClose: true,
+                    area: ["600px", "500px"],
+                    content: addForm
+                });
+                form.render();
+                upload.render({
+                    elem: '#addPhoto'
+                    , url: '/upload/'
+                    , auto: false
+                    , done: function (res) {
+                        console.log(res)
+                    }
+                });
+                form.on("submit(addNew)", function (data) {
+                    //绑定原始文件域
+                    console.log(document.getElementById("addPhoto").files[0]);
+                    var formData = new FormData();
+                    formData.append("fileName", document.getElementById("addPhoto").files[0]);
+                    formData.append("name", "nihao");
+                    $.ajax({
+                        type: "POST",
+                        url: "/old/add",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            console.log(data);
+//                            if (data.status == 200) {
+//                                layer.close(addIndex);
+//                                layer.alert(data.msg, {icon: 1})
+//                                pageFuncs.reloadTable();
+//                            } else {
+//                                layer.alert(data.msg, {icon: 2})
+//                            }
+                        }
+                    })
+                })
+            }
+        };
+
+//事件监听
+        $('.operate-bar .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+
+</script>
+</body>
+</html>

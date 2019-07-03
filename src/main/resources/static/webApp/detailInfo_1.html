@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>layui</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+	<style>
+		table tr td.table-title {
+			text-align: right;
+		}
+
+		table tr td input {
+			width: 100%;
+			border: none;
+			background: transparent;
+		}
+
+		.layui-table td, .layui-table th {
+			padding: 9px 10px;
+		}
+	</style>
+</head>
+<body>
+<div class="layui-container">
+	<div class="layui-row">
+		<div class="layui-col-xs12">
+			<form class="layui-form" action="" lay-filter="example">
+				<table class="layui-table" lay-even="" lay-skin="nob">
+					<!--<thead>-->
+					<!--<tr>-->
+					<!--<th>人物</th>-->
+					<!--<th>民族</th>-->
+					<!--<th>出场时间</th>-->
+					<!--<th>格言</th>-->
+					<!--</tr>-->
+					<!--</thead>-->
+					<colgroup>
+						<col width="140">
+						<col width="160">
+						<col width="140">
+						<col width="160">
+					</colgroup>
+					<tbody>
+					<tr>
+						<td class="table-title">姓名:</td>
+						<td>
+							<input type="text" name="name" disabled>
+						</td>
+						<td class="table-title">性别:</td>
+						<td>
+							<input type="text" name="sex" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td class="table-title">身份证号:</td>
+						<td>
+							<input type="text" name="card" disabled>
+						</td>
+						<td class="table-title">困难情况:</td>
+						<td>
+							<input type="text" name="status" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td class="table-title">配偶是否健在:</td>
+						<td colspan="3">
+							<input type="text" name="alone" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td class="table-title">子女个数:</td>
+						<td>
+							<input type="text" name="children" disabled>
+						</td>
+						<td class="table-title">月均生活费:</td>
+						<td>
+							<input type="text" name="cost" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td class="table-title">来源:</td>
+						<td>
+							<input type="text" name="source" disabled>
+						</td>
+						<td class="table-title">身体状态:</td>
+						<td>
+							<input type="text" name="health" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td class="table-title">照料情况:</td>
+						<td>
+							<input type="text" name="care" disabled>
+						</td>
+						<td class="table-title">存在困难:</td>
+						<td>
+							<input type="text" name="difficult" disabled>
+						</td>
+					</tr>
+					<tr>
+						<!--<td class="table-title">乡镇:</td>-->
+						<!--<td>-->
+							<!--<input type="text" name="town" disabled>-->
+						<!--</td>-->
+						<td class="table-title">村委会:</td>
+						<td>
+							<input type="text" name="qc" disabled>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    window.onload = function () {
+        layui.use(['form'], function () {
+            var form = layui.form;
+            // //监听指定开关
+            // form.on('switch(switchTest)', function(data){
+            //     layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+            //         offset: '6px'
+            //     });
+            //     layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+            // });
+            //
+            // //监听提交
+            form.on('submit(demo1)', function (data) {
+                layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                })
+                return false;
+            });
+            var detailData = JSON.parse(sessionStorage.getItem("detailData"));
+            //表单初始赋值
+            form.val('example', detailData)
+        });
+    }
+</script>
+
+</body>
+</html>

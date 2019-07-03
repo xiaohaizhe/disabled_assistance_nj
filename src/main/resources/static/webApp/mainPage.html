@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>title</title>
+	<link rel="stylesheet" href="css/init.css">
+	<style>
+		body{
+			background:#ffc094;
+		}
+		.header{
+			height:180px;
+			background: url(images/title_bg.jpg) no-repeat;
+			background-size:100% 100%;
+		}
+		#navBar{
+			height:60px;
+			line-height: 60px;
+		}
+		#leftBar{
+			height:100%;
+			float:left;
+		}
+		#navList{
+			height:100%;
+		}
+		#navList li{
+			display: inline-block;
+			height:100%;
+			padding:0 15px;
+			color:#f5f5f5;
+			font-size:16px;
+			cursor: pointer;
+		}
+		#adminUser{
+			float:right;
+			color:#f5f5f5;
+			font-size:16px;
+			padding:0 20px;
+		}
+
+		/* mainBody 主体部分样式设置 */
+		#mainBody{
+			padding:0 80px;
+			color:#fff;
+		}
+		#mainBody .title-bar{
+			height:50px;
+			line-height:50px;
+
+		}
+		#mainBody .title-bar div{
+			font-size:16px;
+		}
+		#mainBody .enter-section .enter-list-box{
+			width:1200px;
+			font-size:0px;
+		}
+		#mainBody .enter-list-box .enter-item{
+			display:inline-block;
+			width:180px;
+			height:180px;
+			border:1px solid #f26d04;
+			cursor:pointer;
+		}
+		#mainBody .enter-list-box .enter-item .enter-item-name{
+			text-align: center;
+			margin-top:120px;
+			font-size:16px;
+		}
+
+	</style>
+</head>
+<body>
+<div class="header"></div>
+<div id="navBar" class="base-bg">
+	<div id="leftBar">
+		<ul id="navList">
+			<li >首页</li>
+			<li >基本信息</li>
+			<li >评估信息</li>
+			<li >能力评估</li>
+			<li >统计分析</li>
+			<li >系统管理</li>
+		</ul>
+	</div>
+	<div id="adminUser">
+		<div>系统管理员</div>
+	</div>
+</div>
+<div id="mainBody">
+	<div class="section title-bar">
+		<div class="left">站内消息</div>
+		<div class="right">icon</div>
+	</div>
+	<div class="section title-bar" style="background:#FD7D22;">
+		<div class="left" style="width:50px;text-align: center;background:#f26d04;">icon</div>
+		<div>
+			<div class="left" style="padding:0 20px;">通知公告</div>
+			<div class="right" style="padding:0 20px;">+</div>
+		</div>
+	</div>
+	<div class="section title-bar">
+		<div class="left">常用功能信息</div>
+	</div>
+	<div class="section enter-section">
+		<div class="enter-list-box">
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="oldInfo.html">老年人基本信息</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="nursingOrganizationInfo.html">养老机构信息</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluateOrganizationInfo.html">评估机构信息</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluaterInvestigate.html">评估人员信息</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluaterInvestigate.html">评估人员审查</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluateQuota.html">评估指标维护</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluaterInvestigate.html">评估模板维护</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluaterInvestigate.html">已评估老人一览</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluaterInvestigate.html">开始新评估</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="chose.html">评估抽查</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="abilityAnalysis.html">能力评估统计分析</div>
+			</div>
+			<div class="enter-item">
+				<div class="enter-item-name" menuUrl="evaluaterInvestigate.html">机构统计分析</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script>
+    $(".enter-list-box").on("click","div.enter-item",function(){
+        //设置主系统子页面
+        sessionStorage.setItem("menuUrl",$(this).find(".enter-item-name").attr("menuUrl"));
+        //跳转
+        window.location.href="webApp/mainPage.html"
+    })
+</script>
+</body>
+</html>

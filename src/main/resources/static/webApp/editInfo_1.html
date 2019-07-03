@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>layui</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+	<style>
+		table tr td.table-title {
+			text-align: right;
+		}
+
+		table tr td input {
+			width: 100%;
+			border: none;
+			background: transparent;
+		}
+
+		.layui-table td, .layui-table th {
+			padding: 9px 10px;
+		}
+	</style>
+</head>
+<body>
+<div class="layui-container">
+	<div class="layui-row">
+		<div class="layui-col-xs2">
+			<a href="">
+				<img src="../images/grandma.png" alt="" width="100%"/>
+			</a>
+		</div>
+		<div class="layui-col-xs10">
+			<form class="layui-form" action="" lay-filter="example">
+				<div class="layui-form-item">
+					<label class="layui-form-label">姓名</label>
+					<div class="layui-input-block">
+						<input type="text" name="name" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">性别</label>
+					<div class="layui-input-block">
+						<!--<input type="text" name="sex" class="layui-input">-->
+						<input type="radio" name="sex" value="男" title="男">
+						<input type="radio" name="sex" value="女" title="女">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">身份证号</label>
+					<div class="layui-input-block">
+						<input type="text" name="id" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">出生日期</label>
+					<div class="layui-input-block">
+						<!--<input type="text" name="birthdate" class="layui-input">-->
+						<input type="text" name="birthdate" id="date" lay-verify="date" placeholder="yyyy-MM-dd"
+						       autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">社保类型</label>
+					<div class="layui-input-block">
+						<input type="text" name="insuranceType" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">社保卡号</label>
+					<div class="layui-input-block">
+						<input type="text" name="insuranceNum" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+
+					<label class="layui-form-label">居住情况</label>
+					<div class="layui-input-block">
+						<input type="text" name="livePlace" class="layui-input">
+					</div>
+
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">民族</label>
+					<div class="layui-input-block">
+						<input type="text" name="nation" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">文化程度</label>
+					<div class="layui-input-block">
+						<input type="text" name="edu" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">宗教信仰</label>
+					<div class="layui-input-block">
+						<input type="text" name="religion" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+						<label class="layui-form-label">城市</label>
+						<div class="layui-input-block">
+							<select name="city" lay-filter="city">
+								<option value="吉林市">吉林市</option>
+								<option value="长春市">长春市</option>
+								<option value="四平市">四平市</option>
+								<option value="通化市">通化市</option>
+								<option value="白城市">白城市</option>
+								<option value="辽源市">辽源市</option>
+								<option value="松原市">松原市</option>
+								<option value="白山市">白山市</option>
+								<option value="延边朝鲜族自治州">延边朝鲜族自治州</option>
+								<option value="长白山管委会">长白山管委会</option>
+							</select>
+						</div>
+				</div>
+				<div class="layui-form-item">
+						<label class="layui-form-label">区(县)</label>
+						<div class="layui-input-block">
+							<select name="district" class="district">
+								<option value="吉林市">吉林市</option>
+								<option value="长春市">长春市</option>
+								<option value="四平市">四平市</option>
+							</select>
+						</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">详细住址</label>
+					<div class="layui-input-block">
+						<input type="text" name="address" class="layui-input">
+					</div>
+
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">经济来源</label>
+					<div class="layui-input-block">
+						<input type="text" name="income" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label" style="padding:0 15px;">经济来源-其他</label>
+					<div class="layui-input-block">
+						<input type="text" name="incomeOther" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label" style="padding:0 15px;">医疗费用支付方式</label>
+					<div class="layui-input-block">
+						<input type="text" name="medPay" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label" style="padding:0 15px;">医疗费用支付方式-其他</label>
+					<div class="layui-input-block">
+						<input type="text" name="medPayOther" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">养老机构</label>
+					<div class="layui-input-block">
+						<input type="text" name="retirePlace" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">备注</label>
+					<div class="layui-input-block">
+						<textarea type="text" name="bz" class="layui-input" cols="3" style="resize: none"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script src="../js/jquery.min.js"></script>
+<script src="../jsons/cities.js"></script>
+<script>
+    var detailData = JSON.parse(sessionStorage.getItem("detailData"));
+    var renderDistrict=function( city) {
+        var dis = districtsArr[city];
+        var str = "";
+        for (var i = 0; i < dis.length; i++) {
+            str += "<option value='" + dis[i] + "'>" + dis[i] + "</option>";
+        }
+        $(".district").html(str);
+    }
+    renderDistrict(detailData.city);
+</script>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    window.onload = function () {
+        layui.use(['form', "laydate"], function () {
+            var form = layui.form;
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#date'
+            });
+
+            // //监听提交
+            // 城市和区县联动
+            form.on("select(city)", function (data) {
+                renderDistrict(data.value);
+//                var dis = districtsArr[data.value];
+//                var str = "";
+//                for (var i = 0; i < dis.length; i++) {
+//                    str += "<option value='" + dis[i] + "'>" + dis[i] + "</option>";
+//                }
+//                $(".district").html(str);
+                form.render("select");
+            })
+
+
+            //提交
+            form.on('submit(demo1)', function (data) {
+                layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                })
+                return false;
+            });
+
+            //表单初始赋值
+            form.val('example', detailData)
+        });
+    }
+</script>
+
+</body>
+</html>

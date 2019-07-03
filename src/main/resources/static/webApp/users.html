@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>用户管理</title>
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../css/init.css">
+	<link rel="stylesheet" href="../css/search_form.css">
+	<style>
+		/* 面包屑导航路径 */
+
+	</style>
+</head>
+<body>
+<!--<div class="layui-row path-bar">-->
+	<!--<div class="layui-col-xs11">-->
+		<!--<div class="path">系统管理 / 用户管理</div>-->
+	<!--</div>-->
+	<!--<div class="layui-col-xs1">-->
+		<!--<div>1</div>-->
+	<!--</div>-->
+<!--</div>-->
+<div class="search-box">
+	<form class="layui-form" lay-filter="search-form">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">乡镇</label>
+				<div class="layui-input-inline">
+					<select class="towns" name="town" lay-filter="changer" keyCode="search">
+						<option value="吉林市">吉林市</option>
+						<option value="长春市">长春市</option>
+						<option value="四平市">四平市</option>
+						<option value="通化市">通化市</option>
+						<option value="白城市">白城市</option>
+						<option value="辽源市">辽源市</option>
+						<option value="松原市">松原市</option>
+						<option value="白山市">白山市</option>
+						<option value="延边朝鲜族自治州">延边朝鲜族自治州</option>
+						<option value="长白山管委会">长白山管委会</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">行政村</label>
+				<div class="layui-input-inline">
+					<select name="village" class="village search-village">
+						<option value="吉林市">吉林市</option>
+						<option value="长春市">长春市</option>
+						<option value="四平市">四平市</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">老人姓名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="name" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item operate-bar" style="margin:0;">
+			<div class="layui-input-block">
+				<button type="button" class="layui-btn layui-btn-sm layui-btn"><i class="layui-icon  layui-icon-search"></i>检索
+				</button>
+				<button type="reset" class="layui-btn layui-btn-sm layui-btn-warm"><i class="layui-icon">&#xe65c;</i>清空
+				</button>
+				<button type="button" class="layui-btn layui-btn-sm layui-btn-normal layui-btn-sm" data-type="addNew"><i
+						class="layui-icon layui-icon-add-1"></i>新增
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+<!--主体表格-->
+<div id="tableBox">
+	<table class="layui-hide" id="mainTable" lay-filter="test"></table>
+</div>
+
+<!--添加模态框-->
+<div id="addPanel" style="display:none">
+	<form class="layui-form" lay-filter="add-form" action="" style="margin-top:15px;">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">姓名</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="realName" lay-verify="required" autocomplete="off" placeholder="请输入姓名"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<!--<input type="password" name="password" lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">-->
+				<select name="roleId" class="roles">
+					<option value="1">角色1</option>
+					<option value="2">角色2</option>
+					<option value="3">角色3</option>
+					<option value="4">角色4</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">乡镇</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="town" class="towns" lay-filter="changer" keyCode="add">
+					<option value="1">部门1</option>
+					<option value="2">部门2</option>
+					<option value="3">部门3</option>
+					<option value="4">部门4</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">行政村</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select class="village add-village"  name="village" lay-filter="add-village">
+					<option value="1">部门1</option>
+					<option value="2">部门2</option>
+					<option value="3">部门3</option>
+					<option value="4">部门4</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">移动电话</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="mobilePhone" lay-verify="required" autocomplete="off" placeholder="请输入移动电话"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">固定电话</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="fixedPhone" autocomplete="off" placeholder="请输入固定电话"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">邮箱</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="email" name="email" autocomplete="off" placeholder="请输入邮箱"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">密码</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="password" name="password" lay-verify="required" autocomplete="off" placeholder="请输入密码"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">确认密码</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="password" name="repassword" lay-verify="required" autocomplete="off" placeholder="请重复密码"
+				       class="layui-input">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="margin:30px 0;text-align: center">
+				<button type="button" class="layui-btn" lay-submit="" lay-filter="addNew">添加</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!--修改编辑模态框-->
+<div id="editPanel" style="display:none">
+	<form class="layui-form" lay-filter="edit-form" action="" style="margin-top:15px;">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">姓名</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="realName" lay-verify="required" autocomplete="off" placeholder="请输入姓名"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<!--<input type="password" name="password" lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">-->
+				<select name="roleId" class="roles">
+					<option value="1">角色1</option>
+					<option value="2">角色2</option>
+					<option value="3">角色3</option>
+					<option value="4">角色4</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">乡镇</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select class="towns" name="town" lay-filter="changer" keyCode="edit">
+					<option value="1">城市1</option>
+					<option value="2">城市2</option>
+					<option value="3">城市3</option>
+					<option value="4">城市4</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">行政村</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select class="village edit-village" name="village" lay-filter="edit-village">
+					<option value="1">城市1</option>
+					<option value="2">城市2</option>
+					<option value="3">城市3</option>
+					<option value="4">城市4</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">移动电话</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="mobilePhone" lay-verify="required" autocomplete="off" placeholder="请输入移动电话"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">固定电话</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="fixedPhone" autocomplete="off" placeholder="请输入固定电话"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">邮箱</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="email" name="email" autocomplete="off" placeholder="请输入邮箱"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="margin:30px 0;text-align: center">
+				<button type="button" class="layui-btn" lay-submit="" lay-filter="edit">修改</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/beforeInit.js"></script>
+<script src="../layui/layui.js"></script>
+<script src="../js/heightClient.js"></script>
+<!--操作组-->
+<script type="text/html" id="barDemo">
+	<a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    //获取添加部门和添加的角色列表
+    var extraData = {
+        getDepts: function () {
+            $.ajax({
+                url: "/sys/queryDepartInfo",
+                type: "post",
+                dataType: 'json',
+                success: function (data) {
+                    var deptStr = '';
+                    for (var i = 0; i < data.length; i++) {
+                        deptStr += '<option  value="' + data[i].key + '">' + data[i].value + '</option>';
+                    }
+                    $(".departments").html(deptStr);
+                }
+            })
+        },
+        getRoles: function () {
+            $.ajax({
+                url: "/role/all",
+                type: "get",
+                dataType: 'json',
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var typeStr = '';
+                        for (var i = 0; i < data.length; i++) {
+                            typeStr += '<option  value="' + data[i].rid + '">' + data[i].rname + '</option>';
+                        }
+                        $(".roles").html(typeStr);
+                    }
+                }
+            })
+        }
+    }
+
+    extraData.getDepts();
+    extraData.getRoles();
+
+
+    //lay函数
+    layui.use(['form', 'table', "layer"], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        form.on("select(changer)", function (data) {
+            var formFilter = data.elem.getAttribute("keyCode") + '-form';
+            var disFilter = data.elem.getAttribute("keyCode") + '-village';
+            before.getVillages(data.value, disFilter);
+
+            form.render("select", formFilter);
+        })
+
+        table.render({
+            elem: '#mainTable'
+            , url: '/manage/user/list'
+            , request: {
+                pageName: 'pageNumber', //页码的参数名称，默认：page
+                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            }
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": 200, //解析接口状态
+//                    "msg": res.message, //解析提示文本
+                    "count": res.total, //解析数据长度
+                    "data": res.rows //解析数据列表
+                };
+            }
+            , title: '用户数据表'
+            , cols: [[
+                {
+                    field: 'name', title: '序号', align: 'center', width: 80, fixed: 'left', unresize: true,
+                    templet: function (data) {
+                        return data.LAY_INDEX
+                    }
+                },
+                {field: 'username', title: '用户名', align: 'center', fixed: 'left', unresize: true},
+                {field: 'realName', title: '姓名', align: 'center', fixed: 'left', unresize: true},
+                {field: 'roleName', title: '角色', align: 'center', unresize: true,},
+                {field: 'email', title: '邮箱', align: 'center', unresize: true, width:    300},
+                {field: 'loginIp', title: '登录IP', align: 'center', unresize: true,},
+                {field: 'lastLoginTime', title: '上次登录时间', align: 'center', unresize: true,},
+                {field: 'mobilePhone', title: '联系电话', align: 'center', unresize: true,},
+                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 200}
+            ]]
+            , page: true
+        });
+
+
+        var pageFuncs = {
+            reloadTable: function () {
+                var demoReload = $('#mainTable');
+                table.reload('mainTable', {
+                    where: {
+                        key: {
+                            field: demoReload.val()
+                        }
+                    }
+                });
+            }
+        }
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            console.log(data);
+            sessionStorage.setItem("detailData", JSON.stringify(obj.data));
+            if (obj.event === 'del') {
+                layer.confirm('确定删除？', function (index) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/manage/user/delete",
+                        data: {
+                            userId: data.userId
+                        },
+                        success: function (data) {
+                            if (data.status == 200) {
+                                //关闭弹框
+                                layer.close(index);
+                                //成功信息提示
+                                layer.alert(data.msg, {icon: 1});
+                                //重新加载表格
+                                pageFuncs.reloadTable()
+                            } else {
+                                //失败信息提示
+                                layer.alert(data.msg, {icon: 2})
+                            }
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                layer.open({
+                    type: 1,
+                    title: "信息修改",
+                    content: $("#editPanel").html(),
+                    area: ['600px', '570px']
+                })
+                form.render("select", "edit-form");
+                form.val("edit-form", data);
+                form.on("submit(edit)", function (data) {
+                    console.log("我尼玛", data.field);
+                    if (data.field.password != data.field.repassword) {
+                        layer.alert("两次密码不一致，请重新输入", {icon: 2})
+                        return
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/manage/user/update",
+                        data: data.field,
+                        success: function (data) {
+                            console.log(data);
+                            if (data.status == 200) {
+                                layer.close(addIndex);
+                                layer.alert(data.msg, {icon: 1})
+                                pageFuncs.reloadTable();
+                            } else {
+                                layer.alert(data.msg, {icon: 2})
+                            }
+                        }
+                    })
+                })
+            }
+        });
+        //    删除事件
+        var $ = layui.$, active = {
+            addNew: function () {
+                var addIndex = layer.open({
+                    type: 1,
+                    title: "新增信息",
+                    shadeClose: true,
+                    area: ["600px", "680px"],
+                    content: $("#addPanel").html()
+                });
+                form.render("select", "add-form");
+                form.on("submit(addNew)", function (data) {
+                    if (data.field.password != data.field.repassword) {
+                        layer.alert("两次密码不一致，请重新输入", {icon: 2})
+                        return
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/manage/user/add",
+                        data: data.field,
+                        success: function (data) {
+                            console.log(data);
+                            if (data.status == 200) {
+                                layer.close(addIndex);
+                                layer.alert(data.msg, {icon: 1})
+                                pageFuncs.reloadTable();
+                            } else {
+                                layer.alert(data.msg, {icon: 2})
+                            }
+                        }
+                    })
+                })
+            }
+        };
+
+        //事件监听
+        $('.operate-bar .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+
+</script>
+</body>
+</html>

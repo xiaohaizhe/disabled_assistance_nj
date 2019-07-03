@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>已评估人数统计</title>
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../css/init.css">
+	<link rel="stylesheet" href="../css/search_form.css">
+	<style>
+		/* 面包屑导航路径 */
+
+	</style>
+</head>
+<body>
+<div class="layui-row path-bar">
+	<div class="layui-col-xs11">
+		<div class="path">已评估人数统计</div>
+	</div>
+	<div class="layui-col-xs1">
+		<div>1</div>
+	</div>
+</div>
+<div class="layui-form" lay-filter="search-form">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">城市</label>
+			<div class="layui-input-inline">
+				<select name="city" lay-filter="search-city">
+					<option value="吉林市">吉林市</option>
+					<option value="长春市">长春市</option>
+					<option value="四平市">四平市</option>
+					<option value="通化市">通化市</option>
+					<option value="白城市">白城市</option>
+					<option value="辽源市">辽源市</option>
+					<option value="松原市">松原市</option>
+					<option value="白山市">白山市</option>
+					<option value="延边朝鲜族自治州">延边朝鲜族自治州</option>
+					<option value="长白山管委会">长白山管委会</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">区(县)</label>
+			<div class="layui-input-inline">
+				<select name="district" class="search-district">
+					<option value="吉林市">吉林市</option>
+					<option value="长春市">长春市</option>
+					<option value="四平市">四平市</option>
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="layui-row operate-bar">
+	<div class="btn-group">
+		<button class="layui-btn layui-btn-sm layui-btn"><i class="layui-icon  layui-icon-search"></i>检索</button>
+		<button class="layui-btn layui-btn-sm layui-btn-warm"><i class="layui-icon layui-icon-refresh-1"></i>清空</button>
+		<!--<button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-sm"><i class="layui-icon layui-icon-add-1"></i>添加-->
+		</button>
+		<!--<button class="layui-btn layui-btn-sm layui-btn-danger" data-type="getCheckData"><i class="layui-icon layui-icon-delete"></i>删除</button>-->
+	</div>
+</div>
+
+<div id="tableBox">
+
+</div>
+
+<script src="../js/jquery.min.js"></script>
+<script src="../jsons/cities.js"></script>
+<script type="text/javascript">
+    var dis = districtsArr["吉林市"];
+    var str = "";
+    for (var i = 0; i < dis.length; i++) {
+        if(i==0){
+            str += "<option value='" + dis[i] + "' selected>" + dis[i] + "</option>";
+        }else {
+            str += "<option value='" + dis[i] + "'>" + dis[i] + "</option>";
+        }
+    }
+    $(".search-district").html(str);
+</script>
+<script src="../layui/layui.js"></script>
+<script src="../js/heightClient.js"></script>
+<script src="../js/echarts.common.min.js"></script>
+<!--数据-->
+<script src="../jsons/tableData.js"></script>
+<script>
+
+    layui.use('form', function () {
+        var form = layui.form;
+        form.on("select(search-city)", function (data) {
+            var dis = districtsArr[data.value];
+            var str = "";
+            for (var i = 0; i < dis.length; i++) {
+                str += "<option value='" + dis[i] + "'>" + dis[i] + "</option>";
+            }
+            $(".search-district").html(str);
+            form.render("select","search-form");
+        })
+
+        //各种基于事件的操作，下面会有进一步介绍
+
+	var echartObj={
+            init:function() {
+                var myChart=echarts.init(document.getElementById('tableBox'));
+                var option = {
+                    title : {
+                        text: '已评估人数统计',
+                        x:'center'
+                    },
+	                toolbox:{
+                        show:true
+	                },
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ["市辖区","船营区", "龙潭区", "昌邑区", "丰满区", "磐石市", "桦甸市", "蛟河市", "舒兰市", "永吉县"]
+                    },
+                    series : [
+                        {
+                            name: '访问来源',
+                            type: 'pie',
+                            radius : '55%',
+                            center: ['20%', '30%'],
+                            data:[
+                                {value:212, name:'市辖区'},
+                                {value:331, name:'船营区'},
+                                {value:124, name:'龙潭区'},
+                                {value:115, name:'昌邑区'},
+                                {value:318, name:'丰满区'},
+                                {value:315, name:'磐石市'},
+                                {value:214, name:'桦甸市'},
+                                {value:148, name:'蛟河市'},
+                                {value:75, name:'舒兰市'},
+                                {value:234, name:'永吉县'}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                myChart.setOption(option)
+            }
+	}
+        echartObj.init();
+
+    });
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            elem: '#mainTable'
+            // ,url:'/test/table/demo1.json'
+            , data: tableData
+            // ,toolbar: '#toolbarDemo'
+            , title: '用户数据表'
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'},
+                {field: 'name', title: '姓名', align: 'center', width: 150, fixed: 'left', unresize: true},
+                {field: 'sex', title: '性别', align: 'center', width: 120, unresize: true,},
+                {field: 'age', title: '年龄', align: 'center', width: 120, unresize: true, sort: true},
+                {field: 'id', title: '身份证号', align: 'center', unresize: true},
+                {field: 'city', title: '城市', align: 'center', unresize: true},
+                {field: 'district', title: '区(县)', align: 'center', unresize: true, sort: true},
+                {field: 'retirePlace', title: '养老机构', align: 'center', unresize: true,},
+                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 200}
+            ]]
+            , page: true
+        });
+
+
+        //    删除事件
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+                var checkStatus = table.checkStatus('mainTable')
+                    ,data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+            ,getCheckLength: function(){ //获取选中数目
+                var checkStatus = table.checkStatus('mainTable')
+                    ,data = checkStatus.data;
+                layer.msg('选中了：'+ data.length + ' 个');
+            }
+            ,isAll: function(){ //验证是否全选
+                var checkStatus = table.checkStatus('idTest');
+                layer.msg(checkStatus.isAll ? '全选': '未全选')
+            }
+        };
+
+//事件监听
+        $('.operate-bar .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+
+
+</script>
+</body>
+</html>

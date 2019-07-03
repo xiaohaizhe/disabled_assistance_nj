@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>登录</title>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="css/init.css">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html, body {
+			height: 100%;
+			width: 100%;
+		}
+
+		body {
+			background-image: url("images/background2@2x.png");
+			background-size: cover;
+			padding-top: 100px;
+		}
+
+		.header {
+			color: #fff;
+			text-align: center;
+			margin-bottom: 100px;
+		}
+
+		.header .city {
+			font-size: 40px;
+		}
+
+		/*.header .project-name{*/
+		/*font-size:20px;*/
+		/*line-height:40px;*/
+		/*}*/
+
+		#logform {
+			width: 600px;
+			height: 400px;
+			margin: 0 auto;
+			color: #fff;
+			background-color: #08153D;
+		}
+
+		#logform .form-title h3 {
+			color: #fff;
+			font-size: 34px;
+			font-weight: lighter;
+			line-height: 140px;
+			text-align: center;
+		}
+
+		#logform .layui-input-block {
+
+		}
+
+		#logform label.layui-form-label {
+			/*line-height: 40px;*/
+			padding-top:20px;
+			font-size: 16px;
+			text-align: justify;
+		}
+
+		#logform label.layui-form-label:after {
+			width: 100%;
+			height: 0;
+			line-height:0;
+			margin: 0;
+			display: inline-block;
+			overflow: hidden;
+			content: '';
+		}
+
+		#logform input {
+			background-color: #202A4B;
+			border-radius: 6px;
+			border: #141719 1px solid;
+			height: 60px;
+			line-height: 60px;
+			font-size: 16px;
+			color: #FFF;
+		}
+	</style>
+</head>
+<body>
+<div class="header">
+	<div class="city">句容市"助老帮帮团"</div>
+	<!--<div class="project-name"></div>-->
+</div>
+
+<div id="logform">
+	<div class="form-title"><h3>用户登录</h3></div>
+	<form class="layui-form" action="">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">密码</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="password" name="password" lay-verify="required" placeholder="请输入密码" autocomplete="off"
+				       class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="margin:30px 0;text-align: center">
+				<button type="button" class="layui-btn" lay-submit="" lay-filter="login"
+				        style="background-color: #1981d2">登录
+				</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+    //layui模块引用，弹框和表单
+    layui.use(["layer", "form"], function () {
+        var layer = layui.layer;
+        var form = layui.form;
+//	    //登录框弹框事件监听
+//        $("#userEnter li.enter-item").on("click",function() {
+//            layer.open({
+//                type: 1,
+//                title: "用户登录",
+//                shadeClose: true,
+//	            area:["500px","300px"],
+//                content: $("#logform").html()
+//            });
+//        })
+        //监听提交
+        form.on('submit(login)', function (data) {
+            $.ajax({
+                type: "POST",
+                url: "/user/login",
+                data: data.field,
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == 200) {
+                        sessionStorage.setItem("menuUrl","webApp/oldInfo.html");
+                        window.location.href = "index.html"
+                    } else {
+                        layer.alert(data.msg, {icon: 2})
+                    }
+                }
+            })
+        });
+    })
+
+</script>
+</body>
+</html>

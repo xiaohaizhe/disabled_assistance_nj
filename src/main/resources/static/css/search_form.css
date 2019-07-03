@@ -1,0 +1,39 @@
+/*导航条部分*/
+.layui-row.path-bar{
+    height:60px;
+    line-height:60px;
+}
+
+.layui-row.path-bar .path{
+    padding:0 20px;
+    font-size:30px;
+    font-weight:500;
+}
+
+/*搜索信息输入部分*/
+.search-box{
+    padding-top:20px;
+}
+
+.layui-form-label{
+    width:auto;
+}
+
+
+/*按钮组部分*/
+.layui-form-item.operate-bar{
+    margin:0;
+}
+.layui-form-item.operate-bar .layui-input-block{
+    min-height: auto;
+    text-align: right;
+}
+.layui-form-item.operate-bar .layui-btn{
+    margin:0 5px;
+}
+
+
+table#mainTable{
+    height:100%;
+    width:100%;
+}

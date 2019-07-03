@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>评估抽查</title>
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../css/init.css">
+	<link rel="stylesheet" href="../css/search_form.css">
+	<style>
+		/* 面包屑导航路径 */
+	</style>
+</head>
+<body>
+<div class="layui-row path-bar">
+	<div class="layui-col-xs11">
+		<div class="path">评估抽查</div>
+	</div>
+	<div class="layui-col-xs1">
+		<div>1</div>
+	</div>
+</div>
+<div class="layui-form" lay-filter="search-form">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">老人姓名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">评估时间</label>
+			<div class="layui-input-inline">
+				<input type="text" name="start-time" id="startDate" lay-verify="date" placeholder="yyyy-MM-dd"
+				       autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">至</label>
+			<div class="layui-input-inline">
+				<input type="text" name="end-time" id="endDate" lay-verify="date" placeholder="yyyy-MM-dd"
+				       autocomplete="off" class="layui-input">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">城市</label>
+			<div class="layui-input-inline">
+				<select name="city" lay-filter="search-city">
+					<option value="吉林市">吉林市</option>
+					<option value="长春市">长春市</option>
+					<option value="四平市">四平市</option>
+					<option value="通化市">通化市</option>
+					<option value="白城市">白城市</option>
+					<option value="辽源市">辽源市</option>
+					<option value="松原市">松原市</option>
+					<option value="白山市">白山市</option>
+					<option value="延边朝鲜族自治州">延边朝鲜族自治州</option>
+					<option value="长白山管委会">长白山管委会</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">区(县)</label>
+			<div class="layui-input-inline">
+				<select name="district" class="search-district">
+					<option value="吉林市">吉林市</option>
+					<option value="长春市">长春市</option>
+					<option value="四平市">四平市</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">养老机构</label>
+			<div class="layui-input-inline">
+				<select name="nursing">
+					<option value="养老机构一">养老机构一</option>
+					<option value="养老机构二">养老机构二</option>
+					<option value="养老机构三">养老机构三</option>
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="layui-row operate-bar">
+	<div class="btn-group">
+		<button class="layui-btn layui-btn-sm layui-btn"><i class="layui-icon  layui-icon-search"></i>检索</button>
+		<button class="layui-btn layui-btn-sm layui-btn-warm"><i class="layui-icon layui-icon-refresh-1"></i>清空</button>
+		<button class="layui-btn layui-btn-sm layui-btn"><i class="layui-icon layui-icon-return"></i>返回</button>
+		<!--<button class="layui-btn layui-btn-sm layui-btn-normal layui-btn-sm"><i class="layui-icon layui-icon-add-1"></i>新增-->
+		</button>
+		<!--<button class="layui-btn layui-btn-sm layui-btn-danger" data-type="getCheckData"><i-->
+		<!--class="layui-icon layui-icon-delete"></i>删除-->
+		<!--</button>-->
+	</div>
+</div>
+
+<div id="tableBox">
+	<table class="layui-hide" id="mainTable" lay-filter="test"></table>
+</div>
+
+<script src="../js/jquery.min.js"></script>
+<script src="../jsons/cities.js"></script>
+<script type="text/javascript">
+    var dis = districtsArr["吉林市"];
+    var str = "";
+    for (var i = 0; i < dis.length; i++) {
+        if (i == 0) {
+            str += "<option value='" + dis[i] + "' selected>" + dis[i] + "</option>";
+        } else {
+            str += "<option value='" + dis[i] + "'>" + dis[i] + "</option>";
+        }
+    }
+    $(".search-district").html(str);
+</script>
+<script src="../layui/layui.js"></script>
+<script src="../js/heightClient.js"></script>
+<!--数据-->
+<script src="../jsons/tableData.js"></script>
+
+<script type="text/html" id="barDemo">
+	<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">查看详情</a>
+	<a class="layui-btn layui-btn-xs" lay-event="edit">评估报告</a>
+	<!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+</script>
+<script>
+    layui.use(['form', "laydate"], function () {
+        var form = layui.form;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#startDate'
+        });
+        laydate.render({
+            elem: '#endDate'
+        });
+        form.on("select(search-city)", function (data) {
+            var dis = districtsArr[data.value];
+            var str = "";
+            for (var i = 0; i < dis.length; i++) {
+                str += "<option value='" + dis[i] + "'>" + dis[i] + "</option>";
+            }
+            $(".search-district").html(str);
+            form.render("select", "search-form");
+        })
+
+        //各种基于事件的操作，下面会有进一步介绍
+    });
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            elem: '#mainTable'
+            , data: tableData
+            // ,toolbar: '#toolbarDemo'
+            , title: '用户数据表'
+            , cols: [[
+                {
+                    field: 'name', title: '序号', align: 'center', width: 80, fixed: 'left', unresize: true,
+                    templet: function (data) {
+                        console.log(data);
+                        return data.LAY_INDEX
+                    }
+                },
+                {field: 'name', title: '老人姓名', align: 'center', fixed: 'left', unresize: true},
+                {field: 'sex', title: '性别', align: 'center', unresize: true,},
+                {field: 'age', title: '年龄', align: 'center', unresize: true,},
+                {field: 'id', title: '身份证号', align: 'center', unresize: true,},
+                {field: 'city', title: '城市', align: 'center', unresize: true},
+                {field: 'district', title: '区(县)', align: 'center', unresize: true,},
+                {field: 'ability_level', title: '能力等级', align: 'center', unresize: true,},
+                {field: 'evaluate_time', title: '评估时间', align: 'center', unresize: true,},
+                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 200}
+            ]]
+            , page: true
+        });
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            sessionStorage.setItem("detailData", JSON.stringify(obj.data));
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {
+                sessionStorage.setItem("operateCode", "edit");
+                layer.open({
+                    type: 2,
+                    title: "信息修改",
+                    content: "editInfo_1.html",
+                    area: ['800px', '650px']
+                })
+            } else if (obj.event === "detail") {
+//                sessionStorage.setItem("detailData", JSON.stringify(obj.data));
+                layer.open({
+                    type: 2,
+                    title: "详情",
+                    content: "detailInfo_1.html",
+                    area: ['800px', '650px']
+                })
+            }
+        });
+        //    删除事件
+        var $ = layui.$, active = {
+            getCheckData: function () { //获取选中数据
+                var checkStatus = table.checkStatus('mainTable')
+                    , data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+            , getCheckLength: function () { //获取选中数目
+                var checkStatus = table.checkStatus('mainTable')
+                    , data = checkStatus.data;
+                layer.msg('选中了：' + data.length + ' 个');
+            }
+            , isAll: function () { //验证是否全选
+                var checkStatus = table.checkStatus('idTest');
+                layer.msg(checkStatus.isAll ? '全选' : '未全选')
+            }
+        };
+
+//事件监听
+        $('.operate-bar .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+
+</script>
+</body>
+</html>

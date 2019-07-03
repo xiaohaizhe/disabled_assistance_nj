@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../css/init.css">
+	<link rel="stylesheet" href="../css/search_form.css">
+	<style>
+		.layui-table-view{
+			margin:0;
+		}
+
+	</style>
+</head>
+<body>
+<table class="layui-hide" id="relationTable" lay-filter="relation"></table>
+
+<script src="../js/jquery.min.js"></script>
+<!--百度地图api-->
+<script src="../layui/layui.js"></script>
+
+<script>
+
+    function layuiRowspan(fieldName, index) {
+        // 左侧列为冻结的情况
+        var tbodyNode = document.getElementsByClassName("layui-table-fixed-l")[index - 1];
+        var child = tbodyNode.getElementsByTagName("td");
+        var childFilterArr = [];
+        // 获取data-field属性为fieldName的td
+        for (var i = 0; i < child.length; i++) {
+            if (child[i].getAttribute("data-field") == fieldName) {
+                childFilterArr.push(child[i]);
+            }
+        }
+        // 获取td的个数和种类
+        var childFilterTextObj = {};
+        for (var i = 0; i < childFilterArr.length; i++) {
+            var childText = childFilterArr[i].textContent;
+            if (childFilterTextObj[childText] == undefined) {
+                childFilterTextObj[childText] = 1;
+            } else {
+                var num = childFilterTextObj[childText];
+                childFilterTextObj[childText] = num * 1 + 1;
+            }
+        }
+        // 给获取到的td设置合并单元格属性
+        for (var key in childFilterTextObj) {
+            var tdNum = childFilterTextObj[key];
+            var canRowspan = true;
+            for (var i = 0; i < childFilterArr.length; i++) {
+                if (childFilterArr[i].getAttribute("data-content") == key) {
+                    if (canRowspan) {
+                        childFilterArr[i].setAttribute("rowspan", tdNum);
+                        canRowspan = false;
+                    } else {
+                        childFilterArr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * name layui合并tbody中单元格的方法
+     * @param fieldName  要合并列的field属性值
+     * @param index 表格的索引值 从1开始
+     * @desc 此方式适用于没有列冻结的单元格合并
+     */
+    function alarmTableRowSpan(fieldName, index) {
+        var fixedNode = document.getElementsByClassName("layui-table-body")[index - 1];
+        if (!fixedNode) {
+            return false;
+        }
+        var child = fixedNode.getElementsByTagName("td");
+        var childFilterArr = [];
+        // 获取data-field属性为fieldName的td
+        for (var i = 0; i < child.length; i++) {
+            if (child[i].getAttribute("data-field") == fieldName) {
+                childFilterArr.push(child[i]);
+            }
+        }
+        // 获取td的个数和种类
+        var childFilterTextObj = {};
+        for (var i = 0; i < childFilterArr.length; i++) {
+            var childText = childFilterArr[i].textContent;
+            if (childFilterTextObj[childText] == undefined) {
+                childFilterTextObj[childText] = 1;
+            } else {
+                var num = childFilterTextObj[childText];
+                childFilterTextObj[childText] = num * 1 + 1;
+            }
+        }
+        // 给获取到的td设置合并单元格属性
+        for (var key in childFilterTextObj) {
+            var tdNum = childFilterTextObj[key];
+            var canRowSpan = true;
+            for (var i = 0; i < childFilterArr.length; i++) {
+                if (childFilterArr[i].textContent == key) {
+                    if (canRowSpan) {
+                        childFilterArr[i].setAttribute("rowspan", tdNum);
+                        canRowSpan = false;
+                    } else {
+                        childFilterArr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    }
+    var rowData = JSON.parse(sessionStorage.getItem("detailData"));
+
+    layui.use(['table',"jquery"], function () {
+        var table=layui.table;
+        var $=layui.jquery;
+
+        $.ajax({
+            type:"POST",
+            url: '/old/relation',
+            data:{
+                uid:rowData.uid
+            },
+            success:function(res){
+                var tableData=[];
+                for(var key in res){
+                    var secLength=res[key].length;
+                    if(secLength){
+                        for(var i=0;i<secLength;i++){
+                            res[key][i].relationship=key;
+                            tableData.push(res[key][i]);
+                        }
+                    }
+                }
+                table.render({
+                    elem: '#relationTable',
+                    data:tableData
+                    , title: '用户数据表'
+                    , cols: [[
+                        {
+                            field: 'username', title: '帮扶对象', align: 'center', width: 120,fixed: 'left', unresize: true,
+                            templet: function (data) {
+                                return rowData.name
+                            }
+                        },
+                        {field: 'relationship', title: '关系', align: 'center',width: 140,  fixed: 'left', unresize: true},
+                        {field: 'name', title: '姓名', align: 'center',width: 120, fixed: 'left', unresize: true},
+                        {field: 'sex', title: '性别', align: 'center', width: 80, unresize: true,},
+                        {field: 'cardid', title: '身份证', align: 'center', unresize: true,},
+                        {field: 'contact', title: '联系方式', align: 'center', unresize: true},
+                    ]],
+//                    , page: true,
+                    done: function () {
+                                    alarmTableRowSpan("username", 2);
+                                    alarmTableRowSpan("relationship", 2);
+                    }
+                });
+            }
+        })
+    })
+</script>
+</body>
+</html>
