@@ -30,17 +30,13 @@ public class IdNumberValidationValidator implements ConstraintValidator<IdNumber
      *                                  出生年月日YYYYMMDD+3位顺序码
      *                                  +0~9或X(x)校验码</i>
      */
-    private static boolean checkIDNo(String IDNo18) {
-        // 校验身份证号码的长度
-        if (!checkStrLength(IDNo18, 18)) {
-            throw new IllegalArgumentException();
+    public static boolean checkIDNo(String IDNo18) {
+        // 校验身份证号码的长度 匹配身份证号码的正则表达式
+        if (checkStrLength(IDNo18, 18) && regexMatch(IDNo18, REGEX_ID_NO_18)) {
+            // 校验身份证号码的验证码
+            return validateCheckNumber(IDNo18);
         }
-        // 匹配身份证号码的正则表达式
-        if (!regexMatch(IDNo18, REGEX_ID_NO_18)) {
-            throw new IllegalArgumentException();
-        }
-        // 校验身份证号码的验证码
-        return validateCheckNumber(IDNo18);
+        return false;
     }
 
     /**
@@ -50,7 +46,7 @@ public class IdNumberValidationValidator implements ConstraintValidator<IdNumber
      * @return  是否符合
      */
     private static boolean checkStrLength(String inputString, int len) {
-        return inputString == null || inputString.length() != len;
+        return inputString.length() == len;
     }
 
     /**

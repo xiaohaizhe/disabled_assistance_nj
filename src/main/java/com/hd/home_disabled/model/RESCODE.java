@@ -8,7 +8,11 @@ public enum RESCODE {
     FAILURE(1,"失败"),
     ORGANIZATION_ID_NOT_EXIST(1,"机构不存在"),
     ADMIN_ID_NOT_EXIST(1,"管理员不存在"),
-    NATUREOFHOUSINGPROPERTYRIGHT_ID_NOT_EXIST(1,"房屋产权性质不存在");
+    NATURE_OF_HOUSING_PROPERTY_RIGHT_ID_NOT_EXIST(1,"房屋产权性质不存在"),
+    DISABILITY_DEGREE_NOT_EXIST(1,"残疾程度不存在"),
+    TYPE_OF_DISABILITY_NOT_EXIST(1,"残疾类别不存在"),
+    NURSING_MODE_NOT_EXIST(1,"托养方式不存在"),
+    USER_ID_NOT_EXIST(1,"用户不存在");
     private int code;
     private String msg;
 

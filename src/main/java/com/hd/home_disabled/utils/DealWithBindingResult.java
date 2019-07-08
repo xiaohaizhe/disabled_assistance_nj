@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * @ClassName DealWithBindingResult
- * @Description TODO
+ * @Description 处理model验证
  * @Author pyt
  * @Date 2019/7/4 16:04
  * @Version

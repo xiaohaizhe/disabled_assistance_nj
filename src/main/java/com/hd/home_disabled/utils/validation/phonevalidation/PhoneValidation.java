@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD,FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
 public @interface PhoneValidation {
-    String message() default  "手机号不正确";
+    String message() default  "号码格式不正确";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
     @Target({METHOD,FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })

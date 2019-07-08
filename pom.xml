@@ -59,7 +59,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/net.sf.ehcache/ehcache -->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/net.sf.ehcache/ehcache &ndash;&gt;
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
+        </dependency>-->
         <!-- 构建Restful API -->
         <!-- https://mvnrepository.com/artifact/com.spring4all/swagger-spring-boot-starter -->
         <dependency>
