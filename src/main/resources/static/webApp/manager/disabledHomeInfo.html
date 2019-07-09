@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../css/init.css">
+	<link rel="stylesheet" href="../../css/search_form.css">
+	<style>
+		#tableContainer  .layui-table-header {
+			overflow-x: auto;
+		}
+	</style>
+</head>
+<body>
+
+<div class="search-box">
+	<form class="layui-form">
+		<div class="layui-form-item layui-tab-title">
+			<div class="layui-inline" style="padding:0 10px;">
+				残疾人之家信息
+			</div>
+		</div>
+		<div class="layui-form-item operate-bar" style="margin:0;padding:0 10px;">
+			<div class="layui-input-block">
+				<span id="export" style="margin-right: 10px;"><i
+						class="layui-icon layui-icon-file"></i>导出Excel
+				</span>
+				<span><i
+						class="layui-icon layui-icon-chart-screen"></i>
+				</span>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div id="tableContainer">
+	<table class="layui-hide" id="mainTable" lay-filter="test"></table>
+</div>
+
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../layui/layui.js"></script>
+<script src="../../js/heightClient.js"></script>
+
+
+<script>
+	layui.use('table', function(){
+		var table = layui.table;
+
+		table.render({
+			elem: '#mainTable',
+			url:'/demo/table/user/',
+			cols: [[
+				{field:'id', width:80, title: '机构名称', sort: true},
+				{field:'username', width:80, title: '登记注册时间', sort: true},
+				{field:'sex', width:80, title: '注册证书编号', sort: true},
+				{field:'city', width:80, title: '注册部门', sort: true},
+				{field:'sign', title: '机构性质', minWidth: 150, sort: true},
+				{field:'experience', width:80, title: '房屋产权性质', sort: true},
+				{field:'score', width:80, title: '机构面积', sort: true},
+				{field:'classify', width:80, title: '床位数', sort: true},
+				{field:'wealth', width:135, title: '庇护性劳动项目', sort: true},
+				{field:'wealth', width:135, title: '地址'},
+				{field:'wealth', width:135, title: '负责人', sort: true},
+				{field:'wealth', width:135, title: '性别', sort: true},
+				{field:'wealth', width:135, title: '出生年月', sort: true},
+				{field:'wealth', width:135, title: '文化程度', sort: true},
+				{field:'wealth', width:135, title: '营业执照或登记证书'},
+				{field:'wealth', width:135, title: '银行开户许可'},
+				{field:'wealth', width:135, title: '门头及室内功能区域、无障碍设施'},
+				{field:'wealth', width:135, title: '管理制度'},
+				{field:'wealth', width:135, title: '服务项目总数', sort: true},
+				{field:'wealth', width:135, title: '总服务人数', sort: true},
+				{field:'wealth', width:135, title: '总服务人次', sort: true},
+				{field:'wealth', width:135, title: '总服务时长', sort: true},
+				{field:'wealth', width:135, title: '平均服务时长', sort: true},
+				{field:'wealth', width:135, title: '提交人'},
+				{field:'wealth', width:135, title: '提交时间', sort: true},
+				{field:'wealth', width:135, title: '更新时间', sort: true},
+			]]
+			,page: true
+		});
+	});
+
+
+
+</script>
+</body>
+</html>
