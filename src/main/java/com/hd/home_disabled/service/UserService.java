@@ -144,57 +144,116 @@ public class UserService {
                                 nursingModeRepository.existsById(user1.getNursingMode().getId())) {
                             if (user1.getId() == null) {
                                 //user模型不带id，表示新增
-                                UserBlockStatistic userBlockStatistic;
+                                UserBlockStatistic userBlockStatistic = null;
                                 Optional<UserBlockStatistic> userBlockStatisticOptional = userblockStatisticRepository.findByBlockLike(user1.getBlock());
-                                userBlockStatistic = userBlockStatisticOptional.orElseGet(() -> userblockStatisticRepository.save(new UserBlockStatistic(user1.getBlock())));
+                                if (userBlockStatisticOptional.isPresent()) {
+                                    userBlockStatistic = userBlockStatisticOptional.get();
+                                }
+                                //残疾人街道统计数据增加
                                 switch (user.getTypeOfDisabilityId()) {
                                     case 1://视力残疾
-                                        if (userBlockStatistic.getVisualDisability() != null) {
-                                            userBlockStatistic.setVisualDisability(userBlockStatistic.getVisualDisability() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getVisualDisability() != null) {
+                                                userBlockStatistic.setVisualDisability(userBlockStatistic.getVisualDisability() + 1);
+                                            } else {
+                                                userBlockStatistic.setVisualDisability(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setVisualDisability(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setVisualDisability(1L);
                                         break;
                                     case 2://听力残疾
-                                        if (userBlockStatistic.getHearingDisability() != null) {
-                                            userBlockStatistic.setHearingDisability(userBlockStatistic.getHearingDisability() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getHearingDisability() != null) {
+                                                userBlockStatistic.setHearingDisability(userBlockStatistic.getHearingDisability() + 1);
+                                            } else {
+                                                userBlockStatistic.setHearingDisability(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setHearingDisability(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setHearingDisability(1L);
                                         break;
                                     case 3://言语残疾
-                                        if (userBlockStatistic.getSpeechDisability() != null) {
-                                            userBlockStatistic.setSpeechDisability(userBlockStatistic.getSpeechDisability() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getSpeechDisability() != null) {
+                                                userBlockStatistic.setSpeechDisability(userBlockStatistic.getSpeechDisability() + 1);
+                                            } else {
+                                                userBlockStatistic.setSpeechDisability(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setSpeechDisability(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setSpeechDisability(1L);
                                         break;
                                     case 4://肢体残疾
-                                        if (userBlockStatistic.getPhysicalDisability() != null) {
-                                            userBlockStatistic.setPhysicalDisability(userBlockStatistic.getPhysicalDisability() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getPhysicalDisability() != null) {
+                                                userBlockStatistic.setPhysicalDisability(userBlockStatistic.getPhysicalDisability() + 1);
+                                            } else {
+                                                userBlockStatistic.setPhysicalDisability(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setPhysicalDisability(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setPhysicalDisability(1L);
                                         break;
                                     case 5://智力残疾
-                                        if (userBlockStatistic.getIntellectualDisability() != null) {
-                                            userBlockStatistic.setIntellectualDisability(userBlockStatistic.getIntellectualDisability() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getIntellectualDisability() != null) {
+                                                userBlockStatistic.setIntellectualDisability(userBlockStatistic.getIntellectualDisability() + 1);
+                                            } else {
+                                                userBlockStatistic.setIntellectualDisability(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setIntellectualDisability(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setIntellectualDisability(1L);
                                         break;
                                     case 6://精神残疾
-                                        if (userBlockStatistic.getMentalDisability() != null) {
-                                            userBlockStatistic.setMentalDisability(userBlockStatistic.getMentalDisability() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getMentalDisability() != null) {
+                                                userBlockStatistic.setMentalDisability(userBlockStatistic.getMentalDisability() + 1);
+                                            } else {
+                                                userBlockStatistic.setMentalDisability(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setMentalDisability(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setMentalDisability(1L);
                                         break;
                                     case 7://多重残疾
-                                        if (userBlockStatistic.getMultipleDisability() != null) {
-                                            userBlockStatistic.setMultipleDisability(userBlockStatistic.getMultipleDisability() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getMultipleDisability() != null) {
+                                                userBlockStatistic.setMultipleDisability(userBlockStatistic.getMultipleDisability() + 1);
+                                            } else {
+                                                userBlockStatistic.setMultipleDisability(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setMultipleDisability(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setMultipleDisability(1L);
                                         break;
                                     default:
-                                        if (userBlockStatistic.getOther() != null) {
-                                            userBlockStatistic.setOther(userBlockStatistic.getOther() + 1);
+                                        if (userBlockStatistic != null) {
+                                            if (userBlockStatistic.getOther() != null) {
+                                                userBlockStatistic.setOther(userBlockStatistic.getOther() + 1);
+                                            } else {
+                                                userBlockStatistic.setOther(1L);
+                                            }
+                                        } else {
+                                            UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
+                                            userBlockStatistic1.setOther(1L);
+                                            userblockStatisticRepository.save(userBlockStatistic1);
                                         }
-                                        userBlockStatistic.setOther(1L);
                                         break;
                                 }
                             }
@@ -225,50 +284,66 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             userOptional.get().setStatus(0);
-//            UserBlockStatistic userBlockStatistic = userBlockStatisticService.getByBlock(userOptional.get().getBlock());
-            UserBlockStatistic userBlockStatistic = new UserBlockStatistic();
+            //残疾人街道统计数据
+            UserBlockStatistic userBlockStatistic = null;
             Optional<UserBlockStatistic> userBlockStatisticOptional = userblockStatisticRepository.findByBlockLike(userOptional.get().getBlock());
             if (userBlockStatisticOptional.isPresent()) {
                 userBlockStatistic = userBlockStatisticOptional.get();
             }
             switch (userOptional.get().getTypeOfDisability().getId()) {
                 case 1://视力残疾
-                    if (userBlockStatistic.getVisualDisability() != null && userBlockStatistic.getVisualDisability() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getVisualDisability() != null &&
+                            userBlockStatistic.getVisualDisability() > 0) {
                         userBlockStatistic.setVisualDisability(userBlockStatistic.getVisualDisability() - 1);
                     }
                     break;
                 case 2://听力残疾
-                    if (userBlockStatistic.getHearingDisability() != null && userBlockStatistic.getHearingDisability() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getHearingDisability() != null &&
+                            userBlockStatistic.getHearingDisability() > 0) {
                         userBlockStatistic.setHearingDisability(userBlockStatistic.getHearingDisability() - 1);
                     }
                     break;
                 case 3://言语残疾
-                    if (userBlockStatistic.getSpeechDisability() != null && userBlockStatistic.getSpeechDisability() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getSpeechDisability() != null &&
+                            userBlockStatistic.getSpeechDisability() > 0) {
                         userBlockStatistic.setSpeechDisability(userBlockStatistic.getSpeechDisability() - 1);
                     }
                     break;
                 case 4://肢体残疾
-                    if (userBlockStatistic.getPhysicalDisability() != null && userBlockStatistic.getPhysicalDisability() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getPhysicalDisability() != null &&
+                            userBlockStatistic.getPhysicalDisability() > 0) {
                         userBlockStatistic.setPhysicalDisability(userBlockStatistic.getPhysicalDisability() - 1);
                     }
                     break;
                 case 5://智力残疾
-                    if (userBlockStatistic.getIntellectualDisability() != null && userBlockStatistic.getIntellectualDisability() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getIntellectualDisability() != null &&
+                            userBlockStatistic.getIntellectualDisability() > 0) {
                         userBlockStatistic.setIntellectualDisability(userBlockStatistic.getIntellectualDisability() - 1);
                     }
                     break;
                 case 6://精神残疾
-                    if (userBlockStatistic.getMentalDisability() != null && userBlockStatistic.getMentalDisability() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getMentalDisability() != null &&
+                            userBlockStatistic.getMentalDisability() > 0) {
                         userBlockStatistic.setMentalDisability(userBlockStatistic.getMentalDisability() - 1);
                     }
                     break;
                 case 7://多重残疾
-                    if (userBlockStatistic.getMultipleDisability() != null && userBlockStatistic.getMultipleDisability() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getMultipleDisability() != null &&
+                            userBlockStatistic.getMultipleDisability() > 0) {
                         userBlockStatistic.setMultipleDisability(userBlockStatistic.getMultipleDisability() - 1);
                     }
                     break;
                 default:
-                    if (userBlockStatistic.getOther() != null && userBlockStatistic.getOther() > 0) {
+                    if (userBlockStatistic != null &&
+                            userBlockStatistic.getOther() != null &&
+                            userBlockStatistic.getOther() > 0) {
                         userBlockStatistic.setOther(userBlockStatistic.getOther() - 1);
                     }
                     break;
