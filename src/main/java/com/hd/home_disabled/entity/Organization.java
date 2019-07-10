@@ -56,6 +56,8 @@ public class Organization {
     private List<User> userList;
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "organization")
     private List<Project> projectList;
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "organization")
+    private List<ApplyForm> applyFormList;
 
     //图片、文件地址
     private String certification;   //营业执照或登记证书

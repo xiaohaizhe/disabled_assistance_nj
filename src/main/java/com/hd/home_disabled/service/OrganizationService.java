@@ -143,8 +143,7 @@ public class OrganizationService {
                     natureOfHousingPropertyRightRepository.existsById(org.getNatureOfHousingPropertyRight().getId())){
                 org.setStatus(1);
                 Organization organization1 = organizationRepository.saveAndFlush(org);
-                organization.setId(organization1.getId());
-                return RESCODE.SUCCESS.getJSONRES(organization);
+                return RESCODE.SUCCESS.getJSONRES(dealWithOrganization(organization1));
             }
             return RESCODE.NATURE_OF_HOUSING_PROPERTY_RIGHT_ID_NOT_EXIST.getJSONRES();
         }

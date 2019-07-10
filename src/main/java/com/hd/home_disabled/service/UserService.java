@@ -44,7 +44,7 @@ public class UserService {
 
     private final UserblockStatisticRepository userblockStatisticRepository;
 
-    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserBlockStatisticService userBlockStatisticService, UserblockStatisticRepository userblockStatisticRepository) {
+    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserblockStatisticRepository userblockStatisticRepository) {
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
         this.typeOfDisabilityRepository = typeOfDisabilityRepository;
@@ -105,7 +105,6 @@ public class UserService {
         u.setDisabilityCertificateNumber(user.getDisabilityCertificateNumber());
         u.setTypeOfDisabilityId(user.getTypeOfDisability().getId());
         u.setDisabilityDegreeId(user.getDisabilityDegree().getId());
-        u.setBlock(user.getBlock());
         u.setAddress(user.getAddress());
         u.setContactNumber(user.getContactNumber());
         u.setNursingModeId(user.getNursingMode().getId());
@@ -258,9 +257,9 @@ public class UserService {
                                 }
                             }
                             user1.setStatus(1);
+                            user1.setBlock(organization.getBlock());
                             User user2 = userRepository.saveAndFlush(user1);
-                            user.setId(user2.getId());
-                            return RESCODE.SUCCESS.getJSONRES(user);
+                            return RESCODE.SUCCESS.getJSONRES(getModel(user2));
                         }
                         return RESCODE.NURSING_MODE_NOT_EXIST.getJSONRES();
                     }
@@ -370,7 +369,7 @@ public class UserService {
 
     public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number, String sorts) {
         Pageable pageable = PageUtils.getPage(page, number, sorts);
-        Page<User> userPage = userRepository.findByOrganizationAndStatus(organizationId, 0, pageable);
+        Page<User> userPage = userRepository.findByOrganizationAndStatus(organizationId, 1, pageable);
         List<com.hd.home_disabled.model.dto.User> userList = new ArrayList<>();
         for (User user :
                 userPage.getContent()) {

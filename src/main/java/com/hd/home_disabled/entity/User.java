@@ -34,7 +34,6 @@ public class User {
     @ManyToOne(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
     @JoinColumn(name = "organizationId")
     private Organization organization;  //残疾人所属机构
-//    private Integer organizationId;
     private String name;                //残疾人姓名
     private String idNumber;            //残疾人身份证号码
     private String disabilityCertificateNumber; //残疾证号码
