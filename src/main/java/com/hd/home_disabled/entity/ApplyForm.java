@@ -29,7 +29,6 @@ public class ApplyForm {
     private Organization organization;              //申请所属机构
     private Integer numOfEligibleDayNursery;    //符合条件的日托人数
     private Integer numOfEligibleBoardingNursery;   //符合条件的全托人数
-    private String asylumLaborProject;            //庇护性劳动项目
     private Float subsidyFundForDayNursery;     //申请机构日托运营补贴资金总额
     private Float subsidyFundForBoardingNursery;    //申请机构全托运营补贴资金总额
     private Float localInvestmentOfLastYear;        //上年当地资金投入

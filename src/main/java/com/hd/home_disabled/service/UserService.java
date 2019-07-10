@@ -152,12 +152,14 @@ public class UserService {
                                 switch (user.getTypeOfDisabilityId()) {
                                     case 1://视力残疾
                                         if (userBlockStatistic != null) {
+                                            //街道数据存在，更新街道数据
                                             if (userBlockStatistic.getVisualDisability() != null) {
                                                 userBlockStatistic.setVisualDisability(userBlockStatistic.getVisualDisability() + 1);
                                             } else {
                                                 userBlockStatistic.setVisualDisability(1L);
                                             }
                                         } else {
+                                            //残疾人街道数据不存在，新建街道数据
                                             UserBlockStatistic userBlockStatistic1 = new UserBlockStatistic(user1.getBlock());
                                             userBlockStatistic1.setVisualDisability(1L);
                                             userblockStatisticRepository.save(userBlockStatistic1);

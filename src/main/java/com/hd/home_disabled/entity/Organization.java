@@ -1,14 +1,11 @@
 package com.hd.home_disabled.entity;
 
 import com.hd.home_disabled.entity.dictionary.NatureOfHousingPropertyRight;
-import com.hd.home_disabled.utils.validation.phonevalidation.PhoneValidation;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +64,8 @@ public class Organization {
     private String facilitiesPictures;  //机构设施图片：门头及室内功能区域、无障碍设施
 
     //机构统计数据
+    private Integer applySum;       //机构申请总数
+
     private Integer projectSum;    //机构服务项目总数
     private Integer personCountSum; //服务人数总数
     private Integer personTimeSum;  //服务总人次

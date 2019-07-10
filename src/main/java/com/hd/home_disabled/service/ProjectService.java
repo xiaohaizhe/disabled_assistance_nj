@@ -101,10 +101,12 @@ public class ProjectService {
                 if (project1.getProjectType() != null &&
                         project1.getProjectType().getId() != null &&
                         projectTypeRepository.existsById(project1.getProjectType().getId())) {
-                    if (organization.getProjectSum() != null) {
-                        organization.setProjectSum(organization.getProjectSum() + 1);
-                    } else {
-                        organization.setProjectSum(1);
+                    if (project.getId()==null){//新建
+                        if (organization.getProjectSum() != null) {
+                            organization.setProjectSum(organization.getProjectSum() + 1);
+                        } else {
+                            organization.setProjectSum(1);
+                        }
                     }
                     project1.setStatus(1);
                     Project project2 = projectRepository.saveAndFlush(project1);

@@ -35,9 +35,6 @@ public class ApplyForm {
     private Integer numOfEligibleDayNursery;    //符合条件的日托人数
     @NotNull(message = "符合条件的全托人数不能为空")
     private Integer numOfEligibleBoardingNursery;   //符合条件的全托人数
-    @NotBlank(message = "庇护性劳动项目不能为空")
-    @NotNull(message = "庇护性劳动项目不能为空")
-    private String asylumLaborProject;            //庇护性劳动项目
     @NotNull(message = "申请机构日托运营补贴资金总额不能为空")
     private Float subsidyFundForDayNursery;     //申请机构日托运营补贴资金总额
     @NotNull(message = "申请机构全托运营补贴资金总额不能为空")
@@ -56,6 +53,8 @@ public class ApplyForm {
 
     private String reasonForRegression;           //申请退回原因
     private Integer status;                       //申请状态:0-删除,1-有效，2-退回，3-审核完成
-
-
+    private Integer adminId;                      //申请提交人
+    private String adminName;       //机构信息提交人姓名
+    private Date createTime;        //创建时间
+    private Date lastModifyTime;        //最新修改时间
 }

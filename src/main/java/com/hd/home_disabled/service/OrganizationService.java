@@ -114,6 +114,7 @@ public class OrganizationService {
         org.setPersonCountSum(organization.getPersonCountSum());
         org.setPersonInCharge(organization.getPersonInCharge());
         org.setPersonTimeSum(organization.getPersonTimeSum());
+        org.setApplySum(organization.getApplySum());
         org.setProjectSum(organization.getProjectSum());
         org.setProvince(organization.getProvince());
         org.setRegistrationCertificateNumber(organization.getRegistrationCertificateNumber());
