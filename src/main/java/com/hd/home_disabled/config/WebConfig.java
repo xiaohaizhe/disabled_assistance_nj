@@ -39,8 +39,12 @@ public class WebConfig extends WebMvcConfigurationSupport {
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/index.html").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        /*registry.addResourceHandler("index.html").addResourceLocations("classpath:/META-INF/resources/static/");
+        registry.addResourceHandler("/statics/**").addResourceLocations("classpath:/META-INF/resources/static/");
+
         registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");*/
+        registry.addResourceHandler("/disabled_assistance_nj/**").addResourceLocations("file:E:/disabled_assistance_nj/");
         super.addResourceHandlers(registry);
     }
 
