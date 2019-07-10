@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @ClassName OrganizationController
  * @Description TODO
@@ -62,5 +65,10 @@ public class OrganizationController {
     @RequestMapping(value = "/getPageByDistrict", method = RequestMethod.GET)
     public JSONObject getOrgList2(String district, Integer page, Integer number, String sorts) {
         return organizationService.getPageByDistrict(district, page, number,sorts);
+    }
+
+    @RequestMapping("/export_excel")
+    public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
+        organizationService.exportExcel(request,response);
     }
 }
