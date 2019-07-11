@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 
 import javax.persistence.QueryHint;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hibernate.jpa.QueryHints.HINT_COMMENT;
@@ -26,4 +27,7 @@ public interface ApplyFormRepository extends JpaRepository<ApplyForm,Integer> {
     Page<ApplyForm> findByOrganizationAndStatus(Integer organizationId, Integer status, Pageable page);
 
     Optional<ApplyForm> findByIdAndStatus(Integer id, Integer status);
+
+    @Query("select u from ApplyForm u where u.organization.id = ?1 and u.status = ?2")
+    List<ApplyForm> findByOrganizationAndStatus(Integer organizationId, Integer status);
 }

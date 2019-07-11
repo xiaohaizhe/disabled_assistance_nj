@@ -35,11 +35,13 @@ public class FileController {
      * @param file 文件
      * @param type
      * 文件类型：
+     * 机构：
      * certification-机构营业执照或登记证书
      * openBankAccountPermitCertificate-银行开户许可
      * staffList-专职工作人员名单
      * managementSystem-管理制度
      * facilitiesPictures-机构设施图片：门头及室内功能区域、无障碍设施
+     * 项目：
      * projectImage-项目图片
      * nursingList-托养残疾人名单
      * lowIncomeCertificate-低保或其他低收入证明

@@ -1,5 +1,6 @@
 package com.hd.home_disabled.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.Organization;
@@ -10,13 +11,18 @@ import com.hd.home_disabled.entity.dictionary.TypeOfDisability;
 import com.hd.home_disabled.entity.statistic.UserBlockStatistic;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.*;
+import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +59,8 @@ public class UserService {
         this.nursingModeRepository = nursingModeRepository;
         this.userblockStatisticRepository = userblockStatisticRepository;
     }
+
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     //model-->entity
     User getEntity(com.hd.home_disabled.model.dto.User user) {
@@ -379,6 +387,77 @@ public class UserService {
             userList.add(u);
         }
         return RESCODE.SUCCESS.getJSONRES(userList, userPage.getTotalPages(), userPage.getTotalElements());
+    }
+
+    public List<JSONArray> getListsByOrganizationId(Integer organizationId) {
+        List<JSONArray> jsonArray = new ArrayList<>();
+        List<User> userList = userRepository.findByOrganizationAndStatus(organizationId, 1);
+        for (User u :
+                userList) {
+            JSONArray array = new JSONArray();
+            JSONObject object = new JSONObject();
+            object.put("name", u.getName() == null ? 0 : u.getName());
+            array.add(object);
+            JSONObject object1 = new JSONObject();
+            object1.put("idNumber", u.getIdNumber() == null ? 0 : u.getIdNumber());
+            array.add(object1);
+            JSONObject object2 = new JSONObject();
+            object2.put("disabilityCertificateNumber", u.getDisabilityCertificateNumber() == null ? 0 : u.getDisabilityCertificateNumber());
+            array.add(object2);
+            JSONObject object3 = new JSONObject();
+            if (u.getTypeOfDisability() != null && u.getTypeOfDisability().getName() != null) {
+                object3.put("typeOfDisability", u.getTypeOfDisability().getName());
+            }else object3.put("typeOfDisability", "");
+            array.add(object3);
+            JSONObject object4 = new JSONObject();
+            if (u.getDisabilityDegree() != null && u.getDisabilityDegree().getType() != null) {
+                object4.put("disabilityDegree", u.getDisabilityDegree().getType());
+            }else object4.put("disabilityDegree", "");
+            array.add(object4);
+            JSONObject object5 = new JSONObject();
+            object5.put("address", u.getAddress() == null ? 0 : u.getAddress());
+            array.add(object5);
+            JSONObject object6 = new JSONObject();
+            object6.put("contactNumber", u.getContactNumber() == null ? 0 : u.getContactNumber());
+            array.add(object6);
+            JSONObject object7 = new JSONObject();
+            if (u.getNursingMode() != null && u.getNursingMode().getType() != null) {
+                object7.put("nursingMode", u.getNursingMode().getType());
+            }else object7.put("nursingMode", "");
+            array.add(object7);
+            JSONObject object8 = new JSONObject();
+            object8.put("nursingMonth", u.getNursingMonth() == null ? 0 : u.getNursingMonth());
+            array.add(object8);
+            JSONObject object9 = new JSONObject();
+            object9.put("subsidies", u.getSubsidies() == null ? 0 : u.getSubsidies());
+            array.add(object9);
+            JSONObject object10 = new JSONObject();
+            if (u.getAdmin() != null && u.getAdmin().getName() != null)
+                object10.put("adminName", u.getAdmin().getName());
+            else object10.put("adminName", "");
+            array.add(object10);
+            JSONObject object11 = new JSONObject();
+            object11.put("createTime", u.getCreateTime() == null ? "" : u.getCreateTime());
+            array.add(object11);
+            JSONObject object12 = new JSONObject();
+            object12.put("lastModifyTime", u.getModifyTime() == null ? "" : u.getModifyTime());
+            array.add(object12);
+            jsonArray.add(array);
+        }
+        return jsonArray;
+    }
+
+    public void exportExcel(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
+        String[] columnNames = new String[]{"残疾人姓名", "身份证号", "残疾证号", "残疾类别", "残疾等级",
+                "家庭住址", "联系电话", "托养方式", "托养月数", "补贴金额",
+                "提交人", "提交时间", "更新时间"};
+        Optional<Organization> organizationOptional = organizationRepository.findById(organizationId);
+        String fileName = "UserList";
+        if (organizationOptional.isPresent()) {
+            fileName += "_" + organizationOptional.get().getName();
+        }
+        fileName += "_" + sdf.format(new Date()) + ".xls";
+        ExcelUtils.exportExcel(fileName, columnNames, getListsByOrganizationId(organizationId), request, response);
     }
 
 

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @ClassName ApplyFormController
  * @Description TODO
@@ -57,5 +60,17 @@ public class ApplyFormController {
     @RequestMapping(value = "/getPageByOrganization", method = RequestMethod.GET)
     public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number,String sorts) {
         return applyFormService.getPageByOrganizationId(organizationId, page, number,sorts);
+    }
+
+    @ApiOperation(value = "机构下补贴申请导出", notes = "excel导出")
+    @RequestMapping("/export_excel1")
+    public void exportExcel(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
+        applyFormService.exportExcel(organizationId,request,response);
+    }
+
+    @ApiOperation(value = "区补贴申请导出", notes = "excel导出")
+    @RequestMapping("/export_excel2")
+    public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
+        applyFormService.exportExcel(district,request,response);
     }
 }

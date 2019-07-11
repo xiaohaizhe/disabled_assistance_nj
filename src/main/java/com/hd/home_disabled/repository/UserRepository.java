@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 
 import javax.persistence.QueryHint;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hibernate.jpa.QueryHints.HINT_COMMENT;
@@ -27,4 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByOrganizationAndStatus(Integer organizationId, Integer status, Pageable page);
 
     Optional<User> findByStatusAndId(Integer status,Long id);
+
+    @Query("select u from User u where u.organization.id = ?1 and u.status = ?2")
+    List<User> findByOrganizationAndStatus(Integer organizationId, Integer status);
 }

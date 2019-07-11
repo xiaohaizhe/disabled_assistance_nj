@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @ClassName ProjectController
  * @Description TODO
@@ -57,5 +60,11 @@ public class ProjectController {
     @RequestMapping(value = "/getPageByOrganization", method = RequestMethod.GET)
     public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number,String sorts) {
         return projectService.getPageByOrganizationId(organizationId, page, number,sorts);
+    }
+
+    @ApiOperation(value = "区服务项目信息导出", notes = "excel导出")
+    @RequestMapping("/export_excel")
+    public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
+        projectService.exportExcel(district,request,response);
     }
 }

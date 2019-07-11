@@ -14,6 +14,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,8 +93,16 @@ public class ExcelUtils {
                 }
             }
             try {
+                fileName = new String(fileName.getBytes(),"ISO8859-1");
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            try {
                 response.setContentType("application/octet-stream");
                 response.setHeader("Content-disposition", "attachment;filename=" + fileName);//Excel文件名
+                response.addHeader("Pargam", "no-cache");
+                response.addHeader("Cache-Control", "no-cache");
                 workbook.write(response.getOutputStream());
             } catch (IOException e) {
                 // TODO Auto-generated catch block

@@ -67,8 +67,9 @@ public class OrganizationController {
         return organizationService.getPageByDistrict(district, page, number,sorts);
     }
 
+    @ApiOperation(value = "区机构信息导出", notes = "excel导出")
     @RequestMapping("/export_excel")
-    public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
-        organizationService.exportExcel(request,response);
+    public void exportExcel(String district,HttpServletRequest request, HttpServletResponse response) {
+        organizationService.exportExcel(district,request,response);
     }
 }

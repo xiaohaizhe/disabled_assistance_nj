@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @ClassName UserController
  * @Description TODO
@@ -55,5 +58,11 @@ public class UserController {
     @RequestMapping(value = "/getPageByOrganization", method = RequestMethod.GET)
     public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number,String sorts) {
         return userService.getPageByOrganizationId(organizationId, page, number,sorts);
+    }
+
+    @ApiOperation(value = "机构下残疾人信息导出", notes = "excel导出")
+    @RequestMapping("/export_excel")
+    public void exportExcel(Integer organizationId,HttpServletRequest request, HttpServletResponse response) {
+        userService.exportExcel(organizationId,request,response);
     }
 }

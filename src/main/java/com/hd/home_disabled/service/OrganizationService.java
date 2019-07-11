@@ -321,7 +321,7 @@ public class OrganizationService {
         return RESCODE.SUCCESS.getJSONRES(organizationList1, organizationPage.getTotalPages(), organizationPage.getTotalElements());
     }
 
-    public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
+    public void exportExcel(String district,HttpServletRequest request, HttpServletResponse response) {
         String[] columnNames = new String[]{"机构名称", "登记注册时间", "注册证书编号", "注册部门", "机构性质",
                 "房屋产权性质", "机构面积", "床位数", "庇护性劳动项目", "地址",
                 "负责人", "性别", "出生年月", "文化程度", "营业执照或登记证书",
@@ -329,6 +329,6 @@ public class OrganizationService {
                 "总服务人数", "总服务人次", "总服务时长", "平均服务时长", "提交人",
                 "提交时间", "更新时间"};
         String fileName = "OrganizationList"+"_"+sdf.format(new Date())+".xls";
-        ExcelUtils.exportExcel(fileName,columnNames, getListsByDistrict("String"), request, response);
+        ExcelUtils.exportExcel(fileName,columnNames, getListsByDistrict(district), request, response);
     }
 }
