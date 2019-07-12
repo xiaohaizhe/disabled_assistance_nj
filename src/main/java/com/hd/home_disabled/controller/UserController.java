@@ -65,4 +65,16 @@ public class UserController {
     public void exportExcel(Integer organizationId,HttpServletRequest request, HttpServletResponse response) {
         userService.exportExcel(organizationId,request,response);
     }
+
+    @ApiOperation(value = "全区残疾人统计表", notes = "统计")
+    @RequestMapping(value = "/statistic",method = RequestMethod.GET)
+    public JSONObject getStatistic() {
+        return userService.getStatistic();
+    }
+
+    @ApiOperation(value = "全区残疾人统计表导出", notes = "统计")
+    @RequestMapping(value = "/statisticExcel",method = RequestMethod.GET)
+    public void getStatisticExcel(HttpServletRequest request, HttpServletResponse response) {
+         userService.getStatisticExcel(request,response);
+    }
 }

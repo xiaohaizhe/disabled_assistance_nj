@@ -67,4 +67,29 @@ public class ProjectController {
     public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
         projectService.exportExcel(district,request,response);
     }
+
+    @ApiOperation(value = "查询机构下服务项目运行统计", notes = "统计数据")
+    @RequestMapping(value = "/getProjectStatistic", method = RequestMethod.GET)
+    public JSONObject getProjectStatistic(Integer organizationId){
+        return projectService.getProjectStatistic(organizationId);
+    }
+
+    @ApiOperation(value = "查询机构下服务项目数据分析",
+            notes = "项目运行数据统计（总服务人数，总服务人次，总服务时长，平均服务时长）")
+    @RequestMapping(value = "/getProjectAnalysis1", method = RequestMethod.GET)
+    public JSONObject getProjectAnalysis(Integer id){
+        return projectService.getProjectAnalysis1(id);
+    }
+
+    @ApiOperation(value = "查询机构下服务项目数据分析",notes = " 参与项目残疾人列表")
+    @RequestMapping(value = "/getProjectAnalysis2", method = RequestMethod.GET)
+    public JSONObject getProjectAnalysis2(Integer id,Integer page,Integer number,String sorts){
+        return projectService.getProjectAnalysis2(id,page,number,sorts);
+    }
+
+    @ApiOperation(value = "机构下服务项目参与残疾人数据导出",notes = " excel导出")
+    @RequestMapping(value = "/userListExport", method = RequestMethod.GET)
+    public void getProjectAnalysis3(Integer id,HttpServletRequest request, HttpServletResponse response){
+         projectService.getProjectAnalysis3(id,request,response);
+    }
 }

@@ -1,6 +1,8 @@
 package com.hd.home_disabled.entity;
 
 import com.hd.home_disabled.entity.dictionary.ProjectType;
+import com.hd.home_disabled.entity.statistic.ProjectUser;
+import com.hd.home_disabled.entity.statistic.ProjectUserDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName Project
@@ -55,4 +58,8 @@ public class Project {
 
     private int status;             //服务项目是否有效：0无效，1有效
 
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "project")
+    private List<ProjectUser> projectUserList;
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "project")
+    private List<ProjectUserDetail> projectUserDetailList;
 }

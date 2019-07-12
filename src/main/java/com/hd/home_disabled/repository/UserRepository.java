@@ -31,4 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.organization.id = ?1 and u.status = ?2")
     List<User> findByOrganizationAndStatus(Integer organizationId, Integer status);
+
+    @Query("select u from User u where u.idNumber = ?1 and u.status = ?2")
+    Optional<User> findByIdNumberAndStatus(String idNumber,Integer status);
 }

@@ -47,6 +47,7 @@ public class ExcelUtils {
             Cell cell = row.createCell(colum++);
             cell.setCellValue(name);
         }
+        System.out.println(jsonArray);
         //一条记录
         for (JSONArray array :
                 jsonArray) {
@@ -56,10 +57,7 @@ public class ExcelUtils {
                 JSONObject object = (JSONObject) o;
                 for (String key :
                         object.keySet()) {
-                    logger.info("key:" + key);
                     String t = object.get(key).getClass().getName();
-                    logger.info("type:" + t);
-                    logger.info(object.get(key));
                     Cell cell0 = row1.createCell(colum++);
                     switch (t) {
                         case "java.lang.String":
@@ -92,22 +90,22 @@ public class ExcelUtils {
                     }
                 }
             }
-            try {
-                fileName = new String(fileName.getBytes(),"ISO8859-1");
-            } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            try {
-                response.setContentType("application/octet-stream");
-                response.setHeader("Content-disposition", "attachment;filename=" + fileName);//Excel文件名
-                response.addHeader("Pargam", "no-cache");
-                response.addHeader("Cache-Control", "no-cache");
-                workbook.write(response.getOutputStream());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        }
+        try {
+            fileName = new String(fileName.getBytes(),"ISO8859-1");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName);//Excel文件名
+            response.addHeader("Pargam", "no-cache");
+            response.addHeader("Cache-Control", "no-cache");
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 }

@@ -23,7 +23,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @ApiOperation(value = "登陆", notes = "测试管理员秘密：5jNKlzcC")
+    @ApiOperation(value = "登陆", notes = "测试管理员密码：5jNKlzcC")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public JSONObject login(String name,String password) {
         return adminService.login(name, password);

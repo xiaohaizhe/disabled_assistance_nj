@@ -150,6 +150,10 @@ public class UserService {
                                 user1.getNursingMode().getId() != null &&
                                 nursingModeRepository.existsById(user1.getNursingMode().getId())) {
                             if (user1.getId() == null) {
+                                Optional<User> userOptional = userRepository.findByIdNumberAndStatus(user1.getIdNumber(),1);
+                                if (userOptional.isPresent()){
+                                    return RESCODE.USER_EXIST.getJSONRES();
+                                }
                                 //user模型不带id，表示新增
                                 UserBlockStatistic userBlockStatistic = null;
                                 Optional<UserBlockStatistic> userBlockStatisticOptional = userblockStatisticRepository.findByBlockLike(user1.getBlock());
@@ -265,8 +269,12 @@ public class UserService {
                                         }
                                         break;
                                 }
+                                user1.setStatus(1);
+                                user1.setBlock(organization.getBlock());
+                                User user2 = userRepository.saveAndFlush(user1);
+                                return RESCODE.SUCCESS.getJSONRES(getModel(user2));
                             }
-                            user1.setStatus(1);
+                            //修改用户
                             user1.setBlock(organization.getBlock());
                             User user2 = userRepository.saveAndFlush(user1);
                             return RESCODE.SUCCESS.getJSONRES(getModel(user2));
@@ -407,12 +415,12 @@ public class UserService {
             JSONObject object3 = new JSONObject();
             if (u.getTypeOfDisability() != null && u.getTypeOfDisability().getName() != null) {
                 object3.put("typeOfDisability", u.getTypeOfDisability().getName());
-            }else object3.put("typeOfDisability", "");
+            } else object3.put("typeOfDisability", "");
             array.add(object3);
             JSONObject object4 = new JSONObject();
             if (u.getDisabilityDegree() != null && u.getDisabilityDegree().getType() != null) {
                 object4.put("disabilityDegree", u.getDisabilityDegree().getType());
-            }else object4.put("disabilityDegree", "");
+            } else object4.put("disabilityDegree", "");
             array.add(object4);
             JSONObject object5 = new JSONObject();
             object5.put("address", u.getAddress() == null ? 0 : u.getAddress());
@@ -423,7 +431,7 @@ public class UserService {
             JSONObject object7 = new JSONObject();
             if (u.getNursingMode() != null && u.getNursingMode().getType() != null) {
                 object7.put("nursingMode", u.getNursingMode().getType());
-            }else object7.put("nursingMode", "");
+            } else object7.put("nursingMode", "");
             array.add(object7);
             JSONObject object8 = new JSONObject();
             object8.put("nursingMonth", u.getNursingMonth() == null ? 0 : u.getNursingMonth());
@@ -460,5 +468,148 @@ public class UserService {
         ExcelUtils.exportExcel(fileName, columnNames, getListsByOrganizationId(organizationId), request, response);
     }
 
+    private JSONArray getUserBlockStatistic(List<UserBlockStatistic> userBlockStatistics) {
+        JSONArray array = new JSONArray();
+        Long sums = 0L;
+        Long visualDisabilitys = 0L;
+        Long hearingDisabilitys = 0L;
+        Long speechDisabilitys = 0L;
+        Long physicalDisabilitys = 0L;
+        Long intellectualDisabilitys = 0L;
+        Long mentalDisabilitys = 0L;
+        Long multipleDisabilitys = 0L;
+        Long others = 0L;
+        for (UserBlockStatistic userBlockStatistic : userBlockStatistics) {
+            Long sum = 0L;
+            Long visualDisability = 0L;
+            if (userBlockStatistic.getVisualDisability() != null)
+                visualDisability = userBlockStatistic.getVisualDisability();
+            sum += visualDisability;
+            Long hearingDisability = 0L;
+            if (userBlockStatistic.getHearingDisability() != null)
+                hearingDisability = userBlockStatistic.getHearingDisability();
+            sum += hearingDisability;
+            Long speechDisability = 0L;
+            if (userBlockStatistic.getSpeechDisability() != null)
+                speechDisability = userBlockStatistic.getSpeechDisability();
+            sum += speechDisability;
+            Long physicalDisability = 0L;
+            if (userBlockStatistic.getPhysicalDisability() != null)
+                physicalDisability = userBlockStatistic.getPhysicalDisability();
+            sum += physicalDisability;
+            Long intellectualDisability = 0L;
+            if (userBlockStatistic.getIntellectualDisability() != null)
+                intellectualDisability = userBlockStatistic.getIntellectualDisability();
+            sum += intellectualDisability;
+            Long mentalDisability = 0L;
+            if (userBlockStatistic.getMentalDisability() != null)
+                mentalDisability = userBlockStatistic.getMentalDisability();
+            sum += mentalDisability;
+            Long multipleDisability = 0L;
+            if (userBlockStatistic.getMultipleDisability() != null)
+                multipleDisability = userBlockStatistic.getMultipleDisability();
+            sum += multipleDisability;
+            Long other = 0L;
+            if (userBlockStatistic.getOther() != null)
+                other = userBlockStatistic.getOther();
+            sum += other;
+            sums += sum;
+            visualDisabilitys += visualDisability;
+            hearingDisabilitys += hearingDisability;
+            speechDisabilitys += speechDisability;
+            physicalDisabilitys += physicalDisability;
+            intellectualDisabilitys += intellectualDisability;
+            mentalDisabilitys += mentalDisability;
+            multipleDisabilitys += multipleDisability;
+            others += other;
+            array.add(getJSONObject(userBlockStatistic.getBlock(),sum,visualDisability,hearingDisability,speechDisability,
+                    physicalDisability,intellectualDisability,mentalDisability,multipleDisability,other));
+        }
+        array.add(getJSONObject("总计",sums,visualDisabilitys,hearingDisabilitys,speechDisabilitys,
+                physicalDisabilitys,intellectualDisabilitys,mentalDisabilitys,multipleDisabilitys,others));
+        return array;
+    }
 
+    private JSONObject getJSONObject(String block,Long sums, Long visualDisability, Long hearingDisability,
+                                      Long speechDisability, Long physicalDisability, Long intellectualDisability,
+                                      Long mentalDisability, Long multipleDisability, Long others){
+        JSONObject object = new JSONObject();
+        object.put("block", block);
+        object.put("visualDisability", visualDisability);
+        object.put("hearingDisability", hearingDisability);
+        object.put("speechDisability", speechDisability);
+        object.put("physicalDisability", physicalDisability);
+        object.put("intellectualDisability", intellectualDisability);
+        object.put("mentalDisability", mentalDisability);
+        object.put("multipleDisability", multipleDisability);
+        object.put("other", others);
+        object.put("sum", sums);
+        return object;
+    }
+
+    public JSONObject getStatistic() {
+        List<UserBlockStatistic> userBlockStatistics = userblockStatisticRepository.findAll();
+        JSONArray array = getUserBlockStatistic(userBlockStatistics);
+        return RESCODE.SUCCESS.getJSONRES(array);
+    }
+
+    private JSONArray getStatisticArray(JSONObject object){
+        JSONArray array = new JSONArray();
+        JSONObject object1 = new JSONObject();
+        object1.put("name", object.get("block"));
+        array.add(object1);
+        JSONObject object2 = new JSONObject();
+        object2.put("name", object.get("visualDisability"));
+        array.add(object2);
+        JSONObject object3 = new JSONObject();
+        object3.put("name", object.get("hearingDisability"));
+        array.add(object3);
+        JSONObject object4 = new JSONObject();
+        object4.put("name", object.get("speechDisability"));
+        array.add(object4);
+        JSONObject object5 = new JSONObject();
+        object5.put("name", object.get("physicalDisability"));
+        array.add(object5);
+        JSONObject object6 = new JSONObject();
+        object6.put("name", object.get("intellectualDisability"));
+        array.add(object6);
+        JSONObject object7 = new JSONObject();
+        object7.put("name", object.get("mentalDisability"));
+        array.add(object7);
+        JSONObject object8 = new JSONObject();
+        object8.put("name", object.get("multipleDisability"));
+        array.add(object8);
+        JSONObject object9 = new JSONObject();
+        object9.put("name", object.get("other"));
+        array.add(object9);
+        JSONObject object10 = new JSONObject();
+        object10.put("name", object.get("sum"));
+        array.add(object10);
+        return array;
+    }
+
+    public List<JSONArray> getStatisticData() {
+        List<JSONArray> jsonArray = new ArrayList<>();
+        List<UserBlockStatistic> userBlockStatistics = userblockStatisticRepository.findAll();
+        JSONArray array = getUserBlockStatistic(userBlockStatistics);
+        System.out.println(array);
+        JSONObject object = (JSONObject)array.get(array.size()-1);
+        jsonArray.add(getStatisticArray(object));
+        System.out.println(array.size());
+        for (int i = 0; i < array.size()-1; i++) {
+            System.out.println(i);
+            JSONObject object1 = (JSONObject)array.get(i);
+            System.out.println(object1);
+            jsonArray.add(getStatisticArray(object1));
+        }
+        System.out.println(jsonArray);
+        return jsonArray;
+    }
+
+    public void getStatisticExcel(HttpServletRequest request, HttpServletResponse response) {
+        String[] columnNames = new String[]{"街道名称", "视力残疾", "听力残疾", "言语残疾", "肢体残疾",
+                "智力残疾", "精神残疾", "多重残疾","其他", "合计"};
+        String fileName = "UserListStatistic"+"_" + sdf.format(new Date()) + ".xls";
+        ExcelUtils.exportExcel(fileName, columnNames, getStatisticData(), request, response);
+    }
 }
