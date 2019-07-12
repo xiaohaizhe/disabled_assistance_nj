@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../css/init.css">
+	<link rel="stylesheet" href="../../css/search_form.css">
+	<style>
+
+	</style>
+</head>
+<body>
+
+<div class="search-box">
+	<form class="layui-form">
+		<div class="layui-form-item layui-tab-title">
+			<div class="layui-inline" style="padding:0 10px;">
+				服务项目创建
+			</div>
+		</div>
+	</form>
+</div>
+
+<form class="layui-form" action="">
+	<div class="layui-form-item">
+		<label class="layui-form-label">残疾人服务内容大类</label>
+		<div class="layui-input-inline">
+			<select name="city" lay-verify="required">
+				<option value="">请选择</option>
+				<option value="0">日间照料</option>
+				<option value="1">辅助性就业</option>
+				<option value="2">康复服务</option>
+				<option value="3">文体活动</option>
+				<option value="4">学习培训</option>
+				<option value="4">志愿者服务</option>
+				<option value="4">其他</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">创建项目名称</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入项目名称" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">所属机构名称</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">项目负责人</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">项目简介</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">总服务人数</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">总服务人次</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">总服务时长</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">平均服务时长</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">提交人</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">提交时间</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">更新时间</label>
+		<div class="layui-input-inline">
+			<input type="text" name="title" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-input-block">
+			<button class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+			<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		</div>
+	</div>
+</form>
+
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../layui/layui.js"></script>
+<!--<script src="../../js/heightClient.js"></script>-->
+
+
+<script>
+	layui.use('form', function(){
+		var form = layui.form;
+
+		//监听提交
+		form.on('submit(formDemo)', function(data){
+			layer.msg(JSON.stringify(data.field));
+			return false;
+		});
+	});
+
+
+</script>
+</body>
+</html>
