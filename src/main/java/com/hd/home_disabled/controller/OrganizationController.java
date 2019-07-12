@@ -68,7 +68,7 @@ public class OrganizationController {
     }
 
     @ApiOperation(value = "区机构信息导出", notes = "excel导出")
-    @RequestMapping("/export_excel")
+    @RequestMapping(value = "/export_excel",method = RequestMethod.GET)
     public void exportExcel(String district,HttpServletRequest request, HttpServletResponse response) {
         organizationService.exportExcel(district,request,response);
     }

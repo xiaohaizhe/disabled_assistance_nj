@@ -63,7 +63,7 @@ public class ProjectController {
     }
 
     @ApiOperation(value = "区服务项目信息导出", notes = "excel导出")
-    @RequestMapping("/export_excel")
+    @RequestMapping(value = "/export_excel",method = RequestMethod.GET)
     public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
         projectService.exportExcel(district,request,response);
     }

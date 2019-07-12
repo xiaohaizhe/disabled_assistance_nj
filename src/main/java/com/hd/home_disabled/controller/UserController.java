@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "机构下残疾人信息导出", notes = "excel导出")
-    @RequestMapping("/export_excel")
+    @RequestMapping(value = "/export_excel",method = RequestMethod.GET)
     public void exportExcel(Integer organizationId,HttpServletRequest request, HttpServletResponse response) {
         userService.exportExcel(organizationId,request,response);
     }

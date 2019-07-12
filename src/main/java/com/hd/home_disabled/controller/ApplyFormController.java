@@ -63,13 +63,13 @@ public class ApplyFormController {
     }
 
     @ApiOperation(value = "机构下补贴申请导出", notes = "excel导出")
-    @RequestMapping("/export_excel1")
+    @RequestMapping(value = "/export_excel1",method = RequestMethod.GET)
     public void exportExcel(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
         applyFormService.exportExcel(organizationId,request,response);
     }
 
     @ApiOperation(value = "区补贴申请导出", notes = "excel导出")
-    @RequestMapping("/export_excel2")
+    @RequestMapping(value = "/export_excel2",method = RequestMethod.GET)
     public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
         applyFormService.exportExcel(district,request,response);
     }
