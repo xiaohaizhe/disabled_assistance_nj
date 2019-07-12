@@ -98,6 +98,7 @@ public class Organization {
     private String facilitiesPictures;  //机构设施图片：门头及室内功能区域、无障碍设施
 
     //机构统计数据
+    private Integer applySum;       //机构申请总数
     private Integer projectSum;    //机构服务项目总数
     private Integer personCountSum; //服务人数总数
     private Integer personTimeSum;  //服务总人次

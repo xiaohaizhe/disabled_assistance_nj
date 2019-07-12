@@ -3,6 +3,8 @@ package com.hd.home_disabled.entity;
 import com.hd.home_disabled.entity.dictionary.DisabilityDegree;
 import com.hd.home_disabled.entity.dictionary.NursingMode;
 import com.hd.home_disabled.entity.dictionary.TypeOfDisability;
+import com.hd.home_disabled.entity.statistic.ProjectUser;
+import com.hd.home_disabled.entity.statistic.ProjectUserDetail;
 import com.hd.home_disabled.utils.validation.disabilityCertificateNumberValidation.DisabilityCertificateNumberValidation;
 import com.hd.home_disabled.utils.validation.idNumberValidation.IdNumberValidation;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName User
@@ -34,7 +37,6 @@ public class User {
     @ManyToOne(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
     @JoinColumn(name = "organizationId")
     private Organization organization;  //残疾人所属机构
-//    private Integer organizationId;
     private String name;                //残疾人姓名
     private String idNumber;            //残疾人身份证号码
     private String disabilityCertificateNumber; //残疾证号码
@@ -65,4 +67,9 @@ public class User {
     private Date modifyTime;        //残疾人信息最新修改时间
 
     private int status;             //残疾人信息是否有效：0无效，1有效
+
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "user")
+    private List<ProjectUser> projectUserList;
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "user")
+    private List<ProjectUserDetail> projectUserDetailList;
 }
