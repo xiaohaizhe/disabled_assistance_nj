@@ -496,10 +496,10 @@
 
         var options = {
             elem: '#mainTable'
-            , url: '/old/list?name='+($("#oldname").val()||"")
+            , url: '/api/user/getPageByOrganization?sorts=id&'+("")+'organizationId=2'+("")
             , request: {
-                pageName: 'pageNumber', //页码的参数名称，默认：page
-                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                pageName: 'page', //页码的参数名称，默认：page
+                limitName: 'number' //每页数据量的参数名，默认：limit
             }
             , response: {
                 statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
@@ -508,8 +508,8 @@
                 return {
                     "code": 200, //解析接口状态
 //                    "msg": res.message, //解析提示文本
-                    "count": res.total, //解析数据长度
-                    "data": res.rows //解析数据列表
+                    "count": res.pageSize, //解析数据长度
+                    "data": res.data //解析数据列表
                 };
             }
             , title: '用户数据表'
@@ -522,13 +522,13 @@
                     }
                 },
                 {field: 'name', title: '残疾人姓名', align: 'center', width: 120, fixed: 'left', unresize: true},
-                {field: 'sex', title: '身份证号', align: 'center', width: 90, unresize: true},
-                {field: 'age', title: '残疾证号', align: 'center', width: 90, unresize: true},
-                {field: 'card', title: '残疾类别', align: 'center', unresize: true},
-                {field: 'qc', title: '残疾等级', align: 'center', width: 120, unresize: true},
-                {field: 'status', title: '家庭住址', align: 'center', unresize: true},
-				{field: 'status', title: '联系电话', align: 'center', unresize: true},
-                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 250}
+                {field: 'idNumber', title: '身份证号', align: 'center', width: 90, unresize: true},
+                {field: 'disabilityCertificateNumber', title: '残疾证号', align: 'center', width: 90, unresize: true},
+                {field: 'typeOfDisabilityId', title: '残疾类别', align: 'center', unresize: true},
+                {field: 'disabilityDegreeId', title: '残疾等级', align: 'center', width: 120, unresize: true},
+                {field: 'address', title: '家庭住址', align: 'center', unresize: true},
+				{field: 'contactNumber', title: '联系电话', align: 'center', unresize: true},
+//                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 250}
             ]]
             , page: true
         }
