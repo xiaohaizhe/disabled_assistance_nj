@@ -119,39 +119,39 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">身份证号</label>
 			<div class="layui-input-block" style="padding-right:15px;">
-				<input type="number" name="age" lay-verify="required" placeholder="请输入身份证号" autocomplete="off"
+				<input type="number" name="idNumber" lay-verify="required" placeholder="请输入身份证号" autocomplete="off"
 					   class="layui-input">
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">残疾证号</label>
 			<div class="layui-input-block" style="padding-right:15px;">
-				<input type="number" name="age" lay-verify="required" placeholder="请输入残疾证号" autocomplete="off"
+				<input type="number" name="disabilityCertificateNumber" lay-verify="required" placeholder="请输入残疾证号" autocomplete="off"
 					   class="layui-input">
 			</div>
 		</div>
-		<div class="layui-form-item">
-			<label class="layui-form-label">残疾类别</label>
-			<div class="layui-input-block" style="padding-right:15px;">
-				<select name="status">
-					<option value="一级">一级</option>
-					<option value="二级">二级</option>
-					<option value="三级">三级</option>
-					<option value="四级">四级</option>
-				</select>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<label class="layui-form-label">残疾等级</label>
-			<div class="layui-input-block" style="padding-right:15px;">
-				<select name="status">
-					<option value="一级">一级</option>
-					<option value="二级">二级</option>
-					<option value="三级">三级</option>
-					<option value="四级">四级</option>
-				</select>
-			</div>
-		</div>
+		<!--<div class="layui-form-item">-->
+			<!--<label class="layui-form-label">残疾类别</label>-->
+			<!--<div class="layui-input-block" style="padding-right:15px;">-->
+				<!--<select name="typeOfDisabilityId">-->
+					<!--<option value="一级">一级</option>-->
+					<!--<option value="二级">二级</option>-->
+					<!--<option value="三级">三级</option>-->
+					<!--<option value="四级">四级</option>-->
+				<!--</select>-->
+			<!--</div>-->
+		<!--</div>-->
+		<!--<div class="layui-form-item">-->
+			<!--<label class="layui-form-label">残疾等级</label>-->
+			<!--<div class="layui-input-block" style="padding-right:15px;">-->
+				<!--<select name="disabilityDegreeId">-->
+					<!--<option value="一级">一级</option>-->
+					<!--<option value="二级">二级</option>-->
+					<!--<option value="三级">三级</option>-->
+					<!--<option value="四级">四级</option>-->
+				<!--</select>-->
+			<!--</div>-->
+		<!--</div>-->
 		<div class="layui-form-item">
 			<label class="layui-form-label">家庭住址</label>
 			<div class="layui-input-block" style="padding-right:15px;">
@@ -162,7 +162,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-block" style="padding-right:15px;">
-				<input type="number" name="children" lay-verify="required" placeholder="请输入联系电话" min="0" step="1"
+				<input type="number" name="address" lay-verify="required" placeholder="请输入联系电话" min="0" step="1"
 					   autocomplete="off"
 					   class="layui-input">
 			</div>
@@ -788,17 +788,17 @@
                 form.on("submit(addNew)", function (data) {
                     var _obj = data.field;
                     //绑定原始文件域
-                    console.log(document.getElementById("addPhoto").files[0]);
+//                    console.log(document.getElementById("addPhoto").files[0]);
                     var formData = new FormData();
-                    formData.append("fileName", document.getElementById("addPhoto").files[0]);
                     for(var key in _obj){
                         formData.append(key, _obj[key]);
                     }
                     $.ajax({
                         type: "POST",
-                        url: "/old/add",
-                        data: formData,
-                        contentType: false,
+                        url: "/api/user/saveAndFlush",
+                        data: JSON.stringify(_obj),
+						dataType:"json",
+                        contentType : 'application/json;charset=utf-8',
                         processData: false,
                         success: function (data) {
                             console.log(data);
