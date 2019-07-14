@@ -1,18 +1,22 @@
 package com.hd.home_disabled.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.Organization;
+import com.hd.home_disabled.entity.Project;
 import com.hd.home_disabled.entity.User;
 import com.hd.home_disabled.entity.dictionary.DisabilityDegree;
 import com.hd.home_disabled.entity.dictionary.NursingMode;
 import com.hd.home_disabled.entity.dictionary.TypeOfDisability;
+import com.hd.home_disabled.entity.statistic.ProjectUser;
 import com.hd.home_disabled.entity.statistic.UserBlockStatistic;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.*;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,7 +54,9 @@ public class UserService {
 
     private final UserblockStatisticRepository userblockStatisticRepository;
 
-    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserblockStatisticRepository userblockStatisticRepository) {
+    private final ProjectUserRepository projectUserRepository;
+
+    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserblockStatisticRepository userblockStatisticRepository, ProjectUserRepository projectUserRepository) {
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
         this.typeOfDisabilityRepository = typeOfDisabilityRepository;
@@ -58,6 +64,7 @@ public class UserService {
         this.adminRepository = adminRepository;
         this.nursingModeRepository = nursingModeRepository;
         this.userblockStatisticRepository = userblockStatisticRepository;
+        this.projectUserRepository = projectUserRepository;
     }
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -611,5 +618,42 @@ public class UserService {
                 "智力残疾", "精神残疾", "多重残疾","其他", "合计"};
         String fileName = "UserListStatistic"+"_" + sdf.format(new Date()) + ".xls";
         ExcelUtils.exportExcel(fileName, columnNames, getStatisticData(), request, response);
+    }
+
+    public JSONObject statisticData(){
+        //全区各类残疾人数量
+        JSONObject object1 = new JSONObject();
+        JSONObject object2 = new JSONObject();
+        List<TypeOfDisability> typeOfDisabilities = typeOfDisabilityRepository.findAll();
+        for (TypeOfDisability typeOfDisability : typeOfDisabilities){
+            object1.put(typeOfDisability.getName(),0);
+            object2.put(typeOfDisability.getName(),0);
+        }
+
+        List<User> userList = userRepository.findAll();
+        for (User user:userList){
+            String type = user.getTypeOfDisability().getName();
+            object1.merge(type, 1, (a, b) -> (int) a + (int)b);
+        }
+        //全区各类残疾人参与项目情况
+        List<ProjectUser> projectUserList = projectUserRepository.findAll();
+        for (ProjectUser projectUser:projectUserList){
+            String type = projectUser.getUser().getTypeOfDisability().getName();
+            object2.merge(type, 1, (a, b) -> (int) a + (int)b);
+        }
+        //百分比值
+        JSONObject object3 = new JSONObject();
+        for (String key:object1.keySet()){
+            if ((int)object2.get(key)==0){
+                object3.put(key,0);
+            }else {
+                float value = (float) Math.round(((float) (int)object2.get(key) / (int)object1.get(key)) * 100) / 100;
+                object3.put(key,value);
+            }
+        }
+        JSONObject object = new JSONObject();
+        object.put("data",object1);
+        object.put("analysis",object3);
+        return RESCODE.SUCCESS.getJSONRES(object);
     }
 }

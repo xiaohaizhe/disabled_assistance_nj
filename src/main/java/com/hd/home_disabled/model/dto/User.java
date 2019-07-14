@@ -21,34 +21,34 @@ public class User {
     private Long id;
     @NotNull(message = "所属机构不能为空")
     private Integer organizationId;  //残疾人所属机构
-    @NotNull(message = "姓名不能为空")
-    @NotBlank(message = "姓名不能为空")
+//    @NotNull(message = "姓名不能为空")
+//    @NotBlank(message = "姓名不能为空")
     private String name;                //残疾人姓名
-    @NotNull(message = "身份证号码不能为空")
-    @NotBlank(message = "身份证号码不能为空")
-    @IdNumberValidation
+//    @NotNull(message = "身份证号码不能为空")
+//    @NotBlank(message = "身份证号码不能为空")
+//    @IdNumberValidation
     private String idNumber;            //残疾人身份证号码
-    @NotNull(message = "残疾证号码不能为空")
-    @NotBlank(message = "残疾证号码不能为空")
+//    @NotNull(message = "残疾证号码不能为空")
+//    @NotBlank(message = "残疾证号码不能为空")
     private String disabilityCertificateNumber; //残疾证号码
     @NotNull(message = "残疾类别不能为空")
     private Integer typeOfDisabilityId;  //残疾类别
     @NotNull(message = "残疾程度不能为空")
     private Integer disabilityDegreeId;  //残疾程度
     private String block;               //残疾人所属机构街道
-    @NotNull(message = "家庭住址不能为空")
-    @NotBlank(message = "家庭住址不能为空")
+//    @NotNull(message = "家庭住址不能为空")
+//    @NotBlank(message = "家庭住址不能为空")
     private String address;             //家庭住址
-    @NotNull(message = "联系电话不能为空")
-    @NotBlank(message = "联系电话不能为空")
-    @PhoneValidation
+//    @NotNull(message = "联系电话不能为空")
+//    @NotBlank(message = "联系电话不能为空")
+//    @PhoneValidation
     private String contactNumber;       //联系电话
     @NotNull(message = "托养方式不能为空")
     private Integer nursingModeId;    //托养方式
-    @NotNull(message = "托养月数不能为空")
-    @Min(1)
+//    @NotNull(message = "托养月数不能为空")
+//    @Min(1)
     private Integer nursingMonth;       //托养月数
-    @NotNull(message = "补贴金额不能为空")
+//    @NotNull(message = "补贴金额不能为空")
     private Float subsidies;            //补贴金额
 
     //数据创建信息

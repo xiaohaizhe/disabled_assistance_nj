@@ -92,4 +92,33 @@ public class ProjectController {
     public void getProjectAnalysis3(Integer id,HttpServletRequest request, HttpServletResponse response){
          projectService.getProjectAnalysis3(id,request,response);
     }
+
+    @ApiOperation(value = "全区服务项目分页",notes = "分页")
+    @RequestMapping(value = "/getPagesByDistrict", method = RequestMethod.GET)
+    public JSONObject getPagesByDistrict(String district,Integer page,Integer number,String sorts){
+        return projectService.getPagesByDistrict(district,page,number,sorts);
+    }
+
+    @ApiOperation(value = "全区服务项目数据导出",notes = "excel导出")
+    @RequestMapping(value = "/projectListExport", method = RequestMethod.GET)
+    public void exportPagesByDistrict(String district,HttpServletRequest request, HttpServletResponse response){
+         projectService.exportPagesByDistrict(district,request,response);
+    }
+    @ApiOperation(value = "领导驾驶舱，全区数据", notes = "查询")
+    @RequestMapping(value = "/overview1", method = RequestMethod.GET)
+    public JSONObject overview1(String district) {
+        return projectService.overview1(district);
+    }
+
+    @ApiOperation(value = "领导驾驶舱，残疾人服务内容分析", notes = "查询")
+    @RequestMapping(value = "/overview3", method = RequestMethod.GET)
+    public JSONObject overview3() {
+        return projectService.overview3();
+    }
+
+    @ApiOperation(value = "领导驾驶舱，残疾人最喜爱项目分析", notes = "查询")
+    @RequestMapping(value = "/usersPreferenceAnalysis", method = RequestMethod.GET)
+    public JSONObject usersPreferenceAnalysis() {
+        return projectService.usersPreferenceAnalysis();
+    }
 }

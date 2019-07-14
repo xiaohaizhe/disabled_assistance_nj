@@ -77,4 +77,11 @@ public class UserController {
     public void getStatisticExcel(HttpServletRequest request, HttpServletResponse response) {
          userService.getStatisticExcel(request,response);
     }
+
+    //全区各类残疾人参与服务率分析
+    @ApiOperation(value = "全区各类残疾人参与服务率分析", notes = "统计")
+    @RequestMapping(value = "/statisticData",method = RequestMethod.GET)
+    public JSONObject statisticData() {
+        return  userService.statisticData();
+    }
 }

@@ -26,8 +26,8 @@ public class ProjectTypeStatistic {
     @OneToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
     private ProjectType projectType;    //服务项目类型
-    private Long person_time_sum;   //总服务人次
-    private Long person_count_sum;  //总服务人数
+    private Long personTimeSum;   //总服务人次
+    private Long personCountSum;  //总服务人数
     private Float totalTimeSum; //总服务时长
     private Float averageTime;  //平均服务时长
 }

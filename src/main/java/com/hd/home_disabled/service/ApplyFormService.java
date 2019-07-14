@@ -5,13 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.ApplyForm;
 import com.hd.home_disabled.entity.Organization;
-import com.hd.home_disabled.entity.User;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.AdminRepository;
 import com.hd.home_disabled.repository.ApplyFormRepository;
 import com.hd.home_disabled.repository.OrganizationRepository;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,11 +47,13 @@ public class ApplyFormService {
         this.adminRepository = adminRepository;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(ApplyFormService.class);
+
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private static String[] columnNames = new String[]{"审核状态", "机构名称", "登记注册时间", "地址", "负责人",
             "机构面积", "床位数", "机构性质", "庇护性劳动项目", "符合条件的全托人数",
-            "符合条件的日托人数", "申请机构全托运营补贴资金总额", "申请机构日托运营补贴资金总额","上年当地资金投入情况","申请托养机构运营补贴资金总额合计",
-            "托养残疾人名单","低保或其他低收入证明","提交人","提交时间","更新时间"};
+            "符合条件的日托人数", "申请机构全托运营补贴资金总额", "申请机构日托运营补贴资金总额", "上年当地资金投入情况", "申请托养机构运营补贴资金总额合计",
+            "托养残疾人名单", "低保或其他低收入证明", "提交人", "提交时间", "更新时间"};
 
     //model-->entity
     ApplyForm getEntity(com.hd.home_disabled.model.dto.ApplyForm applyForm) {
@@ -141,14 +144,15 @@ public class ApplyFormService {
 
     /**
      * 删除申请表
+     *
      * @param id 申请数据id
      * @return 结果
      */
     public JSONObject delete(Integer id) {
-        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id,1);
-        if (applyFormOptional.isPresent()){
+        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id, 1);
+        if (applyFormOptional.isPresent()) {
             ApplyForm applyForm = applyFormOptional.get();
-            Optional<Organization> organizationOptional = organizationRepository.findByIdAndStatus(applyForm.getOrganization().getId(),1);
+            Optional<Organization> organizationOptional = organizationRepository.findByIdAndStatus(applyForm.getOrganization().getId(), 1);
             if (organizationOptional.isPresent()) {
                 Organization organization = organizationOptional.get();
                 if (organization.getApplySum() != null && organization.getApplySum() > 0) {
@@ -164,12 +168,13 @@ public class ApplyFormService {
 
     /**
      * 单个申请表查询
+     *
      * @param id 申请表id
      * @return 结果
      */
-    public JSONObject getById(Integer id){
-        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id,1);
-        if (applyFormOptional.isPresent()){
+    public JSONObject getById(Integer id) {
+        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id, 1);
+        if (applyFormOptional.isPresent()) {
             return RESCODE.SUCCESS.getJSONRES(getModel(applyFormOptional.get()));
         }
         return RESCODE.APPLY_FORM_NOT_EXIST.getJSONRES();
@@ -177,21 +182,39 @@ public class ApplyFormService {
 
     /**
      * 申请表按机构分页查询
+     *
      * @param organizationId 所属机构id
-     * @param page  页码
-     * @param number    每页显示数量
-     * @param sorts 排序条件
+     * @param page           页码
+     * @param number         每页显示数量
+     * @param sorts          排序条件
      * @return 结果
      */
-    public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number, String sorts){
+    public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number, String sorts) {
         Pageable pageable = PageUtils.getPage(page, number, sorts);
-        Page<ApplyForm> applyFormPage = applyFormRepository.findByOrganizationAndStatus(organizationId,1,pageable);
+        Page<ApplyForm> applyFormPage = applyFormRepository.findByOrganizationAndStatus(organizationId, 1, pageable);
         List<com.hd.home_disabled.model.dto.ApplyForm> applyFormList = new ArrayList<>();
-        for (ApplyForm applyForm:
+        for (ApplyForm applyForm :
                 applyFormPage.getContent()) {
             applyFormList.add(getModel(applyForm));
         }
-        return RESCODE.SUCCESS.getJSONRES(applyFormList,applyFormPage.getTotalPages(),applyFormPage.getTotalElements());
+        return RESCODE.SUCCESS.getJSONRES(applyFormList, applyFormPage.getTotalPages(), applyFormPage.getTotalElements());
+    }
+
+    public JSONObject getPageByDistrict(String district, Integer page, Integer number, String sorts) {
+        logger.info("根据区："+district+"查询补贴申请列表");
+        Pageable pageable = PageUtils.getPage(page, number, sorts);
+        List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
+        List<Integer> ids = new ArrayList<>();
+        List<com.hd.home_disabled.model.dto.ApplyForm> applyFormList = new ArrayList<>();
+        for (Organization organization : organizationList) {
+            ids.add(organization.getId());
+        }
+        Page<ApplyForm> applyFormPage = applyFormRepository.findByOrganizationAndStatus(ids, 1, pageable);
+        for (ApplyForm applyForm :
+                applyFormPage.getContent()) {
+            applyFormList.add(getModel(applyForm));
+        }
+        return RESCODE.SUCCESS.getJSONRES(applyFormList, applyFormPage.getTotalPages(), applyFormPage.getTotalElements());
     }
 
     public List<JSONArray> getListsByOrganizationId(Integer organizationId) {
@@ -203,53 +226,53 @@ public class ApplyFormService {
             JSONObject object = new JSONObject();
             object.put("status", applyForm.getStatus() == null ? 0 : applyForm.getStatus());
             array.add(object);
-            if (applyForm.getOrganization()!=null){
+            if (applyForm.getOrganization() != null) {
                 JSONObject object1 = new JSONObject();
-                if (applyForm.getOrganization().getName()!=null)
-                    object1.put("organizationName",applyForm.getOrganization().getName());
-                else object1.put("organizationName","");
+                if (applyForm.getOrganization().getName() != null)
+                    object1.put("organizationName", applyForm.getOrganization().getName());
+                else object1.put("organizationName", "");
                 array.add(object1);
 
                 JSONObject object2 = new JSONObject();
-                if (applyForm.getOrganization().getRegistrationTime()!=null)
-                    object2.put("registrationTime",applyForm.getOrganization().getRegistrationTime());
-                else object2.put("registrationTime",null);
+                if (applyForm.getOrganization().getRegistrationTime() != null)
+                    object2.put("registrationTime", applyForm.getOrganization().getRegistrationTime());
+                else object2.put("registrationTime", null);
                 array.add(object2);
 
                 JSONObject object3 = new JSONObject();
-                if (applyForm.getOrganization().getDetailedAddress()!=null)
-                    object3.put("address",applyForm.getOrganization().getDetailedAddress());
-                else object3.put("address","");
+                if (applyForm.getOrganization().getDetailedAddress() != null)
+                    object3.put("address", applyForm.getOrganization().getDetailedAddress());
+                else object3.put("address", "");
                 array.add(object3);
 
                 JSONObject object5 = new JSONObject();
-                if (applyForm.getOrganization().getPersonInCharge()!=null)
-                    object5.put("object5",applyForm.getOrganization().getPersonInCharge());
-                else object5.put("object5","");
+                if (applyForm.getOrganization().getPersonInCharge() != null)
+                    object5.put("object5", applyForm.getOrganization().getPersonInCharge());
+                else object5.put("object5", "");
                 array.add(object5);
 
                 JSONObject object6 = new JSONObject();
-                if (applyForm.getOrganization().getArea()!=null)
-                    object6.put("object6",applyForm.getOrganization().getArea());
-                else object6.put("object6","");
+                if (applyForm.getOrganization().getArea() != null)
+                    object6.put("object6", applyForm.getOrganization().getArea());
+                else object6.put("object6", "");
                 array.add(object6);
 
                 JSONObject object7 = new JSONObject();
-                if (applyForm.getOrganization().getBedNum()!=null)
-                    object7.put("object7",applyForm.getOrganization().getBedNum());
-                else object7.put("object7","");
+                if (applyForm.getOrganization().getBedNum() != null)
+                    object7.put("object7", applyForm.getOrganization().getBedNum());
+                else object7.put("object7", "");
                 array.add(object7);
 
                 JSONObject object8 = new JSONObject();
-                if (applyForm.getOrganization().getNature()!=null)
-                    object8.put("object8",applyForm.getOrganization().getNature());
-                else object8.put("object8","");
+                if (applyForm.getOrganization().getNature() != null)
+                    object8.put("object8", applyForm.getOrganization().getNature());
+                else object8.put("object8", "");
                 array.add(object8);
 
                 JSONObject object9 = new JSONObject();
-                if (applyForm.getOrganization().getAsylumLaborProjects()!=null)
-                    object9.put("object9",applyForm.getOrganization().getAsylumLaborProjects());
-                else object9.put("object9","");
+                if (applyForm.getOrganization().getAsylumLaborProjects() != null)
+                    object9.put("object9", applyForm.getOrganization().getAsylumLaborProjects());
+                else object9.put("object9", "");
                 array.add(object9);
             }
             JSONObject object10 = new JSONObject();
@@ -305,8 +328,8 @@ public class ApplyFormService {
 
     public List<JSONArray> getListsByDistrict(String distrct) {
         List<JSONArray> jsonArray = new ArrayList<>();
-        List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(distrct,1);
-        for (Organization organization : organizationList){
+        List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(distrct, 1);
+        for (Organization organization : organizationList) {
             List<ApplyForm> applyFormList = applyFormRepository.findByOrganizationAndStatus(organization.getId(), 1);
             for (ApplyForm applyForm :
                     applyFormList) {
@@ -314,53 +337,53 @@ public class ApplyFormService {
                 JSONObject object = new JSONObject();
                 object.put("status", applyForm.getStatus() == null ? 0 : applyForm.getStatus());
                 array.add(object);
-                if (applyForm.getOrganization()!=null){
+                if (applyForm.getOrganization() != null) {
                     JSONObject object1 = new JSONObject();
-                    if (applyForm.getOrganization().getName()!=null)
-                        object1.put("organizationName",applyForm.getOrganization().getName());
-                    else object1.put("organizationName","");
+                    if (applyForm.getOrganization().getName() != null)
+                        object1.put("organizationName", applyForm.getOrganization().getName());
+                    else object1.put("organizationName", "");
                     array.add(object1);
 
                     JSONObject object2 = new JSONObject();
-                    if (applyForm.getOrganization().getRegistrationTime()!=null)
-                        object2.put("registrationTime",applyForm.getOrganization().getRegistrationTime());
-                    else object2.put("registrationTime",null);
+                    if (applyForm.getOrganization().getRegistrationTime() != null)
+                        object2.put("registrationTime", applyForm.getOrganization().getRegistrationTime());
+                    else object2.put("registrationTime", null);
                     array.add(object2);
 
                     JSONObject object4 = new JSONObject();
-                    if (applyForm.getOrganization().getDetailedAddress()!=null)
-                        object4.put("object4",applyForm.getOrganization().getDetailedAddress());
-                    else object4.put("object4","");
+                    if (applyForm.getOrganization().getDetailedAddress() != null)
+                        object4.put("object4", applyForm.getOrganization().getDetailedAddress());
+                    else object4.put("object4", "");
                     array.add(object4);
 
                     JSONObject object5 = new JSONObject();
-                    if (applyForm.getOrganization().getPersonInCharge()!=null)
-                        object5.put("object5",applyForm.getOrganization().getPersonInCharge());
-                    else object5.put("object5","");
+                    if (applyForm.getOrganization().getPersonInCharge() != null)
+                        object5.put("object5", applyForm.getOrganization().getPersonInCharge());
+                    else object5.put("object5", "");
                     array.add(object5);
 
                     JSONObject object6 = new JSONObject();
-                    if (applyForm.getOrganization().getArea()!=null)
-                        object6.put("object6",applyForm.getOrganization().getArea());
-                    else object6.put("object6","");
+                    if (applyForm.getOrganization().getArea() != null)
+                        object6.put("object6", applyForm.getOrganization().getArea());
+                    else object6.put("object6", "");
                     array.add(object6);
 
                     JSONObject object7 = new JSONObject();
-                    if (applyForm.getOrganization().getBedNum()!=null)
-                        object7.put("object7",applyForm.getOrganization().getBedNum());
-                    else object7.put("object7","");
+                    if (applyForm.getOrganization().getBedNum() != null)
+                        object7.put("object7", applyForm.getOrganization().getBedNum());
+                    else object7.put("object7", "");
                     array.add(object7);
 
                     JSONObject object8 = new JSONObject();
-                    if (applyForm.getOrganization().getNature()!=null)
-                        object8.put("object8",applyForm.getOrganization().getNature());
-                    else object8.put("object8","");
+                    if (applyForm.getOrganization().getNature() != null)
+                        object8.put("object8", applyForm.getOrganization().getNature());
+                    else object8.put("object8", "");
                     array.add(object8);
 
                     JSONObject object9 = new JSONObject();
-                    if (applyForm.getOrganization().getAsylumLaborProjects()!=null)
-                        object9.put("object9",applyForm.getOrganization().getAsylumLaborProjects());
-                    else object9.put("object9","");
+                    if (applyForm.getOrganization().getAsylumLaborProjects() != null)
+                        object9.put("object9", applyForm.getOrganization().getAsylumLaborProjects());
+                    else object9.put("object9", "");
                     array.add(object9);
                 }
                 JSONObject object10 = new JSONObject();
@@ -416,7 +439,7 @@ public class ApplyFormService {
         return jsonArray;
     }
 
-    public void exportExcel(Integer organizationId, HttpServletRequest request, HttpServletResponse response){
+    public void exportExcel(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
         Optional<Organization> organizationOptional = organizationRepository.findById(organizationId);
         String fileName = "ApplyFormList";
         if (organizationOptional.isPresent()) {
@@ -426,8 +449,27 @@ public class ApplyFormService {
         ExcelUtils.exportExcel(fileName, columnNames, getListsByOrganizationId(organizationId), request, response);
     }
 
-    public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response){
-        String fileName = "ApplyFormList_"+district+ "_" + sdf.format(new Date()) + ".xls";
+    public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
+        String fileName = "ApplyFormList_" + district + "_" + sdf.format(new Date()) + ".xls";
         ExcelUtils.exportExcel(fileName, columnNames, getListsByDistrict(district), request, response);
+    }
+
+    /**
+     * 全区残疾人之家托养服务补贴资金统计
+     *
+     * @param district 区名
+     * @return 结果
+     */
+    public JSONObject getStatistic(String district) {
+        List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
+        List<JSONObject> objectList = new ArrayList<>();
+        for (Organization organization : organizationList) {
+            JSONObject object = new JSONObject();
+            object.put("id", organization.getId());
+            object.put("name", organization.getName());
+            object.put("applySum", organization.getApplySum());
+            objectList.add(object);
+        }
+        return RESCODE.SUCCESS.getJSONRES(objectList);
     }
 }
