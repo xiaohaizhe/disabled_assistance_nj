@@ -130,43 +130,67 @@
 					   class="layui-input">
 			</div>
 		</div>
-		<!--<div class="layui-form-item">-->
-			<!--<label class="layui-form-label">残疾类别</label>-->
-			<!--<div class="layui-input-block" style="padding-right:15px;">-->
-				<!--<select name="typeOfDisabilityId">-->
-					<!--<option value="一级">一级</option>-->
-					<!--<option value="二级">二级</option>-->
-					<!--<option value="三级">三级</option>-->
-					<!--<option value="四级">四级</option>-->
-				<!--</select>-->
-			<!--</div>-->
-		<!--</div>-->
-		<!--<div class="layui-form-item">-->
-			<!--<label class="layui-form-label">残疾等级</label>-->
-			<!--<div class="layui-input-block" style="padding-right:15px;">-->
-				<!--<select name="disabilityDegreeId">-->
-					<!--<option value="一级">一级</option>-->
-					<!--<option value="二级">二级</option>-->
-					<!--<option value="三级">三级</option>-->
-					<!--<option value="四级">四级</option>-->
-				<!--</select>-->
-			<!--</div>-->
-		<!--</div>-->
+		<div class="layui-form-item">
+			<label class="layui-form-label">残疾类别</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="typeOfDisabilityId">
+					<option value="1">一级</option>
+					<option value="2">二级</option>
+					<option value="3">三级</option>
+					<option value="4">四级</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">残疾等级</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="disabilityDegreeId">
+					<option value="1">一级</option>
+					<option value="2">二级</option>
+					<option value="3">三级</option>
+					<option value="4">四级</option>
+				</select>
+			</div>
+		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">家庭住址</label>
 			<div class="layui-input-block" style="padding-right:15px;">
-				<input type="number" name="age" lay-verify="required" placeholder="请输入家庭住址" autocomplete="off"
+				<input type="number" name="address" lay-verify="required" placeholder="请输入家庭住址" autocomplete="off"
 					   class="layui-input">
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-block" style="padding-right:15px;">
-				<input type="number" name="address" lay-verify="required" placeholder="请输入联系电话" min="0" step="1"
+				<input type="number" name="contactNumber" lay-verify="required" placeholder="请输入联系电话" min="0" step="1"
 					   autocomplete="off"
 					   class="layui-input">
 			</div>
 		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">托养方式</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<select name="nursingModeId">
+					<option value="1">全托</option>
+					<option value="2">日托</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">托养月数</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="nursingMonth" lay-verify="required" placeholder="请输入托养月数" autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">补贴金额</label>
+			<div class="layui-input-block" style="padding-right:15px;">
+				<input type="number" name="subsidies" lay-verify="required" placeholder="请输入补贴金额" autocomplete="off"
+					   class="layui-input">
+			</div>
+		</div>
+
 		<div class="layui-form-item">
 			<div class="layui-input-block" style="margin:30px 0;text-align: center">
 				<button type="button" class="layui-btn" lay-submit="" lay-filter="addNew">添加</button>
