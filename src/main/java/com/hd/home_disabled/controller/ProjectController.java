@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 
 /**
  * @ClassName ProjectController
@@ -118,7 +119,31 @@ public class ProjectController {
 
     @ApiOperation(value = "领导驾驶舱，残疾人最喜爱项目分析", notes = "查询")
     @RequestMapping(value = "/usersPreferenceAnalysis", method = RequestMethod.GET)
-    public JSONObject usersPreferenceAnalysis() {
-        return projectService.usersPreferenceAnalysis();
+    public JSONObject usersPreferenceAnalysis(String type) {
+        return projectService.usersPreferenceAnalysis(type);
+    }
+
+    @ApiOperation(value = "领导驾驶舱，残疾人今日最喜爱项目分析", notes = "查询")
+    @RequestMapping(value = "/usersPreferenceAnalysisToday", method = RequestMethod.GET)
+    public JSONObject usersPreferenceAnalysisToday(String type) {
+        return projectService.usersPreferenceAnalysisToday(type);
+    }
+
+    @ApiOperation(value = "残疾人服务项目分析，全区残疾人服务项目数比对", notes = "查询")
+    @RequestMapping(value = "/projectAnalysis", method = RequestMethod.GET)
+    public JSONObject projectAnalysis(String district) {
+        return projectService.projectAnalysis(district);
+    }
+
+    @ApiOperation(value = "残疾人服务项目分析，今日残疾人服务项目数比对", notes = "查询")
+    @RequestMapping(value = "/projectAnalysisToday", method = RequestMethod.GET)
+    public JSONObject projectAnalysisToday() {
+        return projectService.projectAnalysisToday();
+    }
+
+    @ApiOperation(value = "残疾人服务项目分析，服务项目完成进度分析", notes = "查询")
+    @RequestMapping(value = "/projectAnalysisData", method = RequestMethod.GET)
+    public JSONObject projectAnalysisData() {
+        return projectService.projectAnalysisData();
     }
 }

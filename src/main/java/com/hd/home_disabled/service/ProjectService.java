@@ -1,14 +1,13 @@
 package com.hd.home_disabled.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.Organization;
 import com.hd.home_disabled.entity.Project;
 import com.hd.home_disabled.entity.User;
+import com.hd.home_disabled.entity.dictionary.Plan;
 import com.hd.home_disabled.entity.dictionary.ProjectType;
-import com.hd.home_disabled.entity.dictionary.TypeOfDisability;
 import com.hd.home_disabled.entity.statistic.ProjectTypeStatistic;
 import com.hd.home_disabled.entity.statistic.ProjectUser;
 import com.hd.home_disabled.entity.statistic.ProjectUserDetail;
@@ -19,7 +18,6 @@ import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -48,8 +47,9 @@ public class ProjectService {
     private final ProjectUserDetailRepository projectUserDetailRepository;
     private final ProjectTypeStatisticRepository projectTypeStatisticRepository;
     private final TypeOfDisabilityRepository typeOfDisabilityRepository;
+    private final PlanRepository planRepository;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectTypeRepository projectTypeRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository, ProjectUserRepository projectUserRepository, ProjectUserDetailRepository projectUserDetailRepository, ProjectTypeStatisticRepository projectTypeStatisticRepository, TypeOfDisabilityRepository typeOfDisabilityRepository) {
+    public ProjectService(ProjectRepository projectRepository, ProjectTypeRepository projectTypeRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository, ProjectUserRepository projectUserRepository, ProjectUserDetailRepository projectUserDetailRepository, ProjectTypeStatisticRepository projectTypeStatisticRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, PlanRepository planRepository) {
         this.projectRepository = projectRepository;
         this.projectTypeRepository = projectTypeRepository;
         this.organizationRepository = organizationRepository;
@@ -58,6 +58,7 @@ public class ProjectService {
         this.projectUserDetailRepository = projectUserDetailRepository;
         this.projectTypeStatisticRepository = projectTypeStatisticRepository;
         this.typeOfDisabilityRepository = typeOfDisabilityRepository;
+        this.planRepository = planRepository;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
@@ -595,7 +596,7 @@ public class ProjectService {
         Integer projectSum = 0;    //机构服务项目总数
         Integer personCountSum = 0; //服务人数总数
         Integer personTimeSum = 0;  //服务总人次
-        Integer totalTimeSum = 0;   //服务总时长
+        Float totalTimeSum = 0f;   //服务总时长
         Float averageTime = 0f;      //平均服务时长：总时长/总人次
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         for (Organization organization : organizationList) {
@@ -618,52 +619,460 @@ public class ProjectService {
         return RESCODE.SUCCESS.getJSONRES(object);
     }
 
-    public JSONObject getData(ProjectTypeStatistic projectTypeStatistic){
+
+    /**
+     * 领导驾驶舱：全区数据2，当天数据
+     *
+     * @param district 区名
+     * @return 结果
+     */
+    public JSONObject overview2(String district) {
+        Integer projectSum = 0;    //机构服务项目总数
+        Integer personCountSum = 0; //服务人数总数
+        Integer personTimeSum = 0;  //服务总人次
+        Integer totalTimeSum = 0;   //服务总时长
+        Float averageTime = 0f;      //平均服务时长：总时长/总人次
+        Date date = new Date();
+        try {
+            date = sdf.parse(sdf.format(date));
+        } catch (ParseException e) {
+            return RESCODE.TIME_PARSE_FAILURE.getJSONRES(e.getMessage());
+        }
+        List<ProjectUserDetail> projectUserDetailList = projectUserDetailRepository.findByStartAfter(date);
+        for (ProjectUserDetail projectUserDetail : projectUserDetailList) {
+
+        }
+        return null;
+    }
+
+    public JSONObject getData(ProjectTypeStatistic projectTypeStatistic) {
         JSONObject object = new JSONObject();
-        object.put("personTimeSum",projectTypeStatistic.getPersonTimeSum()==null?0:projectTypeStatistic.getPersonTimeSum());
-        object.put("personCountSum",projectTypeStatistic.getPersonCountSum()==null?0:projectTypeStatistic.getPersonCountSum());
-        object.put("totalTimeSum",projectTypeStatistic.getTotalTimeSum()==null?0:projectTypeStatistic.getTotalTimeSum());
-        object.put("averageTime",projectTypeStatistic.getAverageTime()==null?0:projectTypeStatistic.getAverageTime());
+        object.put("personTimeSum", projectTypeStatistic.getPersonTimeSum() == null ? 0 : projectTypeStatistic.getPersonTimeSum());
+        object.put("personCountSum", projectTypeStatistic.getPersonCountSum() == null ? 0 : projectTypeStatistic.getPersonCountSum());
+        object.put("totalTimeSum", projectTypeStatistic.getTotalTimeSum() == null ? 0 : projectTypeStatistic.getTotalTimeSum());
+        object.put("averageTime", projectTypeStatistic.getAverageTime() == null ? 0 : projectTypeStatistic.getAverageTime());
         return object;
     }
 
     /**
      * 领导驾驶舱：残疾人服务内容分析
+     *
      * @return 结果
      */
     public JSONObject overview3() {
         JSONObject object = new JSONObject();
-        List<ProjectType> projectTypeList =projectTypeRepository.findAll();
+        List<ProjectType> projectTypeList = projectTypeRepository.findAll();
         JSONObject data = new JSONObject();
-        data.put("personTimeSum",0);
-        data.put("personCountSum",0);
-        data.put("totalTimeSum",0);
-        data.put("averageTime",0);
-        for (ProjectType projectType:projectTypeList){
-            object.put(projectType.getName(),data);
+        data.put("personTimeSum", 0);
+        data.put("personCountSum", 0);
+        data.put("totalTimeSum", 0);
+        data.put("averageTime", 0);
+        for (ProjectType projectType : projectTypeList) {
+            object.put(projectType.getName(), data);
         }
         List<ProjectTypeStatistic> projectTypeStatisticList = projectTypeStatisticRepository.findAll();
-        for (ProjectTypeStatistic projectTypeStatistic:projectTypeStatisticList){
-            object.put(projectTypeStatistic.getProjectType().getName(),getData(projectTypeStatistic));
+        for (ProjectTypeStatistic projectTypeStatistic : projectTypeStatisticList) {
+            object.put(projectTypeStatistic.getProjectType().getName(), getData(projectTypeStatistic));
         }
         return RESCODE.SUCCESS.getJSONRES(object);
     }
 
     /**
-     * 全区残疾人最喜爱项目分析
+     * 全区各类残疾人当日最喜爱项目分析
+     *
+     * @param type 残疾人类型：
+     *             1	视力残疾
+     *             2	听力残疾
+     *             3	言语残疾
+     *             4	肢体残疾
+     *             5	智力残疾
+     *             6	精神残疾
+     *             7	多重残疾
+     *             8	其他
      * @return 结果
      */
-    public JSONObject usersPreferenceAnalysis(){
-        JSONObject object = new JSONObject();
-        List<TypeOfDisability> typeOfDisabilities =typeOfDisabilityRepository.findAll();
-        for (TypeOfDisability typeOfDisability:typeOfDisabilities){
-            object.put(typeOfDisability.getName(),new HashSet<>());
+    public JSONObject usersPreferenceAnalysisToday(String type) {
+        Date date = new Date();
+        try {
+            date = sdf.parse(sdf.format(date));
+        } catch (ParseException e) {
+            return RESCODE.TIME_PARSE_FAILURE.getJSONRES(e.getMessage());
         }
+        List<ProjectUserDetail> projectUserDetailList = projectUserDetailRepository.findByStartAfter(date);
+        JSONObject object = getResult(projectUserDetailList, type);
+        return RESCODE.SUCCESS.getJSONRES(object);
+    }
+
+    /**
+     * 全区各类残疾人最喜爱项目分析
+     *
+     * @param type 残疾人类型：
+     *             1	视力残疾
+     *             2	听力残疾
+     *             3	言语残疾
+     *             4	肢体残疾
+     *             5	智力残疾
+     *             6	精神残疾
+     *             7	多重残疾
+     *             8	其他
+     * @return 结果
+     */
+    public JSONObject usersPreferenceAnalysis(String type) {
+
         List<ProjectUserDetail> projectUserDetailList = projectUserDetailRepository.findAll();
-        for (ProjectUserDetail projectUserDetail : projectUserDetailList){
-            String userType = projectUserDetail.getUser().getTypeOfDisability().getName();
-            Set<Project> projects =(Set<Project>) object.get(userType);
+        //遍历type残疾类型，全部打卡数据
+        JSONObject object = getResult(projectUserDetailList, type);
+        return RESCODE.SUCCESS.getJSONRES(object);
+    }
+
+    private JSONObject getResult(List<ProjectUserDetail> projectUserDetailList, String type) {
+        List<ProjectUserDetail> projectUserDetails = new ArrayList<>();
+        for (ProjectUserDetail projectUserDetail : projectUserDetailList) {
+            if (projectUserDetail.getUser().getTypeOfDisability().getName().equals(type)) {
+                projectUserDetails.add(projectUserDetail);
+            }
+        }
+        //遍历打卡数据，获取全部项目，与项目服务时长
+        JSONObject object = new JSONObject();
+        Float sum = 0F;
+        for (ProjectUserDetail projectUserDetail : projectUserDetails) {
+            sum += projectUserDetail.getLengthOfService();
+            String projectName = projectUserDetail.getProject().getName();
+            object.merge(projectName, projectUserDetail.getLengthOfService(), (a, b) -> (Float) a + (Float) b);
+        }
+        //计算项目时长所占比
+        if (sum != 0) {
+            for (String key : object.keySet()) {
+                Float value = object.getFloatValue(key);
+                Float result = (float) Math.round((value / sum) * 100) / 100;
+                object.put(key, result);
+            }
+        } else if (object.keySet().size() > 0) {
+            Float result = (float) Math.round((1 / object.keySet().size()) * 100) / 100;
+            for (String key : object.keySet()) {
+                object.put(key, result);
+            }
+        }
+        return object;
+    }
+
+    public void addRecord() throws ParseException {
+        ProjectUserDetail projectUserDetail = new ProjectUserDetail();
+        Admin admin = new Admin();
+        admin.setId(1);
+        projectUserDetail.setAdmin(admin);
+        Project project = new Project();
+        project.setId(2);
+        projectUserDetail.setProject(project);
+        User user = new User();
+        user.setId(1L);
+        projectUserDetail.setUser(user);
+        Date start = sdf1.parse("2019-07-14 08:00:00");
+        Date end = sdf1.parse("2019-07-14 10:40:00");
+        projectUserDetail.setStart(start);
+        projectUserDetail.setEnd(end);
+        Float lengthOfService = (float) Math.round(((end.getTime() - start.getTime()) / 1000f / 60f / 60f) * 100) / 100;
+        projectUserDetail.setLengthOfService(lengthOfService);
+        projectUserDetailRepository.save(projectUserDetail);
+    }
+
+
+    //残疾人服务项目分析
+    //全区残疾人服务项目数比对
+    public JSONObject projectAnalysis(String district) {
+        int count1 = 0;//日间照料
+        int count2 = 0;//辅助性就业
+        int count3 = 0;//康复服务
+        int count4 = 0;//文体活动
+        int count5 = 0;//学习培训
+        int count6 = 0;//志愿服务
+        int count7 = 0;//其它
+        List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
+        List<Integer> ids = new ArrayList<>();
+        for (Organization organization : organizationList) {
+            ids.add(organization.getId());
+        }
+        List<Project> projectList = projectRepository.findByOrganizationAndStatus(ids, 1);
+        for (Project project : projectList) {
+            switch (project.getProjectType().getId()) {
+                case 1:
+                    count1++;
+                    break;
+                case 2:
+                    count2++;
+                    break;
+                case 3:
+                    count3++;
+                    break;
+                case 4:
+                    count4++;
+                    break;
+                case 5:
+                    count5++;
+                    break;
+                case 6:
+                    count6++;
+                    break;
+                case 7:
+                    count7++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        JSONObject object = new JSONObject();
+        if (projectList.size() > 0) {
+            object.put("日间照料", (float) Math.round(((float) count1 / projectList.size()) * 100) / 100);
+            object.put("辅助性就业", (float) Math.round(((float) count2 / projectList.size()) * 100) / 100);
+            object.put("康复服务", (float) Math.round(((float) count3 / projectList.size()) * 100) / 100);
+            object.put("文体活动", (float) Math.round(((float) count4 / projectList.size()) * 100) / 100);
+            object.put("学习培训", (float) Math.round(((float) count5 / projectList.size()) * 100) / 100);
+            object.put("志愿服务", (float) Math.round(((float) count6 / projectList.size()) * 100) / 100);
+            object.put("其他", (float) Math.round(((float) count7 / projectList.size()) * 100) / 100);
+
+        } else {
+            object.put("日间照料", count1);
+            object.put("辅助性就业", count2);
+            object.put("康复服务", count3);
+            object.put("文体活动", count4);
+            object.put("学习培训", count5);
+            object.put("志愿服务", count6);
+            object.put("其他", count7);
         }
         return RESCODE.SUCCESS.getJSONRES(object);
+    }
+
+    //残疾人服务项目分析
+    //今日残疾人服务项目数比对
+    public JSONObject projectAnalysisToday() {
+        int count1 = 0;//日间照料
+        int count2 = 0;//辅助性就业
+        int count3 = 0;//康复服务
+        int count4 = 0;//文体活动
+        int count5 = 0;//学习培训
+        int count6 = 0;//志愿服务
+        int count7 = 0;//其它
+        Date date = new Date();
+        try {
+            date = sdf.parse(sdf.format(date));
+        } catch (ParseException e) {
+            return RESCODE.TIME_PARSE_FAILURE.getJSONRES(e.getMessage());
+        }
+        Set<Project> projectSet = new HashSet<>();
+        List<ProjectUserDetail> projectUserDetailList = projectUserDetailRepository.findByStartAfter(date);
+        for (ProjectUserDetail projectUserDetail : projectUserDetailList) {
+            projectSet.add(projectUserDetail.getProject());
+        }
+        for (Project project : projectSet) {
+            switch (project.getProjectType().getId()) {
+                case 1:
+                    count1++;
+                    break;
+                case 2:
+                    count2++;
+                    break;
+                case 3:
+                    count3++;
+                    break;
+                case 4:
+                    count4++;
+                    break;
+                case 5:
+                    count5++;
+                    break;
+                case 6:
+                    count6++;
+                    break;
+                case 7:
+                    count7++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        JSONObject object = new JSONObject();
+        if (projectSet.size() > 0) {
+            object.put("日间照料", (float) Math.round(((float) count1 / projectSet.size()) * 100) / 100);
+            object.put("辅助性就业", (float) Math.round(((float) count2 / projectSet.size()) * 100) / 100);
+            object.put("康复服务", (float) Math.round(((float) count3 / projectSet.size()) * 100) / 100);
+            object.put("文体活动", (float) Math.round(((float) count4 / projectSet.size()) * 100) / 100);
+            object.put("学习培训", (float) Math.round(((float) count5 / projectSet.size()) * 100) / 100);
+            object.put("志愿服务", (float) Math.round(((float) count6 / projectSet.size()) * 100) / 100);
+            object.put("其他", (float) Math.round(((float) count7 / projectSet.size()) * 100) / 100);
+
+        } else {
+            object.put("日间照料", count1);
+            object.put("辅助性就业", count2);
+            object.put("康复服务", count3);
+            object.put("文体活动", count4);
+            object.put("学习培训", count5);
+            object.put("志愿服务", count6);
+            object.put("其他", count7);
+        }
+        return RESCODE.SUCCESS.getJSONRES(object);
+    }
+
+    //残疾人服务项目分析
+    // 服务项目完成进度分析
+    public JSONObject projectAnalysisData() {
+        Date today = new Date();
+        try {
+            today = sdf.parse(sdf.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        int count1 = 0;//日间照料
+        int count11 = 0;//今日日间照料
+        int count2 = 0;//辅助性就业
+        int count21 = 0;//今日辅助性就业
+        int count3 = 0;//康复服务
+        int count31 = 0;//今日康复服务
+        int count4 = 0;//文体活动
+        int count41 = 0;//今日文体活动
+        int count5 = 0;//学习培训
+        int count51 = 0;//今日学习培训
+        int count6 = 0;//志愿服务
+        int count61 = 0;//今日志愿服务
+        int count7 = 0;//其它
+        int count71 = 0;//今日其它
+        List<Project> projectList = projectRepository.findAll();
+        for (Project project : projectList) {
+            switch (project.getProjectType().getId()) {
+                case 1:
+                    if (project.getCreateTime().getTime() > today.getTime()) count11++;
+                    count1++;
+                    break;
+                case 2:
+                    if (project.getCreateTime().getTime() > today.getTime()) count21++;
+                    count2++;
+                    break;
+                case 3:
+                    if (project.getCreateTime().getTime() > today.getTime()) count31++;
+                    count3++;
+                    break;
+                case 4:
+                    if (project.getCreateTime().getTime() > today.getTime()) count41++;
+                    count4++;
+                    break;
+                case 5:
+                    if (project.getCreateTime().getTime() > today.getTime()) count51++;
+                    count5++;
+                    break;
+                case 6:
+                    if (project.getCreateTime().getTime() > today.getTime()) count61++;
+                    count6++;
+                    break;
+                case 7:
+                    if (project.getCreateTime().getTime() > today.getTime()) count71++;
+                    count7++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        JSONArray array = new JSONArray();
+        Optional<Plan> planOptional = planRepository.findById(1);
+        if (planOptional.isPresent()) {
+            Plan plan = planOptional.get();
+            JSONObject object = new JSONObject();
+            object.put("name","日间照料");
+            object.put("finishedNum", count1);
+            object.put("finishedNumToday", count11);
+            object.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count1 / plan.getProject_type0()) * 100) / 100);
+            array.add(object);
+
+            JSONObject object1 = new JSONObject();
+            object1.put("name","辅助性就业");
+            object1.put("finishedNum", count2);
+            object1.put("finishedNumToday", count21);
+            object1.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count2 / plan.getProject_type0()) * 100) / 100);
+            array.add(object1);
+
+            JSONObject object2 = new JSONObject();
+            object2.put("name","康复服务");
+            object2.put("finishedNum", count3);
+            object2.put("finishedNumToday", count31);
+            object2.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count3 / plan.getProject_type0()) * 100) / 100);
+            array.add(object2);
+
+            JSONObject object3 = new JSONObject();
+            object3.put("name","文体活动");
+            object3.put("finishedNum", count4);
+            object3.put("finishedNumToday", count41);
+            object3.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count4 / plan.getProject_type0()) * 100) / 100);
+            array.add(object3);
+
+            JSONObject object4 = new JSONObject();
+            object4.put("name","学习培训");
+            object4.put("finishedNum", count5);
+            object4.put("finishedNumToday", count51);
+            object4.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count5 / plan.getProject_type0()) * 100) / 100);
+            array.add(object4);
+
+            JSONObject object5 = new JSONObject();
+            object5.put("name","志愿服务");
+            object5.put("finishedNum", count6);
+            object5.put("finishedNumToday", count61);
+            object5.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count6 / plan.getProject_type0()) * 100) / 100);
+            array.add(object5);
+
+            JSONObject object6 = new JSONObject();
+            object6.put("name","其他");
+            object6.put("finishedNum", count7);
+            object6.put("finishedNumToday", count71);
+            object6.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count7 / plan.getProject_type0()) * 100) / 100);
+            array.add(object6);
+
+        } else {
+            JSONObject object = new JSONObject();
+            object.put("name","日间照料");
+            object.put("finishedNum", count1);
+            object.put("finishedNumToday", count11);
+            object.put("percent", null);
+            array.add(object);
+
+            JSONObject object1 = new JSONObject();
+            object1.put("name","辅助性就业");
+            object1.put("finishedNum", count2);
+            object1.put("finishedNumToday", count21);
+            object1.put("percent", null);
+            array.add(object1);
+
+            JSONObject object2 = new JSONObject();
+            object2.put("name","康复服务");
+            object2.put("finishedNum", count3);
+            object2.put("finishedNumToday", count31);
+            object2.put("percent", null);
+            array.add(object2);
+
+            JSONObject object3 = new JSONObject();
+            object3.put("name","文体活动");
+            object3.put("finishedNum", count4);
+            object3.put("finishedNumToday", count41);
+            object3.put("percent", null);
+            array.add(object3);
+
+            JSONObject object4 = new JSONObject();
+            object4.put("name","学习培训");
+            object4.put("finishedNum", count5);
+            object4.put("finishedNumToday", count51);
+            object4.put("percent", null);
+            array.add(object4);
+
+            JSONObject object5 = new JSONObject();
+            object5.put("name","志愿服务");
+            object5.put("finishedNum", count6);
+            object5.put("finishedNumToday", count61);
+            object5.put("percent", null);
+            array.add(object5);
+
+            JSONObject object6 = new JSONObject();
+            object6.put("name","其他");
+            object6.put("finishedNum", count7);
+            object6.put("finishedNumToday", count71);
+            object6.put("percent", null);
+            array.add(object6);
+        }
+        return RESCODE.SUCCESS.getJSONRES(array);
     }
 }

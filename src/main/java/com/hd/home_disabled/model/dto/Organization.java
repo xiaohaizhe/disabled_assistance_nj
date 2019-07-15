@@ -102,7 +102,7 @@ public class Organization {
     private Integer projectSum;    //机构服务项目总数
     private Integer personCountSum; //服务人数总数
     private Integer personTimeSum;  //服务总人次
-    private Integer totalTimeSum;   //服务总时长
+    private Float totalTimeSum;   //服务总时长
     private Float averageTime;      //平均服务时长：总时长/总人次
 
     //数据创建信息

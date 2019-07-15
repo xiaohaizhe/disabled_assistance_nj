@@ -21,11 +21,11 @@ import javax.persistence.Id;
 public class Plan {
     @Id
     private Integer id;
-    private Integer project_type0;
-    private Integer project_type1;
-    private Integer project_type2;
-    private Integer project_type3;
-    private Integer project_type4;
-    private Integer project_type5;
-    private Integer project_type6;
+    private Integer project_type0;  //日间照料
+    private Integer project_type1;  //辅助性就业
+    private Integer project_type2;  //康复服务
+    private Integer project_type3;  //文体活动
+    private Integer project_type4;  //学习培训
+    private Integer project_type5;  //志愿服务
+    private Integer project_type6;  //其它
 }

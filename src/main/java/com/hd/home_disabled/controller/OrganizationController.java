@@ -73,5 +73,11 @@ public class OrganizationController {
         organizationService.exportExcel(district,request,response);
     }
 
+    //残疾人之家分析
+    @ApiOperation(value = "残疾人之家分析", notes = "查询")
+    @RequestMapping(value = "/analysis", method = RequestMethod.GET)
+    public JSONObject analysis() {
+        return organizationService.analysis();
+    }
 
 }
