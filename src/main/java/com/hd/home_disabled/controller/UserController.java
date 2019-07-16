@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * @ClassName UserController
@@ -76,5 +77,17 @@ public class UserController {
     @RequestMapping(value = "/statisticExcel",method = RequestMethod.GET)
     public void getStatisticExcel(HttpServletRequest request, HttpServletResponse response) {
          userService.getStatisticExcel(request,response);
+    }
+
+    @ApiOperation(value = "全区各类残疾人参与服务率分析", notes = "统计")
+    @RequestMapping(value = "/statisticData",method = RequestMethod.GET)
+    public JSONObject statisticData() {
+        return  userService.statisticData();
+    }
+
+    @ApiOperation(value = "残疾人参与项目打卡", notes = "统计")
+    @RequestMapping(value = "/clockIn",method = RequestMethod.GET)
+    public JSONObject clockIn(Integer projectId, Long userId, String start,String end,Integer adminId) {
+        return  userService.clockIn(projectId,userId,start,end,adminId);
     }
 }

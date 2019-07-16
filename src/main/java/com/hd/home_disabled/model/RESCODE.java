@@ -12,11 +12,13 @@ public enum RESCODE {
     DISABILITY_DEGREE_NOT_EXIST(1,"残疾程度不存在"),
     TYPE_OF_DISABILITY_NOT_EXIST(1,"残疾类别不存在"),
     NURSING_MODE_NOT_EXIST(1,"托养方式不存在"),
-    USER_ID_NOT_EXIST(1,"用户不存在"),
+    USER_ID_NOT_EXIST(1,"残疾人不存在"),
     USER_EXIST(1,"用户已存在"),
     PROJECTTYPE_NOT_EXIST(1,"项目类型不存在"),
     PROJECT_ID_NOT_EXIST(1,"服务项目不存在"),
-    APPLY_FORM_NOT_EXIST(1,"补贴申请不存在");
+    APPLY_FORM_NOT_EXIST(1,"补贴申请不存在"),
+    TIME_PARSE_FAILURE(1,"时间格式转换失败"),
+    CLOCK_IN_WRONG(1,"打卡时间错误");
     private int code;
     private String msg;
 

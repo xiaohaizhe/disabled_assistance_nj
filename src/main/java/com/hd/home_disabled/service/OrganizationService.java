@@ -13,6 +13,7 @@ import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -330,5 +331,44 @@ public class OrganizationService {
                 "提交时间", "更新时间"};
         String fileName = "OrganizationList"+"_"+sdf.format(new Date())+".xls";
         ExcelUtils.exportExcel(fileName,columnNames, getListsByDistrict(district), request, response);
+    }
+
+    private List<JSONObject> getOrganization(List<Organization> organizationList){
+        List<JSONObject> objectList = new ArrayList<>();
+        for (Organization organization : organizationList){
+            JSONObject object = new JSONObject();
+            object.put("id",organization.getId());
+            object.put("name",organization.getName());
+            objectList.add(object);
+        }
+        return objectList;
+    }
+
+    public JSONObject analysis(){
+        JSONObject object = new JSONObject();
+        Sort sort1 = new Sort(new Sort.Order(Sort.Direction.DESC, "projectSum"));
+        Sort sort2 = new Sort(new Sort.Order(Sort.Direction.DESC, "personCountSum"));
+        Sort sort3 = new Sort(new Sort.Order(Sort.Direction.DESC, "personTimeSum"));
+        Sort sort4 = new Sort(new Sort.Order(Sort.Direction.DESC, "totalTimeSum"));
+        Sort sort5 = new Sort(new Sort.Order(Sort.Direction.DESC, "averageTime"));
+        List<Organization> organizationList1 = organizationRepository.findAll(sort1).subList(0,3);
+        List<Organization> organizationList2 = organizationRepository.findAll(sort2).subList(0,3);
+        List<Organization> organizationList3 = organizationRepository.findAll(sort3).subList(0,3);
+        List<Organization> organizationList4 = organizationRepository.findAll(sort4).subList(0,3);
+        List<Organization> organizationList5 = organizationRepository.findAll(sort5).subList(0,3);
+        object.put("projectSum",getOrganization(organizationList1));
+        object.put("personCountSum",getOrganization(organizationList2));
+        object.put("personTimeSum",getOrganization(organizationList3));
+        object.put("totalTimeSum",getOrganization(organizationList4));
+        object.put("averageTime",getOrganization(organizationList5));
+        List<Sort.Order> orders = new ArrayList<>();
+        String sorts = "projectSum,personCountSum,personTimeSum,totalTimeSum,averageTime";
+        for(String sort : sorts.split(",") ){
+            orders.add(new Sort.Order(Sort.Direction.DESC, sort));
+        }
+        Sort sort6 = new Sort(orders);
+        List<Organization> organizationList6 = organizationRepository.findAll(sort6).subList(0,3);
+        object.put("ranking",getOrganization(organizationList6));
+        return RESCODE.SUCCESS.getJSONRES(object);
     }
 }

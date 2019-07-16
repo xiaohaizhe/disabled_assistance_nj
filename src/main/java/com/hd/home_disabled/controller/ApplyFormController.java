@@ -2,11 +2,9 @@ package com.hd.home_disabled.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.model.dto.ApplyForm;
-import com.hd.home_disabled.model.dto.User;
 import com.hd.home_disabled.service.ApplyFormService;
 import com.hd.home_disabled.utils.DealWithBindingResult;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,21 +54,33 @@ public class ApplyFormController {
         return applyFormService.getById(id);
     }
 
-    @ApiOperation(value = "查询机构下补贴申请人分页", notes = "分页")
+    @ApiOperation(value = "查询机构下补贴申请分页", notes = "分页")
     @RequestMapping(value = "/getPageByOrganization", method = RequestMethod.GET)
-    public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number,String sorts) {
-        return applyFormService.getPageByOrganizationId(organizationId, page, number,sorts);
+    public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number, String sorts) {
+        return applyFormService.getPageByOrganizationId(organizationId, page, number, sorts);
     }
 
     @ApiOperation(value = "机构下补贴申请导出", notes = "excel导出")
-    @RequestMapping(value = "/export_excel1",method = RequestMethod.GET)
+    @RequestMapping(value = "/export_excel1", method = RequestMethod.GET)
     public void exportExcel(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
-        applyFormService.exportExcel(organizationId,request,response);
+        applyFormService.exportExcel(organizationId, request, response);
+    }
+
+    @ApiOperation(value = "区补贴申请分页", notes = "分页")
+    @RequestMapping(value = "/getPageByDistrict", method = RequestMethod.GET)
+    public JSONObject getPageByDistrict(String district, Integer page, Integer number, String sorts) {
+        return applyFormService.getPageByDistrict(district, page, number, sorts);
     }
 
     @ApiOperation(value = "区补贴申请导出", notes = "excel导出")
-    @RequestMapping(value = "/export_excel2",method = RequestMethod.GET)
+    @RequestMapping(value = "/export_excel2", method = RequestMethod.GET)
     public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
-        applyFormService.exportExcel(district,request,response);
+        applyFormService.exportExcel(district, request, response);
+    }
+
+    @ApiOperation(value = "区补贴资金统计", notes = "列表")
+    @RequestMapping(value = "/getStatistic", method = RequestMethod.GET)
+    public JSONObject getStatistic(String district) {
+        return applyFormService.getStatistic(district);
     }
 }

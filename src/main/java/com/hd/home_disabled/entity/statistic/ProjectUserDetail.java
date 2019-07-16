@@ -8,6 +8,7 @@ import com.hd.home_disabled.entity.dictionary.TypeOfDisability;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,6 +26,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ProjectUserDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +37,7 @@ public class ProjectUserDetail {
     private User user;
     private Date start;     //打卡开始时间
     private Date end;       //打卡结束时间
+    private Float lengthOfService;  //本次服务时长
 
     //数据创建信息
     @OneToOne

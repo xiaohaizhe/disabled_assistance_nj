@@ -1,18 +1,26 @@
 package com.hd.home_disabled.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.Organization;
+import com.hd.home_disabled.entity.Project;
 import com.hd.home_disabled.entity.User;
 import com.hd.home_disabled.entity.dictionary.DisabilityDegree;
 import com.hd.home_disabled.entity.dictionary.NursingMode;
+import com.hd.home_disabled.entity.dictionary.ProjectType;
 import com.hd.home_disabled.entity.dictionary.TypeOfDisability;
+import com.hd.home_disabled.entity.statistic.ProjectTypeStatistic;
+import com.hd.home_disabled.entity.statistic.ProjectUser;
+import com.hd.home_disabled.entity.statistic.ProjectUserDetail;
 import com.hd.home_disabled.entity.statistic.UserBlockStatistic;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.*;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
+import io.swagger.models.auth.In;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +59,15 @@ public class UserService {
 
     private final UserblockStatisticRepository userblockStatisticRepository;
 
-    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserblockStatisticRepository userblockStatisticRepository) {
+    private final ProjectUserRepository projectUserRepository;
+
+    private final ProjectRepository projectRepository;
+
+    private final ProjectUserDetailRepository projectUserDetailRepository;
+
+    private final ProjectTypeStatisticRepository projectTypeStatisticRepository;
+
+    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserblockStatisticRepository userblockStatisticRepository, ProjectUserRepository projectUserRepository, ProjectRepository projectRepository, ProjectUserDetailRepository projectUserDetailRepository, ProjectTypeStatisticRepository projectTypeStatisticRepository) {
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
         this.typeOfDisabilityRepository = typeOfDisabilityRepository;
@@ -58,12 +75,16 @@ public class UserService {
         this.adminRepository = adminRepository;
         this.nursingModeRepository = nursingModeRepository;
         this.userblockStatisticRepository = userblockStatisticRepository;
+        this.projectUserRepository = projectUserRepository;
+        this.projectRepository = projectRepository;
+        this.projectUserDetailRepository = projectUserDetailRepository;
+        this.projectTypeStatisticRepository = projectTypeStatisticRepository;
     }
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     //model-->entity
-    User getEntity(com.hd.home_disabled.model.dto.User user) {
+    private User getEntity(com.hd.home_disabled.model.dto.User user) {
         User u = new User();
         if (user.getId() != null) u.setId(user.getId());
         Optional<Organization> organizationOptional = organizationRepository.findById(user.getOrganizationId());
@@ -104,7 +125,7 @@ public class UserService {
     }
 
     //entity-->model
-    com.hd.home_disabled.model.dto.User getModel(User user) {
+    private com.hd.home_disabled.model.dto.User getModel(User user) {
         com.hd.home_disabled.model.dto.User u = new com.hd.home_disabled.model.dto.User();
         u.setId(user.getId());
         u.setOrganizationId(user.getOrganization().getId());
@@ -397,7 +418,7 @@ public class UserService {
         return RESCODE.SUCCESS.getJSONRES(userList, userPage.getTotalPages(), userPage.getTotalElements());
     }
 
-    public List<JSONArray> getListsByOrganizationId(Integer organizationId) {
+    private List<JSONArray> getListsByOrganizationId(Integer organizationId) {
         List<JSONArray> jsonArray = new ArrayList<>();
         List<User> userList = userRepository.findByOrganizationAndStatus(organizationId, 1);
         for (User u :
@@ -588,7 +609,7 @@ public class UserService {
         return array;
     }
 
-    public List<JSONArray> getStatisticData() {
+    private List<JSONArray> getStatisticData() {
         List<JSONArray> jsonArray = new ArrayList<>();
         List<UserBlockStatistic> userBlockStatistics = userblockStatisticRepository.findAll();
         JSONArray array = getUserBlockStatistic(userBlockStatistics);
@@ -611,5 +632,172 @@ public class UserService {
                 "智力残疾", "精神残疾", "多重残疾","其他", "合计"};
         String fileName = "UserListStatistic"+"_" + sdf.format(new Date()) + ".xls";
         ExcelUtils.exportExcel(fileName, columnNames, getStatisticData(), request, response);
+    }
+
+    public JSONObject statisticData(){
+        //全区各类残疾人数量
+        JSONObject object1 = new JSONObject();
+        JSONObject object2 = new JSONObject();
+        List<TypeOfDisability> typeOfDisabilities = typeOfDisabilityRepository.findAll();
+        for (TypeOfDisability typeOfDisability : typeOfDisabilities){
+            object1.put(typeOfDisability.getName(),0);
+            object2.put(typeOfDisability.getName(),0);
+        }
+
+        List<User> userList = userRepository.findAll();
+        for (User user:userList){
+            String type = user.getTypeOfDisability().getName();
+            object1.merge(type, 1, (a, b) -> (int) a + (int)b);
+        }
+        //全区各类残疾人参与项目情况
+        List<ProjectUser> projectUserList = projectUserRepository.findAll();
+        for (ProjectUser projectUser:projectUserList){
+            String type = projectUser.getUser().getTypeOfDisability().getName();
+            object2.merge(type, 1, (a, b) -> (int) a + (int)b);
+        }
+        //百分比值
+        JSONObject object3 = new JSONObject();
+        for (String key:object1.keySet()){
+            if ((int)object2.get(key)==0){
+                object3.put(key,0);
+            }else {
+                float value = (float) Math.round(((float) (int)object2.get(key) / (int)object1.get(key)) * 100) / 100;
+                object3.put(key,value);
+            }
+        }
+        JSONObject object = new JSONObject();
+        object.put("data",object1);
+        object.put("analysis",object3);
+        return RESCODE.SUCCESS.getJSONRES(object);
+    }
+
+    /**
+     * 残疾人打卡项目
+     * @param projectId 项目id
+     * @param userId    残疾人id
+     * @param s    打卡开始时间
+     * @param e      打卡结束时间
+     * @return  结果
+     */
+    @Transactional
+    public JSONObject clockIn(Integer projectId, Long userId, String s,String e,Integer adminId){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start;
+        Date end;
+        try {
+            start = sdf.parse(s);
+            end = sdf.parse(e);
+        } catch (ParseException ex) {
+            return RESCODE.TIME_PARSE_FAILURE.getJSONRES();
+        }
+        Optional<Project> projectOptional = projectRepository.findByIdAndStatus(projectId,1);
+        if (projectOptional.isPresent()){
+            Optional<Admin> adminOptional =adminRepository.findById(adminId);
+            if (adminOptional.isPresent()){
+                Optional<User> userOptional = userRepository.findByStatusAndId(1,userId);
+                if (userOptional.isPresent()){
+                    //project-user-detail:残疾人打卡详情记录
+                    Project project = projectOptional.get();
+                    User user = userOptional.get();
+                    Admin admin = adminOptional.get();
+                    ProjectUserDetail projectUserDetail = new ProjectUserDetail();
+                    projectUserDetail.setProject(project);
+                    projectUserDetail.setUser(user);
+                    projectUserDetail.setAdmin(admin);
+                    if (end.getTime()<start.getTime()){
+                        return RESCODE.CLOCK_IN_WRONG.getJSONRES();
+                    }
+                    projectUserDetail.setStart(start);
+                    projectUserDetail.setEnd(end);
+                    Float value = (float) Math.round(((end.getTime()-start.getTime())/1000f/60f/60f) * 100) / 100;
+                    projectUserDetail.setLengthOfService(value);
+                    projectUserDetailRepository.save(projectUserDetail);
+                    //project-user:残疾人打卡总览记录
+                    boolean flag = false;//记录残疾人之前是否在项目中打卡
+                    List<ProjectUser> projectUsers = projectUserRepository.findByProjectAndUser(projectId,userId);
+                    if (projectUsers.size()>0){
+                        for (ProjectUser projectUser:projectUsers){
+                            flag = true;
+                            projectUser.setStart(start);
+                            projectUser.setEnd(end);
+                            projectUser.setServicesNum(projectUser.getServicesNum()+1);
+                            projectUser.setLengthOfService(value);
+                            projectUser.setTotalLengthOfService(projectUser.getTotalLengthOfService()+value);
+                            projectUserRepository.saveAndFlush(projectUser);
+                        }
+                    }else {
+                        ProjectUser projectUser = new ProjectUser();
+                        projectUser.setProject(project);
+                        projectUser.setUser(user);
+                        projectUser.setAdmin(admin);
+                        projectUser.setStart(start);
+                        projectUser.setEnd(end);
+                        projectUser.setServicesNum(1);
+                        projectUser.setLengthOfService(value);
+                        projectUser.setTotalLengthOfService(value);
+                        projectUserRepository.saveAndFlush(projectUser);
+                    }
+                    //project-type-statistic,服务项目类型数据统计
+                    Integer typeId = project.getProjectType().getId();
+                    Optional<ProjectTypeStatistic> projectTypeStatisticOptional =projectTypeStatisticRepository.findByProjectType(typeId);
+                    if (projectTypeStatisticOptional.isPresent()){
+                        ProjectTypeStatistic projectTypeStatistic = projectTypeStatisticOptional.get();
+                        if (!flag){
+                            projectTypeStatistic.setPersonCountSum(projectTypeStatistic.getPersonCountSum()+1);
+                        }
+                        projectTypeStatistic.setPersonTimeSum(projectTypeStatistic.getPersonTimeSum()+1);
+                        projectTypeStatistic.setTotalTimeSum(projectTypeStatistic.getTotalTimeSum()+value);
+                        float averageTime = (float) Math.round((projectTypeStatistic.getTotalTimeSum()/projectTypeStatistic.getPersonTimeSum()) * 100) / 100;
+                        projectTypeStatistic.setAverageTime(averageTime);
+                        projectTypeStatisticRepository.saveAndFlush(projectTypeStatistic);
+                    }else{
+                        ProjectTypeStatistic projectTypeStatistic = new ProjectTypeStatistic();
+                        ProjectType projectType = new ProjectType();
+                        projectType.setId(typeId);
+                        projectTypeStatistic.setProjectType(projectType);
+                        projectTypeStatistic.setAverageTime(value);
+                        projectTypeStatistic.setTotalTimeSum(value);
+                        projectTypeStatistic.setPersonCountSum(1L);
+                        projectTypeStatistic.setPersonTimeSum(1L);
+                        projectTypeStatisticRepository.saveAndFlush(projectTypeStatistic);
+                    }
+                    //project数据统计
+                    if (project.getPersonTimeSum()!=null)
+                        project.setPersonTimeSum(project.getPersonTimeSum()+1);
+                    else project.setPersonTimeSum(1);
+                    if (!flag){
+                        if (project.getPersonCountSum()!=null)
+                            project.setPersonCountSum(project.getPersonCountSum()+1);
+                        else project.setPersonCountSum(1);
+                    }
+                    if (project.getTotalTimeSum()!=null)
+                        project.setTotalTimeSum(project.getTotalTimeSum()+value);
+                    else project.setTotalTimeSum(value);
+                    float averageTime_project = (float) Math.round((project.getTotalTimeSum()/project.getPersonTimeSum()) * 100) / 100;
+                    project.setAverageTime(averageTime_project);
+                    projectRepository.saveAndFlush(project);
+                    //organization数据统计
+                    Organization organization = project.getOrganization();
+                    if (!flag){
+                        if (organization.getPersonCountSum()!=null)
+                            organization.setPersonCountSum(organization.getPersonCountSum()+1);
+                        else organization.setPersonCountSum(1);
+                    }
+                    if (organization.getPersonTimeSum()!=null)
+                        organization.setPersonTimeSum(organization.getPersonTimeSum()+1);
+                    else organization.setPersonTimeSum(1);
+                    if (organization.getTotalTimeSum()!=null)
+                        organization.setTotalTimeSum(organization.getTotalTimeSum()+value);
+                    else organization.setTotalTimeSum(value);
+                    float averageTime_organization = (float) Math.round((organization.getTotalTimeSum()/organization.getPersonTimeSum()) * 100) / 100;
+                    organization.setAverageTime(averageTime_organization);
+                    organizationRepository.saveAndFlush(organization);
+                    return RESCODE.SUCCESS.getJSONRES();
+                }
+                return RESCODE.USER_ID_NOT_EXIST.getJSONRES();
+            }
+            return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
+        }
+        return RESCODE.PROJECT_ID_NOT_EXIST.getJSONRES();
     }
 }

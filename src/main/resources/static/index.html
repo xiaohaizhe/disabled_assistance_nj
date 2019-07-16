@@ -69,8 +69,8 @@
 					<a href="javascript:;">服务项目</a>
 					<dl class="layui-nav-child">
 						<dd><a href="webApp/createServiceItemOrg.html">服务项目创建</a></dd>
-						<dd><a href="webApp/oldHelp.html">项目运行统计</a></dd>
-						<dd><a href="webApp/oldHelp.html">项目数据分析</a></dd>
+						<dd><a href="webApp/projectRunStatistics.html">项目运行统计</a></dd>
+						<dd><a href="webApp/projectInfo.html">项目数据分析</a></dd>
 					</dl>
 				</li>
 				<li class="layui-nav-item">
@@ -102,7 +102,7 @@
         //iframe 路由切换
         var menuUrl = sessionStorage.menuUrl;
         if(!menuUrl){
-            menuUrl="webApp/oldInfo.html"
+            menuUrl="webApp/disabledInfo.html"
         }
         $("#mainPage").attr("src", menuUrl);
         //添加选中下划线

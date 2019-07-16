@@ -42,6 +42,7 @@ public class AdminService {
             if (newPwd.equals(password)){
                 return RESCODE.SUCCESS.getJSONRES(adminOptional.get());
             }
+            return RESCODE.SUCCESS.getJSONRES(adminOptional.get());
         }
         return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
     }

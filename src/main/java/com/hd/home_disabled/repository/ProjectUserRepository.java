@@ -16,6 +16,9 @@ public interface ProjectUserRepository extends JpaRepository<ProjectUser, Intege
     @Query("select u from ProjectUser u where u.project.id = ?1")
     List<ProjectUser> findByProject(Integer projectId);
 
+    @Query("select u from ProjectUser u where u.project.id = ?1 and u.user.id = ?2")
+    List<ProjectUser> findByProjectAndUser(Integer projectId, Long userId);
+
     @QueryHints(value = {@QueryHint(name = HINT_COMMENT, value = "a query for pageable")})
     @Query("select u from ProjectUser u where u.project.id = ?1")
     Page<ProjectUser> findByProject(Integer projectId, Pageable page);
