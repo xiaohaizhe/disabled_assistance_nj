@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../css/init.css">
+	<link rel="stylesheet" href="../../css/search_form.css">
+	<style>
+		.container {
+			width: 100%;
+		}
+		.title {
+			font-size: 18px;
+			color: #888;
+			padding: 5px;
+		}
+		.main {
+			padding: 10px;
+			padding-top: 30px;
+			background-color: #eee;
+		}
+		.main .up,.main .down {
+			width: 100%;
+			height: 420px;
+			margin-bottom: 10px;
+
+		}
+		.up .left,.up .right {
+			width: 50%;
+			height: 100%;
+			background-color: #fff;
+		}
+		.up .right {
+			background-color: #ccc;
+		}
+		.sub_title {
+			line-height: 60px;
+			font-size: 18px;
+			padding-left: 30px;
+		}
+		#allArea,#today {
+			width: 100%;
+			height: 360px;
+		}
+		.down {
+			padding: 5px 15px;
+		}
+		.table_title {
+			padding:10px 0;
+			border-bottom: 1px solid #aaa;
+		}
+		.table_title>div {
+			float: left;
+			font-size: 20px;
+			text-align: center;
+		}
+		.table_title:after {
+			display: block;
+			content: "";
+			clear: both;
+		}
+		.xh {
+			width: 10%;
+		}
+		.xmmc {
+			width: 20%;
+		}
+		.wcxm {
+			width: 20%;
+		}
+		.xzxm {
+			width: 20%;
+		}
+		.wcjd {
+			width: 20%;
+		}
+		.table_content {
+			width: 100%;
+		}
+		.table_row {
+			width: 100%;
+		}
+		.table_row>div {
+			float: left;
+			font-size: 20px;
+			text-align: center;
+			padding: 10px 0;
+		}
+		.table_row:after {
+			display: block;
+			content: "";
+			clear: both;
+		}
+		.name {
+			font-weight: bold;
+			color: #7F7F7F;
+		}
+		.color_blue {
+			color: #7EC0EE;
+		}
+		.color_orange {
+			color: #EE9A49;
+		}
+		.wcjd {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.processBar {
+			width: 80%;
+			height: 30px;
+			background-color: #fff;
+			border:1px solid #87CEFF;
+			border-radius: 10px;
+			overflow: hidden;
+		}
+		.process {
+			width: 60%;
+			height: 28px;
+			background-color: #87CEFF;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="title">残疾人服务项目分析</div>
+	<div class="main">
+		<div class="up">
+			<div class="left">
+				<div class="sub_title">全区残疾人服务项目数比对</div>
+				<div id="allArea"></div>
+			</div>
+			<div class="right">
+				<div class="sub_title">今日残疾人服务项目数比对</div>
+				<div id="today"></div>
+			</div>
+		</div>
+		<div class="down">
+			<div class="table_title">
+				<div class="xh">序号</div>
+				<div class="xmmc">项目名称</div>
+				<div class="wcxm">全区完成项目(项)</div>
+				<div class="xzxm">今日新增项目(项)</div>
+				<div class="wcjd">完成进度</div>
+			</div>
+			<div class="table_content">
+				<div class="table_row">
+					<div class="xh">1</div>
+					<div class="xmmc name">日间照料</div>
+					<div class="wcxm color_blue">23</div>
+					<div class="xzxm color_orange">23</div>
+					<div class="wcjd">
+						<div class="processBar">
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+				<div class="table_row">
+					<div class="xh">2</div>
+					<div class="xmmc name">辅助性就业</div>
+					<div class="wcxm color_blue">15</div>
+					<div class="xzxm color_orange">15</div>
+					<div class="wcjd">
+						<div class="processBar">
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+				<div class="table_row">
+					<div class="xh">3</div>
+					<div class="xmmc name">康复服务</div>
+					<div class="wcxm color_blue">645</div>
+					<div class="xzxm color_orange">645</div>
+					<div class="wcjd">
+						<div class="processBar">
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+				<div class="table_row">
+					<div class="xh">4</div>
+					<div class="xmmc name">学习培训</div>
+					<div class="wcxm color_blue">23</div>
+					<div class="xzxm color_orange">23</div>
+					<div class="wcjd">
+						<div class="processBar">
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+				<div class="table_row">
+					<div class="xh">5</div>
+					<div class="xmmc name">志愿者服务</div>
+					<div class="wcxm color_blue">23</div>
+					<div class="xzxm color_orange">23</div>
+					<div class="wcjd">
+						<div class="processBar">
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+				<div class="table_row">
+					<div class="xh">6</div>
+					<div class="xmmc name">问题活动</div>
+					<div class="wcxm color_blue">23</div>
+					<div class="xzxm color_orange">23</div>
+					<div class="wcjd">
+						<div class="processBar">
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+				<div class="table_row">
+					<div class="xh">7</div>
+					<div class="xmmc name">其他</div>
+					<div class="wcxm color_blue">23</div>
+					<div class="xzxm color_orange">23</div>
+					<div class="wcjd">
+						<div class="processBar">
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../layui/layui.js"></script>
+<script src="../../js/echarts.common.min.js"></script>
+<!--<script src="../../js/heightClient.js"></script>-->
+
+
+<script>
+
+	var option = {
+		series: [
+			{
+				name:'访问来源',
+				type:'pie',
+				radius: ['50%', '70%'],
+				avoidLabelOverlap: false,
+				label: {
+					normal: {
+						show: true,
+//						position: 'center'
+					},
+					emphasis: {
+						show: true,
+						textStyle: {
+							fontSize: '30',
+							fontWeight: 'bold'
+						}
+					}
+				},
+				labelLine: {
+					normal: {
+						show: true
+					}
+				},
+				data:[
+					{value:335, name:'直接访问'},
+					{value:310, name:'邮件营销'},
+					{value:234, name:'联盟广告'},
+					{value:135, name:'视频广告'},
+					{value:1548, name:'搜索引擎'}
+				]
+			}
+		]
+	};
+
+	var myChart = echarts.init(document.getElementById('allArea'));
+	myChart.setOption(option);
+	var myChart = echarts.init(document.getElementById('today'));
+	myChart.setOption(option);
+</script>
+</body>
+</html>
