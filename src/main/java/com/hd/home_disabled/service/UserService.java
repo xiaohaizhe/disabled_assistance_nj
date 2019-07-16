@@ -84,7 +84,7 @@ public class UserService {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     //model-->entity
-    User getEntity(com.hd.home_disabled.model.dto.User user) {
+    private User getEntity(com.hd.home_disabled.model.dto.User user) {
         User u = new User();
         if (user.getId() != null) u.setId(user.getId());
         Optional<Organization> organizationOptional = organizationRepository.findById(user.getOrganizationId());
@@ -125,7 +125,7 @@ public class UserService {
     }
 
     //entity-->model
-    com.hd.home_disabled.model.dto.User getModel(User user) {
+    private com.hd.home_disabled.model.dto.User getModel(User user) {
         com.hd.home_disabled.model.dto.User u = new com.hd.home_disabled.model.dto.User();
         u.setId(user.getId());
         u.setOrganizationId(user.getOrganization().getId());
@@ -418,7 +418,7 @@ public class UserService {
         return RESCODE.SUCCESS.getJSONRES(userList, userPage.getTotalPages(), userPage.getTotalElements());
     }
 
-    public List<JSONArray> getListsByOrganizationId(Integer organizationId) {
+    private List<JSONArray> getListsByOrganizationId(Integer organizationId) {
         List<JSONArray> jsonArray = new ArrayList<>();
         List<User> userList = userRepository.findByOrganizationAndStatus(organizationId, 1);
         for (User u :
@@ -609,7 +609,7 @@ public class UserService {
         return array;
     }
 
-    public List<JSONArray> getStatisticData() {
+    private List<JSONArray> getStatisticData() {
         List<JSONArray> jsonArray = new ArrayList<>();
         List<UserBlockStatistic> userBlockStatistics = userblockStatisticRepository.findAll();
         JSONArray array = getUserBlockStatistic(userBlockStatistics);
@@ -675,11 +675,21 @@ public class UserService {
      * 残疾人打卡项目
      * @param projectId 项目id
      * @param userId    残疾人id
-     * @param start     打卡开始时间
-     * @param end       打卡结束时间
+     * @param s    打卡开始时间
+     * @param e      打卡结束时间
      * @return  结果
      */
-    public JSONObject clockIn(Integer projectId, Long userId, Date start,Date end,Integer adminId){
+    @Transactional
+    public JSONObject clockIn(Integer projectId, Long userId, String s,String e,Integer adminId){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start;
+        Date end;
+        try {
+            start = sdf.parse(s);
+            end = sdf.parse(e);
+        } catch (ParseException ex) {
+            return RESCODE.TIME_PARSE_FAILURE.getJSONRES();
+        }
         Optional<Project> projectOptional = projectRepository.findByIdAndStatus(projectId,1);
         if (projectOptional.isPresent()){
             Optional<Admin> adminOptional =adminRepository.findById(adminId);
@@ -687,12 +697,9 @@ public class UserService {
                 Optional<User> userOptional = userRepository.findByStatusAndId(1,userId);
                 if (userOptional.isPresent()){
                     //project-user-detail:残疾人打卡详情记录
-                    Project project = new Project();
-                    project.setId(projectId);
-                    User user = new User();
-                    user.setId(userId);
-                    Admin admin = new Admin();
-                    admin.setId(adminId);
+                    Project project = projectOptional.get();
+                    User user = userOptional.get();
+                    Admin admin = adminOptional.get();
                     ProjectUserDetail projectUserDetail = new ProjectUserDetail();
                     projectUserDetail.setProject(project);
                     projectUserDetail.setUser(user);

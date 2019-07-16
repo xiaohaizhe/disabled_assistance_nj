@@ -111,6 +111,12 @@ public class ProjectController {
         return projectService.overview1(district);
     }
 
+    @ApiOperation(value = "领导驾驶舱，全区数据", notes = "查询")
+    @RequestMapping(value = "/overview2", method = RequestMethod.GET)
+    public JSONObject overview2() {
+        return projectService.overview2();
+    }
+
     @ApiOperation(value = "领导驾驶舱，残疾人服务内容分析", notes = "查询")
     @RequestMapping(value = "/overview3", method = RequestMethod.GET)
     public JSONObject overview3() {

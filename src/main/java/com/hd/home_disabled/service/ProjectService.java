@@ -597,7 +597,7 @@ public class ProjectService {
         Integer personCountSum = 0; //服务人数总数
         Integer personTimeSum = 0;  //服务总人次
         Float totalTimeSum = 0f;   //服务总时长
-        Float averageTime = 0f;      //平均服务时长：总时长/总人次
+        float averageTime = 0f;      //平均服务时长：总时长/总人次
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         for (Organization organization : organizationList) {
             if (organization.getProjectSum() != null)
@@ -622,16 +622,14 @@ public class ProjectService {
 
     /**
      * 领导驾驶舱：全区数据2，当天数据
-     *
-     * @param district 区名
      * @return 结果
      */
-    public JSONObject overview2(String district) {
-        Integer projectSum = 0;    //机构服务项目总数
-        Integer personCountSum = 0; //服务人数总数
-        Integer personTimeSum = 0;  //服务总人次
-        Integer totalTimeSum = 0;   //服务总时长
-        Float averageTime = 0f;      //平均服务时长：总时长/总人次
+    public JSONObject overview2() {
+        int projectSum;    //当天服务项目总数
+        int personCountSum; //当天服务人数总数
+        int personTimeSum;  //当天服务总人次
+        Float totalTimeSum = 0f;   //当天服务总时长
+        float averageTime;      //平均服务时长：总时长/总人次
         Date date = new Date();
         try {
             date = sdf.parse(sdf.format(date));
@@ -639,10 +637,26 @@ public class ProjectService {
             return RESCODE.TIME_PARSE_FAILURE.getJSONRES(e.getMessage());
         }
         List<ProjectUserDetail> projectUserDetailList = projectUserDetailRepository.findByStartAfter(date);
+        logger.info("当天打卡详情：");
+        Set<Project> projects = new HashSet<>();
+        Set<User> users = new HashSet<>();
+        personTimeSum = projectUserDetailList.size();
         for (ProjectUserDetail projectUserDetail : projectUserDetailList) {
-
+            logger.info("详情id"+projectUserDetail.getId());
+            totalTimeSum += projectUserDetail.getLengthOfService();
+            projects.add(projectUserDetail.getProject());
+            users.add(projectUserDetail.getUser());
         }
-        return null;
+        projectSum = projects.size();
+        personCountSum = users.size();
+        averageTime = (float) Math.round(((float) totalTimeSum / personTimeSum) * 100) / 100;
+        JSONObject object = new JSONObject();
+        object.put("projectSum", projectSum);
+        object.put("personCountSum", personCountSum);
+        object.put("personTimeSum", personTimeSum);
+        object.put("totalTimeSum", totalTimeSum);
+        object.put("averageTime", averageTime);
+        return RESCODE.SUCCESS.getJSONRES(object);
     }
 
     public JSONObject getData(ProjectTypeStatistic projectTypeStatistic) {

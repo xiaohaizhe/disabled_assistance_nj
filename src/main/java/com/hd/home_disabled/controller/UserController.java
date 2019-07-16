@@ -87,7 +87,7 @@ public class UserController {
 
     @ApiOperation(value = "残疾人参与项目打卡", notes = "统计")
     @RequestMapping(value = "/clockIn",method = RequestMethod.GET)
-    public JSONObject clockIn(Integer projectId, Long userId, Date start,Date end,Integer adminId) {
+    public JSONObject clockIn(Integer projectId, Long userId, String start,String end,Integer adminId) {
         return  userService.clockIn(projectId,userId,start,end,adminId);
     }
 }
