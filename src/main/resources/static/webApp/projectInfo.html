@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>项目数据分析</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <style>
+        html {
+            background-color: #F4F6F9;
+        }
+        .grid-project {
+            padding: 10px;
+        }
+        .project-info {
+            height: 180px;
+            background-color: #fff;
+            padding: 10px;
+        }
+        .nav-title {
+            background-color: #fff;
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+            font-size: 18px;
+        }
+        .bold-text {
+            font-weight: bold;
+            font-size: 36px;
+            color: #f0ad4e;
+        }
+        .numbers {
+            padding: 10px;
+        }
+        .numbers > p{
+            font-size: 20px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .table-box {
+            background-color: #fff;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<div class="nav-title">项目数据分析</div>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div class="layui-col-sm3">
+            <div class="grid-project">
+                <div class="project-info">
+                    <div>
+                        <h2>项目总服务人数:</h2>
+                        <div class="numbers">
+                            <p><span class="bold-text">200</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm3">
+            <div class="grid-project">
+                <div class="project-info">
+                    <h2>总服务人次:</h2>
+                    <div class="numbers">
+                        <p><span class="bold-text">6000</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm3">
+            <div class="grid-project">
+                <div class="project-info">
+                    <h2>总服务时长:</h2>
+                    <div class="numbers">
+                        <p><span class="bold-text">12000分钟</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm3">
+            <div class="grid-project">
+                <div class="project-info">
+                    <h2>平均服务时长:</h2>
+                    <div class="numbers">
+                        <p><span class="bold-text">20分钟</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div class="table-box">
+            <p>项目名称</p>
+            <table id="demo" lay-filter="test"></table>
+        </div>
+    </div>
+</div>
+
+
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+
+        //第一个实例
+        table.render({
+            elem: '#demo'
+            ,height: 400
+            ,url: 'test.json' //数据接口
+            ,page: true //开启分页
+            ,cols: [[ //表头
+                {field: 'id', title: '残疾人姓名', width:200, sort: true, fixed: 'left'}
+                ,{field: 'username', title: '身份证号', width:180, sort: true}
+                ,{field: 'sex', title: '残疾证号', width:180, sort: true}
+                ,{field: 'city', title: '残疾类别', width:180, sort: true}
+                ,{field: 'sign', title: '残疾等级', width: 177, sort: true}
+                ,{field: 'experience', title: '本次刷卡签到时间', width: 280, sort: true}
+                ,{field: 'score', title: '本次刷卡离开时间', width: 280, sort: true}
+                ,{field: 'classify', title: '本次服务时长', width: 180, sort: true}
+                ,{field: 'wealth', title: '总服务次数', width: 135, sort: true}
+                ,{field: 'wealth', title: '总服务时长', width: 135, sort: true}
+                ,{field: 'wealth', title: '每次服务时间汇总', width: 180, sort: true}
+                ,{field: 'wealth', title: '补贴单价与价格', width: 135, sort: true}
+                ,{field: 'wealth', title: '提交人', width: 135, sort: true}
+                ,{field: 'wealth', title: '提交时间', width: 135, sort: true}
+                ,{field: 'wealth', title: '更新时间', width: 135, sort: true}
+                ,{field: 'wealth', title: '扩展字段', width: 135, sort: true}
+
+            ]]
+        });
+
+    });
+</script>
+
+</body>
+</html>
