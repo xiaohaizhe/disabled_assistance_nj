@@ -43,7 +43,7 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">地址</label>
 		<div class="layui-input-inline">
-			<select name="city" lay-verify="required">
+			<select id="province_sele" name="province" lay-verify="required">
 				<option value="">省/自治区/直辖市</option>
 				<option value="0">北京</option>
 				<option value="1">上海</option>
@@ -130,13 +130,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">符合条件的全托人数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="numOfEligibleDayNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">符合条件的日托人数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="numOfEligibleBoardingNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -145,13 +145,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">申请机构全托运营补贴资金总额</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="subsidyFundForBoardingNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">申请机构日托运营补贴资金总额</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="subsidyFundForDayNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -160,13 +160,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">上年当地资金投入情况</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="localInvestmentOfLastYear last_year" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">申请托养机构运营补贴资金总额合计</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="totalSubsidyFunds" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -202,6 +202,7 @@
 
 
 <script src="../../js/jquery.min.js"></script>
+<script src="../js/address.js"></script>
 <script src="../../layui/layui.js"></script>
 <!--<script src="../../js/heightClient.js"></script>-->
 

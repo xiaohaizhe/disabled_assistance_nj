@@ -186,6 +186,19 @@
 function gotoDetail() {
     window.open("projectInfo.html")
 }
+layui.use(['table', 'form'], function () {
+    var $ = layui.$;
+    $.ajax({
+        type: "POST",
+        url: "/api/project/get_project_statistic",
+        dataL:{id:"2"},
+        success: function (data) {
+            console.log(data);
+
+        }
+    })
+})
+
 </script>
 
 </body>
