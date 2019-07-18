@@ -2,6 +2,9 @@ package com.hd.home_disabled.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.model.RESCODE;
+import com.hd.home_disabled.service.ApplyFormService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +32,7 @@ public class FileController {
     public FileController(Environment environment) {
         this.environment = environment;
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
     /**
      * 上传文件
      * @param file 文件
@@ -53,7 +56,7 @@ public class FileController {
         if (file.isEmpty()) return RESCODE.FAILURE.getJSONRES("文件不存在");
         String fileName = file.getOriginalFilename();  // 文件名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
-        String filePath = "E://disabled_assistance_nj//" + type + "//"; // 上传后的路径,即本地磁盘
+        String filePath = System.getProperty("user.dir")+"\\picture"+"\\" + type + "\\"; // 上传后的路径,即本地磁盘
         fileName = UUID.randomUUID() + suffixName; // 新文件名
         File dest = new File(filePath + fileName);
         if (!dest.getParentFile().exists()) {
@@ -65,7 +68,7 @@ public class FileController {
             e.printStackTrace();
             return RESCODE.FAILURE.getJSONRES(e.getMessage());
         }
-        String filename = "/disabled_assistance_nj/" + type + "/" + fileName;//本地目录和生成的文件名拼接，这一段存入数据库
+        String filename = "/picture/" + type + "/" + fileName;//本地目录和生成的文件名拼接，这一段存入数据库
         String fileUrl = "http://"+getHostIp()+":"+getPort()+filename;
         JSONObject url = new JSONObject();
         url.put("fileUrl",fileUrl);
@@ -78,7 +81,7 @@ public class FileController {
         return environment.getProperty("local.server.port");
     }
     private String getHostIp(){
-        InetAddress localHost = null;
+        InetAddress localHost;
         try {
             localHost = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {

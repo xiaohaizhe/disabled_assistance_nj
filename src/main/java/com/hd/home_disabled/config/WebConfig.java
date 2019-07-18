@@ -40,7 +40,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-        registry.addResourceHandler("/disabled_assistance_nj/**").addResourceLocations("file:E:/disabled_assistance_nj/");
+        String filePath = System.getProperty("user.dir")+"/picture/";
+        registry.addResourceHandler("/picture/**").addResourceLocations("file:"+filePath);
         super.addResourceHandlers(registry);
     }
 
