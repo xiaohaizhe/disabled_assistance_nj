@@ -105,12 +105,12 @@
 		</div>
 		<div class="layui-input-inline">
 			<select id="city_sele" name="city" lay-verify="required">
-				<option value="">市</option>
+				<option value="南京市">南京市</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
 			<select id="cdistinct_sele" name="distinct" lay-verify="required">
-				<option value="">区/县</option>
+				<option value="雨花台区">区/县</option>
 			</select>
 		</div>
 
@@ -167,6 +167,7 @@
 				<button type="button" class="layui-btn" id="test1">
 					<i class="layui-icon">&#xe67c;</i>选择文件
 				</button>
+				<input id="yyzzhdjzs" type="text" name="certification" required  lay-verify="required" autocomplete="off" class="layui-input" style="display:none;">
 			</div>
 		</div>
 	</div>
@@ -178,6 +179,8 @@
 				<button type="button" class="layui-btn" id="test2">
 					<i class="layui-icon">&#xe67c;</i>选择文件
 				</button>
+				<input id="yhkhxkz" type="text" name="openBankAccountPermitCertificate" required  lay-verify="required" autocomplete="off" class="layui-input" style="display:none;">
+
 			</div>
 		</div>
 	</div>
@@ -189,6 +192,7 @@
 				<button type="button" class="layui-btn" id="test3">
 					<i class="layui-icon">&#xe67c;</i>选择文件
 				</button>
+				<input id="mtjslgnjy" type="text" name="facilitiesPictures" required  lay-verify="required" autocomplete="off" class="layui-input" style="display:none;">
 			</div>
 		</div>
 	</div>
@@ -200,6 +204,7 @@
 				<button type="button" class="layui-btn" id="test4">
 					<i class="layui-icon">&#xe67c;</i>选择文件
 				</button>
+				<input id="zzgzrymd" type="text" name="staffList" required  lay-verify="required" autocomplete="off" class="layui-input" style="display:none;">
 			</div>
 		</div>
 		<div class="layui-inline">
@@ -209,6 +214,7 @@
 				<button type="button" class="layui-btn" id="test5">
 					<i class="layui-icon">&#xe67c;</i>选择文件
 				</button>
+				<input id="glzd" type="text" name="managementSystem" required  lay-verify="required" autocomplete="off" class="layui-input" style="display:none;">
 			</div>
 		</div>
 	</div>
@@ -235,12 +241,16 @@
 		var form = layui.form;
 		var laydate = layui.laydate;
 		var upload = layui.upload;
-
+		var $ = layui.$;
 		//执行实例
 		var uploadInst = upload.render({
 			elem: '#test1' //绑定元素
-			,url: '/upload/' //上传接口
+			,url: '/api/file/upload' //上传接口
+			,data:{type:"certification"}
 			,done: function(res){
+			    if(res.data){
+					$("#yyzzhdjzs").val(res.data.fileUrl)
+				}
 				//上传完毕回调
 			}
 			,error: function(){
@@ -279,7 +289,6 @@
 
 			}
         }
-        debugger
         return html.join("");
     }
 

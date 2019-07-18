@@ -91,7 +91,7 @@
 </head>
 <body>
 <div class="header">
-	<div class="city">句容市"助老帮帮团"</div>
+	<div class="city">雨花台区助残大数据平台</div>
 	<!--<div class="project-name"></div>-->
 </div>
 
@@ -101,7 +101,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">用户名</label>
 			<div class="layui-input-block" style="padding-right:15px;">
-				<input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+				<input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
 				       class="layui-input">
 			</div>
 		</div>
@@ -142,14 +142,19 @@
         //监听提交
         form.on('submit(login)', function (data) {
             $.ajax({
-                type: "POST",
-                url: "/user/login",
+                type: "get",
+                url: "/api/admin/login",
                 data: data.field,
                 success: function (data) {
                     console.log(data);
-                    if (data.status == 200) {
-                        sessionStorage.setItem("menuUrl","webApp/oldInfo.html");
-                        window.location.href = "index.html"
+                    if (data.msg == "成功") {
+                        if(data.data.adminType.id == "1"){
+                            window.location.href = "managerINdex.html";
+                            sessionStorage.setItem("menuUrl","webApp/manager/cockpit.html");
+                        }else {
+                            window.location.href = "index.html";
+                            sessionStorage.setItem("menuUrl","webApp/disabledInfo.html");
+                        }
                     } else {
                         layer.alert(data.msg, {icon: 2})
                     }
