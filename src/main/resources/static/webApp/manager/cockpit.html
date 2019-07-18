@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../css/init.css">
+	<link rel="stylesheet" href="../../css/search_form.css">
+	<style>
+		.container {
+			width: 100%;
+		}
+		.title {
+			font-size: 18px;
+			color: #888;
+			padding: 5px;
+		}
+		.main {
+			padding: 10px;
+			background-color: #eee;
+		}
+		.count,.analysis,.chart {
+			width: 100%;
+			height: 300px;
+			margin-top: 20px;
+		}
+		.subTitle {
+			font-size: 16px;
+			color: #000;
+			background-color: #F0F8FF;
+			padding: 5px 10px;
+		}
+		.subContent {
+			width: 100%;
+			height: 270px;
+		}
+		.count .left {
+			width: 55%;
+			height: 100%;
+			padding-top: 30px;
+			position: relative;
+			background-color: #fff;
+		}
+		.count .right {
+			width: 45%;
+			height: 100%;
+			position: relative;
+		}
+		.leftTitle {
+			font-weight: bold;
+			position: absolute;
+			left: 10px;
+			top: 5px;
+			font-size: 16px;
+		}
+		.leftContent {
+			width: 100%;
+		}
+		.rightContent {
+			width: 100%;
+			height: 240px;
+		}
+		.leftContent:after {
+			content: "";
+			display: block;
+			clear: both;
+		}
+		.leftContent >div {
+			float: left;
+			width: 33%;
+			height: 120px;
+		}
+		.card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+		.card img {
+			width: 18px;
+			height: 18px;
+		}
+		.card .card_value {
+			color: #1E90FF;
+		}
+		.card_value>.value {
+			font-size: 30px;
+			font-weight: bold;
+		}
+		.chart .left {
+			width: 50%;
+			height: 100%;
+		}
+		.chart .right {
+			width: 50%;
+			height: 100%;
+			background-color: #AAAAAA;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 10px 30px;
+		}
+		.right .legend {
+			display: flex;
+			justify-content: space-between;
+			padding: 5px;
+			border-bottom: 1px solid #555555;
+			width: 100%;
+		}
+		.legend .color {
+			display: inline-block;
+			width: 30px;
+			line-height: 30px;
+			text-align: center;
+			font-size: 20px;
+			font-weight: bold;
+			color: #fff;
+			border-radius: 3px;
+		}
+		.color_one {
+			background-color: #97FFFF;
+		}
+		.color_two {
+			background-color: #6CA6CD;
+		}
+		.color_three {
+			background-color: #EEB422;
+		}
+		.color_four {
+			background-color: #FF83FA;
+		}
+		.color_five {
+			background-color: #9F79EE;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="title">领导驾驶舱</div>
+	<div class="main">
+		<div class="count">
+			<div class="subTitle">
+				<span> 数据统计</span>
+			</div>
+			<div class="subContent">
+				<div class="left">
+					<div class="leftTitle">全区服务数据统计</div>
+					<div class="leftContent">
+						<div class="card">
+							<div class="card_value"><span class="value">6571</span><span>人</span></div>
+							<div><img src="../../images/disabled/tubiao_11.png" alt="">全区总服务人数</div>
+						</div>
+						<div class="card">
+							<div class="card_value"><span class="value">71</span><span>次</span></div>
+							<div><img src="../../images/disabled/tubiao_13.png" alt="">全区总服务人次</div>
+						</div>
+						<div class="card">
+							<div class="card_value"><span class="value">21</span><span>项</span></div>
+							<div><img src="../../images/disabled/tubiao_15.png" alt="">全区服务项目总数</div>
+						</div>
+						<div class="card">
+							<div class="card_value"><span class="value">6571</span><span>小时</span></div>
+							<div><img src="../../images/disabled/tubiao_21.png" alt="">全区总服务时长</div>
+						</div>
+						<div class="card">
+							<div class="card_value"><span class="value">4534</span><span>小时</span></div>
+							<div><img src="../../images/disabled/tubiao_20.png" alt="">全区平均服务时长</div>
+						</div>
+					</div>
+				</div>
+				<div class="right">
+					<div class="leftTitle">全区最喜爱残疾人项目分析</div>
+					<div class="rightContent" id="favorite"></div>
+				</div>
+			</div>
+		</div>
+		<div class="analysis">
+			<div class="subTitle">残疾人服务内容分析</div>
+			<div class="subContent" id="analysis"></div>
+		</div>
+		<div class="chart">
+			<div class="subTitle">各区各级残疾人数据统计</div>
+			<div class="subContent">
+				<div class="left" id="disabledCount"></div>
+				<div class="right">
+					<div class="legend">
+						<div>
+							<span class="color color_one">1</span>
+							<span>言语残疾</span>
+						</div>
+						<div>54431人</div>
+					</div>
+					<div class="legend">
+						<div>
+							<span class="color color_two">2</span>
+							<span>言语残疾</span>
+						</div>
+						<div>54431人</div>
+					</div>
+					<div class="legend">
+						<div>
+							<span class="color color_three">3</span>
+							<span>言语残疾</span>
+						</div>
+						<div>54431人</div>
+					</div>
+					<div class="legend">
+						<div>
+							<span class="color color_four">4</span>
+							<span>言语残疾</span>
+						</div>
+						<div>54431人</div>
+					</div>
+					<div class="legend">
+						<div>
+							<span class="color color_five">5</span>
+							<span>言语残疾</span>
+						</div>
+						<div>54431人</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../layui/layui.js"></script>
+<script src="../../js/echarts.common.min.js"></script>
+<!--<script src="../../js/heightClient.js"></script>-->
+
+
+<script>
+	var option = {
+//		title: {
+//			text: '全区最喜爱残疾人项目分析'
+//		},
+		xAxis: {
+			type: 'value',
+			show: false,
+			splitLine: {show: false},
+			boundaryGap: [0, 0.01]
+		},
+		yAxis: {
+			type: 'category',
+			splitLine: {show: false},
+			axisLine: {
+				lineStyle:{
+					width: 0
+				}
+			},
+			axisTick: {
+				show: false
+			},
+			data: ['跳绳','踢毽子','打球','跑步','其他'].reverse()
+		},
+		series: [{
+			name: 'bar',
+			type: 'bar',
+			barWidth: 10,
+			itemStyle: {
+				normal: {
+					barBorderRadius: 5,
+					color: new echarts.graphic.LinearGradient(
+							0, 0, 0, 1,
+							[
+								{offset: 0, color: '#14c8d4'},
+								{offset: 1, color: '#43eec6'}
+							]
+					)
+				}
+			},
+			data: [61, 34, 11, 6, 1].reverse()
+		}]
+	};
+	var myChart = echarts.init(document.getElementById('favorite'));
+	myChart.setOption(option);
+
+	var option2 = {
+		legend: {
+			data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+		},
+		grid: {
+			left: '3%',
+			right: '4%',
+			bottom: '3%',
+			containLabel: true
+		},
+		xAxis: {
+			type: 'category',
+			boundaryGap: false,
+			data: ['周一','周二','周三','周四','周五','周六','周日']
+		},
+		yAxis: {
+			type: 'value'
+		},
+		series: [
+			{
+				name:'邮件营销',
+				type:'line',
+				stack: '总量',
+				data:[120, 132, 101, 134, 90, 230, 210]
+			},
+			{
+				name:'联盟广告',
+				type:'line',
+				stack: '总量',
+				data:[220, 182, 191, 234, 290, 330, 310]
+			},
+			{
+				name:'视频广告',
+				type:'line',
+				stack: '总量',
+				data:[150, 232, 201, 154, 190, 330, 410]
+			},
+			{
+				name:'直接访问',
+				type:'line',
+				stack: '总量',
+				data:[320, 332, 301, 334, 390, 330, 320]
+			},
+			{
+				name:'搜索引擎',
+				type:'line',
+				stack: '总量',
+				data:[820, 932, 901, 934, 1290, 1330, 1320]
+			}
+		]
+	};
+	var myChart = echarts.init(document.getElementById('analysis'));
+	myChart.setOption(option2);
+
+	var cellSize = [80, 80];
+	var option3 = {
+		series : [
+			{
+				name: '访问来源',
+				type: 'pie',
+				radius : '55%',
+				center: ['50%', '60%'],
+				data:[
+					{value:335, name:'直接访问'},
+					{value:310, name:'邮件营销'},
+					{value:234, name:'联盟广告'},
+					{value:135, name:'视频广告'},
+					{value:1548, name:'搜索引擎'}
+				],
+				itemStyle: {
+					emphasis: {
+						shadowBlur: 10,
+						shadowOffsetX: 0,
+						shadowColor: 'rgba(0, 0, 0, 0.5)'
+					}
+				}
+			}
+		]
+	};
+	var myChart = echarts.init(document.getElementById('disabledCount'));
+	myChart.setOption(option3);
+</script>
+</body>
+</html>

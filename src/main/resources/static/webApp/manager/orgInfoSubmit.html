@@ -29,13 +29,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构名称</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" placeholder="请输入机构名称" autocomplete="off" class="layui-input">
+				<input type="text" name="name" required  lay-verify="required" placeholder="请输入机构名称" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">登记注册时间</label>
 			<div class="layui-input-inline">
-				<input type="text" class="layui-input" id="registDate"  placeholder="请选择时间">
+				<input type="text" class="layui-input" id="registrationTime"  placeholder="请选择时间">
 			</div>
 		</div>
 	</div>
@@ -46,13 +46,13 @@
 			<label class="layui-form-label">注册证书编号
 			</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="registrationCertificateNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">注册部门</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="registrationDepartment" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -61,13 +61,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构性质</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="nature" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">房屋产权性质</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="natureOfHousingPropertyRightId" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -76,13 +76,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构面积</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="area" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">床位数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="bedNum" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -91,7 +91,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">庇护性劳动项目</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="asylumLaborProjects" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -99,33 +99,18 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">地址</label>
 		<div class="layui-input-inline">
-			<select name="city" lay-verify="required">
+			<select id="province_sele" name="province" lay-verify="required">
 				<option value="">省/自治区/直辖市</option>
-				<option value="0">北京</option>
-				<option value="1">上海</option>
-				<option value="2">广州</option>
-				<option value="3">深圳</option>
-				<option value="4">杭州</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select name="city" lay-verify="required">
+			<select id="city_sele" name="city" lay-verify="required">
 				<option value="">市</option>
-				<option value="0">北京</option>
-				<option value="1">上海</option>
-				<option value="2">广州</option>
-				<option value="3">深圳</option>
-				<option value="4">杭州</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select name="city" lay-verify="required">
+			<select id="cdistinct_sele" name="distinct" lay-verify="required">
 				<option value="">区/县</option>
-				<option value="0">北京</option>
-				<option value="1">上海</option>
-				<option value="2">广州</option>
-				<option value="3">深圳</option>
-				<option value="4">杭州</option>
 			</select>
 		</div>
 
@@ -133,7 +118,7 @@
 
 	<div class="layui-form-item" style="padding-left:50px;">
 		<div class="layui-input-inline">
-			<textarea name="desc" placeholder="详细地址" class="layui-textarea"></textarea>
+			<textarea name="detailedAddress" placeholder="详细地址" class="layui-textarea"></textarea>
 		</div>
 	</div>
 
@@ -141,13 +126,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">负责人</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="personInCharge" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">性别</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="gender" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -156,13 +141,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">出生年月</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="birthMonth" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">文化程度</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="education" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -170,7 +155,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="contactNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -240,6 +225,7 @@
 
 
 <script src="../../js/jquery.min.js"></script>
+<script src="../../js/address.js"></script>
 <script src="../../layui/layui.js"></script>
 <!--<script src="../../js/heightClient.js"></script>-->
 
@@ -284,6 +270,20 @@
 		});
 	});
 
+	function getAddress(type, name) {
+	    var html = [];
+        for (var i = 0; i < provinceList.length; i++) {
+            if(provinceList[i][type] && !name){
+                html.push('<option value="'+provinceList[i].name+'">'+provinceList[i].name+'</option>');
+			}else if(provinceList[i].name == name){
+
+			}
+        }
+        debugger
+        return html.join("");
+    }
+
+    $("#province_sele").html(getAddress("cityList", null));
 
 </script>
 </body>
