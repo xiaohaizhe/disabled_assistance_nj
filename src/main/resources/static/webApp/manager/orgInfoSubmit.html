@@ -67,7 +67,8 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">房屋产权性质</label>
 			<div class="layui-input-inline">
-				<input type="text" name="natureOfHousingPropertyRightId" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<select id="fwcqxz" name="natureOfHousingPropertyRightId" lay-verify="required">
+				</select>
 			</div>
 		</div>
 	</div>
@@ -243,6 +244,17 @@
 		var upload = layui.upload;
         var layer = layui.layer;
 		var $ = layui.$;
+
+        $.ajax({
+            type: "GET",
+            url: "/api/typeList",
+			data:{name:"housing"},
+            success: function (data) {
+                setHous(data);
+                form.render('select'); //刷新select选择框渲染
+            }
+        })
+
 		//执行实例
 		var uploadInst = upload.render({
 			elem: '#test1' //绑定元素
@@ -347,6 +359,15 @@
 			return false;
 		});
 	});
+
+	function setHous(data) {
+	    var array = data.data;
+        var html = [];
+        for (var i = 0; i < array.length; i++) {
+            html.push('<option value="'+array[i].id+'">'+array[i].name+'</option>');
+        }
+        $("#fwcqxz").html(html.join(""));
+    }
 
 	function getAddress(type, name) {
 	    var html = [];

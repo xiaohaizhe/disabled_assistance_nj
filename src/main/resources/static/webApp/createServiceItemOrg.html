@@ -75,7 +75,7 @@
 				<button type="button" class="layui-btn" id="test1">
 					<i class="layui-icon">&#xe67c;</i>选择文件
 				</button>
-
+				<input style="display: none;" id="xmtp" type="text" name="image" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -117,8 +117,13 @@
         var uploadInst = upload.render({
             elem: '#test1' //绑定元素
             ,url: '/api/file/upload' //上传接口
+            ,data:{type:"projectImage"}
             ,done: function(res){
                 //上传完毕回调
+                if(res.data){
+                    layer.msg('上传成功');
+                    $("#xmtp").val(res.data.fileUrl)
+                }
             }
             ,error: function(){
                 //请求异常回调
@@ -127,7 +132,19 @@
 
 		//监听提交
 		form.on('submit(formDemo)', function(data){
-			layer.msg(JSON.stringify(data.field));
+			// layer.msg(JSON.stringify(data.field));
+            var _data = data.field;
+            _data.adminId = 1;
+            _data.organizationId = 2;
+            $.ajax({
+                type: "POST",
+                url: "/api/project/saveAndFlush",
+                data: _data,
+                success: function (data) {
+                    console.log(data);
+
+                }
+            })
 			return false;
 		});
 	});

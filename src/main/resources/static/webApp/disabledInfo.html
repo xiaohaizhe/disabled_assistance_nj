@@ -445,13 +445,15 @@
     }
 
     $("#export").click(function () {
-        $.ajax({
-            type: "post",
-            url: "/old/export",
-            success: function () {
-
-            }
-        });
+        window.location = "/api/user/export_excel?organizationId=2";
+        // $.ajax({
+        //     type: "get",
+        //     url: "/api/user/export_excel",
+		// 	data:{organizationId:2},
+        //     success: function () {
+		//
+        //     }
+        // });
     })
 
     var addForm = $("#addPanel").html();
@@ -817,6 +819,10 @@
                     for(var key in _obj){
                         formData.append(key, _obj[key]);
                     }
+                    formData.append("adminId", "1");
+                    formData.append("organizationId", "2");
+                    _obj.adminId = 1;
+                    _obj.organizationId = 2;
                     $.ajax({
                         type: "POST",
                         url: "/api/user/saveAndFlush",
@@ -826,7 +832,7 @@
                         processData: false,
                         success: function (data) {
                             console.log(data);
-                            if (data.status == 200) {
+                            if (data.msg == "成功") {
                                 layer.close(addIndex);
                                 layer.alert(data.msg, {icon: 1})
                                 pageFuncs.reloadTable();

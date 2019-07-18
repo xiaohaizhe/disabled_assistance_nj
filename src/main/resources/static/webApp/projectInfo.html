@@ -116,25 +116,39 @@
         table.render({
             elem: '#demo'
             ,height: 400
-            ,url: 'test.json' //数据接口
+            ,url: '/api/project/getProjectAnalysis2?id=2&sorts=modifyTime' //数据接口
+            , request: {
+                pageName: 'page', //页码的参数名称，默认：page
+                limitName: 'number' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            }
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": 200, //解析接口状态
+//                    "msg": res.message, //解析提示文本
+//                     "count": res.total, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            }
             ,page: true //开启分页
             ,cols: [[ //表头
-                {field: 'id', title: '残疾人姓名', width:200, sort: true, fixed: 'left'}
-                ,{field: 'username', title: '身份证号', width:180, sort: true}
-                ,{field: 'sex', title: '残疾证号', width:180, sort: true}
-                ,{field: 'city', title: '残疾类别', width:180, sort: true}
-                ,{field: 'sign', title: '残疾等级', width: 177, sort: true}
-                ,{field: 'experience', title: '本次刷卡签到时间', width: 280, sort: true}
-                ,{field: 'score', title: '本次刷卡离开时间', width: 280, sort: true}
-                ,{field: 'classify', title: '本次服务时长', width: 180, sort: true}
-                ,{field: 'wealth', title: '总服务次数', width: 135, sort: true}
-                ,{field: 'wealth', title: '总服务时长', width: 135, sort: true}
+                {field: 'userName', title: '残疾人姓名', width:200, sort: true, fixed: 'left'}
+                ,{field: 'userIdNumber', title: '身份证号', width:180, sort: true}
+                ,{field: 'userDisabilityCertificateNumber', title: '残疾证号', width:180, sort: true}
+                ,{field: 'userTypeOfDisability', title: '残疾类别', width:180, sort: true}
+                ,{field: 'userDisabilityDegree', title: '残疾等级', width: 177, sort: true}
+                ,{field: 'start', title: '本次刷卡签到时间', width: 280, sort: true}
+                ,{field: 'end', title: '本次刷卡离开时间', width: 280, sort: true}
+                ,{field: 'lengthOfService', title: '本次服务时长', width: 180, sort: true}
+                ,{field: 'serviceSum', title: '总服务次数', width: 135, sort: true}
+                ,{field: 'totalLengthOfService', title: '总服务时长', width: 135, sort: true}
                 ,{field: 'wealth', title: '每次服务时间汇总', width: 180, sort: true}
-                ,{field: 'wealth', title: '补贴单价与价格', width: 135, sort: true}
-                ,{field: 'wealth', title: '提交人', width: 135, sort: true}
-                ,{field: 'wealth', title: '提交时间', width: 135, sort: true}
-                ,{field: 'wealth', title: '更新时间', width: 135, sort: true}
-                ,{field: 'wealth', title: '扩展字段', width: 135, sort: true}
+                ,{field: 'subsidies', title: '补贴单价与价格', width: 135, sort: true}
+                ,{field: 'adminName', title: '提交人', width: 135, sort: true}
+                ,{field: 'createTime', title: '提交时间', width: 135, sort: true}
+                ,{field: 'lastModifyTime', title: '更新时间', width: 135, sort: true}
 
             ]]
         });

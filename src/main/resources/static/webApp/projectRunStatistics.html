@@ -47,7 +47,7 @@
 <![endif]-->
 <div class="nav-title">项目运行统计</div>
 <div class="layui-fluid">
-    <div class="layui-row">
+    <div id="projects" class="layui-row">
         <div class="layui-col-sm3">
             <div class="grid-project">
                 <div class="project-info">
@@ -169,7 +169,7 @@
                         <div class="numbers">
                             <p>总服务人数: <span class="bold-text">200</span></p>
                             <p>总服务人次: <span class="bold-text">6000</span></p>
-                            <p>总服务时长: <span class="bold-text">12000</span> 分钟</p>
+                            <p>总服务时长: <span class="bold-text"></span> 分钟</p>
                             <p>平均服务时长: <span class="bold-text">20</span> 分钟</p>
                         </div>
                     </div>
@@ -189,15 +189,36 @@ function gotoDetail() {
 layui.use(['table', 'form'], function () {
     var $ = layui.$;
     $.ajax({
-        type: "POST",
-        url: "/api/project/get_project_statistic",
-        dataL:{id:"2"},
+        type: "GET",
+        url: "/api/project/getProjectStatistic",
+        data:{organizationId:"2"},
         success: function (data) {
             console.log(data);
-
+            setBox(data.data,$("#projects"))
         }
     })
 })
+
+
+    function setBox(array,dom) {
+        var html = [];
+        for (var i = 0; i < array.length; i++) {
+            html.push('<div class="layui-col-sm3">');
+            html.push(' <div class="grid-project">');
+            html.push(' <div class="project-info">');
+            html.push('<div>');
+            html.push('<button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>');
+            html.push('<h2>'+array[i].name+'</h2>');
+            html.push('<div class="numbers">');
+            html.push('<p>总服务人数: <span class="bold-text">'+array[i].personCountSum+'</span></p>');
+            html.push('<p>总服务人次: <span class="bold-text">'+array[i].personTimeSum+'</span></p>');
+            html.push('<p>总服务时长: <span class="bold-text">'+array[i].averageTime+'</span> 分钟</p>');
+            html.push('<p>平均服务时长: <span class="bold-text">'+array[i].totalTimeSum+'</span> 分钟</p>');
+            html.push('</div></div>');
+            html.push('</div></div></div>');
+        }
+        dom.html(html.join(""))
+    }
 
 </script>
 
