@@ -237,10 +237,11 @@
 
 
 <script>
-	layui.use(['laydate','form','upload'], function(){
+	layui.use(['laydate','form','upload','layer'], function(){
 		var form = layui.form;
 		var laydate = layui.laydate;
 		var upload = layui.upload;
+        var layer = layui.layer;
 		var $ = layui.$;
 		//执行实例
 		var uploadInst = upload.render({
@@ -249,6 +250,7 @@
 			,data:{type:"certification"}
 			,done: function(res){
 			    if(res.data){
+                    layer.msg('上传成功');
 					$("#yyzzhdjzs").val(res.data.fileUrl)
 				}
 				//上传完毕回调
@@ -260,8 +262,13 @@
 
 		var uploadInst2 = upload.render({
 			elem: '#test2' //绑定元素
-			,url: '/upload/' //上传接口
+            ,url: '/api/file/upload' //上传接口
+            ,data:{type:"openBankAccountPermitCertificate"}
 			,done: function(res){
+                if(res.data){
+                    layer.msg('上传成功');
+                    $("#yhkhxkz").val(res.data.fileUrl)
+                }
 				//上传完毕回调
 			}
 			,error: function(){
@@ -269,13 +276,74 @@
 			}
 		});
 
+        var uploadInst3 = upload.render({
+            elem: '#test3' //绑定元素
+            ,url: '/api/file/upload' //上传接口
+            ,data:{type:"facilitiesPictures"}
+            ,done: function(res){
+                if(res.data){
+                    layer.msg('上传成功');
+                    $("#mtjslgnjy").val(res.data.fileUrl)
+                }
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+
+        var uploadInst4 = upload.render({
+            elem: '#test4' //绑定元素
+            ,url: '/api/file/upload' //上传接口
+            ,data:{type:"staffList"}
+            ,done: function(res){
+                if(res.data){
+                    layer.msg('上传成功');
+                    $("#zzgzrymd").val(res.data.fileUrl)
+                }
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+
+        var uploadInst5 = upload.render({
+            elem: '#test5' //绑定元素
+            ,url: '/api/file/upload' //上传接口
+            ,data:{type:"managementSystem"}
+            ,done: function(res){
+                if(res.data){
+                    layer.msg('上传成功');
+                    $("#glzd").val(res.data.fileUrl)
+                }
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+
 		//执行一个laydate实例
 		laydate.render({
 			elem: '#registDate' //指定元素
 		});
 		//监听提交
 		form.on('submit(formDemo)', function(data){
-			layer.msg(JSON.stringify(data.field));
+			// layer.msg(JSON.stringify(data.field));
+			var _data = data.field;
+			_data.adminId = "0";
+            _data.block = "xxx";
+            _data.addressId = "ccccccc";
+            $.ajax({
+                type: "POST",
+                url: "/api/org/saveAndFlush",
+                data: _data,
+                success: function (data) {
+                    console.log(data);
+
+                }
+            })
 			return false;
 		});
 	});
