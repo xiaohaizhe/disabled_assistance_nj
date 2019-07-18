@@ -41,4 +41,5 @@ public class JasyptUtil {
         String result = standardPBEStringEncryptor.decrypt(var);
         return result;
     }
+
 }
