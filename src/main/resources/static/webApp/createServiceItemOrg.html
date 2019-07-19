@@ -141,6 +141,9 @@
                 type: "POST",
                 url: "/api/project/saveAndFlush",
                 data: JSON.stringify(_data),
+                dataType:"json",
+                contentType : 'application/json;charset=utf-8',
+                processData: false,
                 success: function (data) {
                     console.log(data);
 
