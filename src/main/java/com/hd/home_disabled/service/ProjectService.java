@@ -253,10 +253,10 @@ public class ProjectService {
         ProjectStatistic projectStatistic = new ProjectStatistic();
         projectStatistic.setId(project.getId());
         projectStatistic.setName(project.getName());
-        projectStatistic.setPersonCountSum(project.getPersonCountSum());
-        projectStatistic.setPersonTimeSum(project.getPersonTimeSum());
-        projectStatistic.setTotalTimeSum(project.getTotalTimeSum());
-        projectStatistic.setAverageTime(project.getAverageTime());
+        projectStatistic.setPersonCountSum(project.getPersonCountSum()==null?0:project.getPersonCountSum());
+        projectStatistic.setPersonTimeSum(project.getPersonTimeSum()==null?0:project.getPersonTimeSum());
+        projectStatistic.setTotalTimeSum(project.getTotalTimeSum()==null?0f:project.getTotalTimeSum());
+        projectStatistic.setAverageTime(project.getAverageTime()==null?0f:project.getAverageTime());
         return projectStatistic;
     }
 
