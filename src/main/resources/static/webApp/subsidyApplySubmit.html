@@ -24,18 +24,18 @@
 	</form>
 </div>
 
-<form class="layui-form" action="">
+<form class="layui-form"  lay-filter="org-form"  action="">
 	<div class="layui-form-item">
 		<div class="layui-inline">
 			<label class="layui-form-label">机构名称</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" placeholder="请输入机构名称" autocomplete="off" class="layui-input">
+				<input type="text" name="name" required  lay-verify="required" placeholder="请输入机构名称" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">登记注册时间</label>
 			<div class="layui-input-inline">
-				<input type="text" class="layui-input" id="registDate"  placeholder="请选择时间">
+				<input type="text"  name="registrationCertificateNumber" class="layui-input" id="registDate"  placeholder="请选择时间">
 			</div>
 		</div>
 	</div>
@@ -44,7 +44,7 @@
 		<label class="layui-form-label">地址</label>
 		<div class="layui-input-inline">
 			<select id="province_sele" name="province" lay-verify="required">
-				<option value="">省/自治区/直辖市</option>
+				<option value="江苏省">省/自治区/直辖市</option>
 				<option value="0">北京</option>
 				<option value="1">上海</option>
 				<option value="2">广州</option>
@@ -54,7 +54,7 @@
 		</div>
 		<div class="layui-input-inline">
 			<select name="city" lay-verify="required">
-				<option value="">市</option>
+				<option value="南京市">市</option>
 				<option value="0">北京</option>
 				<option value="1">上海</option>
 				<option value="2">广州</option>
@@ -63,8 +63,8 @@
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select name="city" lay-verify="required">
-				<option value="">区/县</option>
+			<select name="distinct" lay-verify="required">
+				<option value="雨花台">区/县</option>
 				<option value="0">北京</option>
 				<option value="1">上海</option>
 				<option value="2">广州</option>
@@ -77,7 +77,7 @@
 
 	<div class="layui-form-item" style="padding-left:50px;">
 		<div class="layui-input-inline">
-			<textarea name="desc" placeholder="详细地址" class="layui-textarea"></textarea>
+			<textarea name="detailedAddress" placeholder="详细地址" class="layui-textarea"></textarea>
 		</div>
 	</div>
 
@@ -85,13 +85,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">负责人</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="personInCharge" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="contactNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -100,13 +100,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构面积</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="area" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">床位数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="bedNum" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -115,13 +115,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构性质</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="nature" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">庇护性劳动项目</label>
 			<div class="layui-input-inline">
-				<input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="asylumLaborProjects" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -214,14 +214,32 @@
 		var form = layui.form;
 		var laydate = layui.laydate;
 		var upload = layui.upload;
+		var $ = layui.$;
+
+        $.ajax({
+            type: "GET",
+            url: "/api/org/getById",
+            data: {id:2},
+            success: function (data) {
+                // console.log(data);
+                form.render();
+                form.val("org-form", data.data);
+
+            }
+        })
 
 		//执行实例
 		var uploadInst = upload.render({
 			elem: '#test1' //绑定元素
-			,url: '/upload/' //上传接口
-			,done: function(res){
-				//上传完毕回调
-			}
+            ,url: '/api/file/upload' //上传接口
+            ,data:{type:"nursingList"}
+            ,done: function(res){
+                if(res.data){
+                    layer.msg('上传成功');
+                    $("#tycjrmd").val(res.data.fileUrl)
+                }
+                //上传完毕回调
+            }
 			,error: function(){
 				//请求异常回调
 			}
@@ -229,10 +247,15 @@
 
 		var uploadInst2 = upload.render({
 			elem: '#test2' //绑定元素
-			,url: '/upload/' //上传接口
-			,done: function(res){
-				//上传完毕回调
-			}
+            ,url: '/api/file/upload' //上传接口
+            ,data:{type:"lowIncomeCertificate"}
+            ,done: function(res){
+                if(res.data){
+                    layer.msg('上传成功');
+                    $("#dbhqtdsrzm").val(res.data.fileUrl)
+                }
+                //上传完毕回调
+            }
 			,error: function(){
 				//请求异常回调
 			}
@@ -244,7 +267,18 @@
 		});
 		//监听提交
 		form.on('submit(formDemo)', function(data){
-			layer.msg(JSON.stringify(data.field));
+            var _data = data.field;
+            _data.adminId = "1";
+            _data.organizationId = "2";
+            $.ajax({
+                type: "POST",
+                url: "/api/apply/saveAndFlush",
+                data: _data,
+                success: function (data) {
+                    console.log(data);
+
+                }
+            })
 			return false;
 		});
 	});

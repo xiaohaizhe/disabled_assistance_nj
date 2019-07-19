@@ -51,28 +51,43 @@
 		var table = layui.table;
 
 		table.render({
-			elem: '#mainTable',
-			url:'/demo/table/user/',
-			cols: [[
+			elem: '#mainTable'
+            ,url: '/api/project/getProjectAnalysis2?organizationId=2&sorts=modifyTime' //数据接口
+            , request: {
+				pageName: 'page', //页码的参数名称，默认：page
+				limitName: 'number' //每页数据量的参数名，默认：limit
+			}
+			, response: {
+				statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+			}
+    		, parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+				return {
+					"code": 200, //解析接口状态
+	//                    "msg": res.message, //解析提示文本
+	//                     "count": res.total, //解析数据长度
+					"data": res.data //解析数据列表
+				};
+			}
+			,cols: [[
 				{field:'id', width:120, title: '审核状态', sort: true},
-				{field:'username', width:120, title: '机构名称', sort: true},
-				{field:'sex', width:130, title: '等级注册时间', sort: true},
-				{field:'city', width:130, title: '地址'},
-				{field:'sign', title: '负责人', minWidth: 120, sort: true},
-				{field:'experience', width:80, title: '机构面积', sort: true},
-				{field:'score', width:80, title: '床位数', sort: true},
-				{field:'classify', width:80, title: '机构性质', sort: true},
-				{field:'wealth', width:135, title: '庇护性劳动项目', sort: true},
-				{field:'wealth', width:135, title: '符合条件的全托人数'},
-				{field:'wealth', width:135, title: '符合条件的日托人数', sort: true},
-				{field:'wealth', width:135, title: '申请机构全托运营补贴资金总额', sort: true},
-				{field:'wealth', width:135, title: '申请机构日托运营补贴资金总额', sort: true},
-				{field:'wealth', width:135, title: '上年当地资金投入情况', sort: true},
-				{field:'wealth', width:135, title: '申请托养机构运营补贴资金总额合计'},
-				{field:'wealth', width:135, title: '托养残疾人名单'},
-				{field:'wealth', width:135, title: '低保或其他低收入证明'},
-				{field:'wealth', width:135, title: '提交人'},
-				{field:'wealth', width:135, title: '提交时间', sort: true}
+				{field:'name', width:120, title: '机构名称', sort: true},
+				{field:'registrationCertificateNumber', width:130, title: '登记注册时间', sort: true},
+				{field:'detailedAddress', width:130, title: '地址'},
+				{field:'personInCharge', title: '负责人', minWidth: 120, sort: true},
+				{field:'area', width:80, title: '机构面积', sort: true},
+				{field:'bedNum', width:80, title: '床位数', sort: true},
+				{field:'nature', width:80, title: '机构性质', sort: true},
+				{field:'asylumLaborProjects', width:135, title: '庇护性劳动项目', sort: true},
+				{field:'numOfEligibleDayNursery', width:135, title: '符合条件的全托人数'},
+				{field:'numOfEligibleBoardingNursery', width:135, title: '符合条件的日托人数', sort: true},
+				{field:'subsidyFundForBoardingNursery', width:135, title: '申请机构全托运营补贴资金总额', sort: true},
+				{field:'subsidyFundForDayNursery', width:135, title: '申请机构日托运营补贴资金总额', sort: true},
+				{field:'localInvestmentOfLastYear last_year', width:135, title: '上年当地资金投入情况', sort: true},
+				{field:'totalSubsidyFunds', width:135, title: '申请托养机构运营补贴资金总额合计'},
+				{field:'nursingList', width:135, title: '托养残疾人名单'},
+				{field:'lowIncomeCertificate', width:135, title: '低保或其他低收入证明'},
+				{field:'adminName', width:135, title: '提交人'},
+				{field:'createTime', width:135, title: '提交时间', sort: true}
 			]]
 			,page: true
 		});
