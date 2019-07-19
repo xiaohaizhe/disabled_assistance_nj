@@ -2,6 +2,7 @@ package com.hd.home_disabled.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hd.home_disabled.controller.FileController;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.Organization;
 import com.hd.home_disabled.entity.dictionary.NatureOfHousingPropertyRight;
@@ -11,6 +12,8 @@ import com.hd.home_disabled.repository.NatureOfHousingPropertyRightRepository;
 import com.hd.home_disabled.repository.OrganizationRepository;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,14 +50,17 @@ public class OrganizationService {
         this.organizationRepository = organizationRepository;
         this.adminRepository = adminRepository;
     }
+
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 
     //model-->entity
-    Organization dealWithData(com.hd.home_disabled.model.dto.Organization organization) {
+    Organization dealWithData(com.hd.home_disabled.model.dto.Organization organization) throws ParseException {
+        logger.info("机构数据:model-->entity");
         Organization org = new Organization();
         if (organization.getId() != null) org.setId(organization.getId());
         org.setName(organization.getName());
-        org.setRegistrationTime(organization.getRegistrationTime());
+        org.setRegistrationTime(sdf.parse(organization.getRegistrationTime()));
         org.setRegistrationCertificateNumber(organization.getRegistrationCertificateNumber());
         org.setRegistrationDepartment(organization.getRegistrationDepartment());
         org.setNature(organization.getNature());
@@ -94,6 +101,7 @@ public class OrganizationService {
     //entity-->model
     com.hd.home_disabled.model.dto.Organization dealWithOrganization(Organization organization) {
         com.hd.home_disabled.model.dto.Organization org = new com.hd.home_disabled.model.dto.Organization();
+        logger.info("机构数据:entity-->model");
         org.setId(organization.getId());
         org.setAddressId(organization.getAddressId());
         org.setAdminName(organization.getAdmin().getName());
@@ -124,7 +132,7 @@ public class OrganizationService {
         org.setProvince(organization.getProvince());
         org.setRegistrationCertificateNumber(organization.getRegistrationCertificateNumber());
         org.setRegistrationDepartment(organization.getRegistrationDepartment());
-        org.setRegistrationTime(organization.getRegistrationTime());
+        org.setRegistrationTime(sdf.format(organization.getRegistrationTime()));
         org.setStaffList(organization.getStaffList());
         org.setTotalTimeSum(organization.getTotalTimeSum());
         org.setAdminName(organization.getAdmin().getName());
@@ -136,12 +144,19 @@ public class OrganizationService {
     /**
      * 添加或修改机构
      * 修改机构--数据中需要id
-     *
      * @param organization 机构
      * @return 添加或修改结果
      */
     public JSONObject saveAndFlush(com.hd.home_disabled.model.dto.Organization organization) {
-        Organization org = dealWithData(organization);
+        logger.info("添加或修改机构");
+        logger.info(organization.toString());
+        Organization org;
+        try {
+            org = dealWithData(organization);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return RESCODE.TIME_PARSE_FAILURE.getJSONRES();
+        }
         if (org.getAdmin() != null &&
                 org.getAdmin().getId() != null &&
                 adminRepository.existsById(org.getAdmin().getId())) {
@@ -164,11 +179,14 @@ public class OrganizationService {
      * @return 结果
      */
     public JSONObject delete(Integer id) {
+        logger.info("删除机构");
         Optional<Organization> optional = organizationRepository.findById(id);
         if (optional.isPresent()) {
             optional.get().setStatus(0);
+            logger.info("删除成功");
             return RESCODE.SUCCESS.getJSONRES();
         }
+        logger.info("删除失败");
         return RESCODE.ORGANIZATION_ID_NOT_EXIST.getJSONRES();
     }
 
@@ -179,11 +197,13 @@ public class OrganizationService {
      * @return 结果
      */
     public JSONObject getById(Integer id) {
+        logger.info("查询单个机构");
         Optional<Organization> optional = organizationRepository.findById(id);
         if (optional.isPresent()) {
             com.hd.home_disabled.model.dto.Organization organization = dealWithOrganization(optional.get());
             return RESCODE.SUCCESS.getJSONRES(organization);
         }
+        logger.info("机构不存在");
         return RESCODE.ORGANIZATION_ID_NOT_EXIST.getJSONRES();
     }
 
@@ -194,6 +214,7 @@ public class OrganizationService {
      * @return 结果
      */
     public JSONObject getListByDistrict(String district) {
+        logger.info("查询区机构");
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         List<com.hd.home_disabled.model.dto.Organization> organizationList1 = new ArrayList<>();
         for (Organization organization :
@@ -310,6 +331,7 @@ public class OrganizationService {
      * @return 结果
      */
     public JSONObject getPageByDistrict(String district, Integer page, Integer number, String sorts) {
+        logger.info("区:"+district+"机构分页");
         Pageable pageable = PageUtils.getPage(page, number, sorts);
         Page<Organization> organizationPage = organizationRepository.findByDistrictAndStatus(district, 1, pageable);
         List<Organization> organizationList = organizationPage.getContent();

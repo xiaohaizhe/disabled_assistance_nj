@@ -53,6 +53,7 @@ public class FileController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject uploadImages(@RequestParam(value = "file") MultipartFile file, String type) {
+        logger.info("上传"+type+"类型的文件");
         if (file.isEmpty()) return RESCODE.FAILURE.getJSONRES("文件不存在");
         String fileName = file.getOriginalFilename();  // 文件名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
@@ -72,14 +73,14 @@ public class FileController {
         String fileUrl = "http://"+getHostIp()+":"+getPort()+filename;
         JSONObject url = new JSONObject();
         url.put("fileUrl",fileUrl);
+        logger.info("文件上传成功，访问地址为："+fileUrl);
         return RESCODE.SUCCESS.getJSONRES(url);
     }
-
-
 
     private String getPort(){
         return environment.getProperty("local.server.port");
     }
+
     private String getHostIp(){
         InetAddress localHost;
         try {

@@ -39,8 +39,6 @@ public class ApplyFormService {
     private final ApplyFormRepository applyFormRepository;
     private final OrganizationRepository organizationRepository;
     private final AdminRepository adminRepository;
-
-
     public ApplyFormService(ApplyFormRepository applyFormRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository) {
         this.applyFormRepository = applyFormRepository;
         this.organizationRepository = organizationRepository;
@@ -57,6 +55,7 @@ public class ApplyFormService {
 
     //model-->entity
     ApplyForm getEntity(com.hd.home_disabled.model.dto.ApplyForm applyForm) {
+        logger.info("补贴申请表：model-->entity");
         ApplyForm applyForm1 = new ApplyForm();
         if (applyForm.getId() != null) applyForm1.setId(applyForm.getId());
         Organization organization = new Organization();
@@ -84,6 +83,7 @@ public class ApplyFormService {
 
     //entity-->model
     com.hd.home_disabled.model.dto.ApplyForm getModel(ApplyForm applyForm) {
+        logger.info("补贴申请表：entity-->model");
         com.hd.home_disabled.model.dto.ApplyForm applyForm1 = new com.hd.home_disabled.model.dto.ApplyForm();
         applyForm1.setId(applyForm.getId());
         applyForm1.setOrganizationName(applyForm.getOrganization().getName());
@@ -117,17 +117,21 @@ public class ApplyFormService {
      * @return 结果
      */
     public JSONObject saveAndFlush(com.hd.home_disabled.model.dto.ApplyForm applyForm) {
+        logger.info("新建或修改补贴申请");
         ApplyForm applyForm1 = getEntity(applyForm);
         if (applyForm1.getOrganization() != null &&
                 applyForm1.getOrganization().getId() != null &&
                 organizationRepository.findByIdAndStatus(applyForm1.getOrganization().getId(), 1).isPresent()) {
             Organization organization = organizationRepository.getOne(applyForm1.getOrganization().getId());
+            logger.info("补贴申请机构方为："+(organization.getName()==null?"":organization.getName()));
             if (applyForm1.getAdmin() != null &&
                     applyForm1.getAdmin().getId() != null &&
                     adminRepository.existsById(applyForm1.getAdmin().getId())) {
                 if (applyForm.getId() == null) {
+                    logger.info("新建补贴申请");
                     //申请id不存在，表示新建数据
                     if (organization.getApplySum() != null) {
+                        logger.info("机构下补贴申请总数加1");
                         organization.setApplySum(organization.getApplySum() + 1);
                     } else {
                         organization.setApplySum(1);
@@ -149,6 +153,7 @@ public class ApplyFormService {
      * @return 结果
      */
     public JSONObject delete(Integer id) {
+        logger.info("进入补贴申请删除");
         Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id, 1);
         if (applyFormOptional.isPresent()) {
             ApplyForm applyForm = applyFormOptional.get();
@@ -156,6 +161,7 @@ public class ApplyFormService {
             if (organizationOptional.isPresent()) {
                 Organization organization = organizationOptional.get();
                 if (organization.getApplySum() != null && organization.getApplySum() > 0) {
+                    logger.info("补贴申请所属机构："+(organization.getName()==null?"":organization.getName())+"补贴申请总数减1");
                     organization.setApplySum(organization.getApplySum() - 1);
                     organizationRepository.saveAndFlush(organization);
                 }
@@ -173,10 +179,12 @@ public class ApplyFormService {
      * @return 结果
      */
     public JSONObject getById(Integer id) {
+        logger.info("根据id:"+id+"查询补贴申请");
         Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id, 1);
         if (applyFormOptional.isPresent()) {
             return RESCODE.SUCCESS.getJSONRES(getModel(applyFormOptional.get()));
         }
+        logger.info("补贴申请不存在");
         return RESCODE.APPLY_FORM_NOT_EXIST.getJSONRES();
     }
 
@@ -190,6 +198,10 @@ public class ApplyFormService {
      * @return 结果
      */
     public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number, String sorts) {
+        logger.info("根据机构id:"+organizationId+"查询补贴申请，结果分页");
+        logger.info("按照"+sorts+"进行降序排序");
+        logger.info("每页显示："+number+"条数据");
+        logger.info("当前为第"+page+"页");
         Pageable pageable = PageUtils.getPage(page, number, sorts);
         Page<ApplyForm> applyFormPage = applyFormRepository.findByOrganizationAndStatus(organizationId, 1, pageable);
         List<com.hd.home_disabled.model.dto.ApplyForm> applyFormList = new ArrayList<>();
@@ -201,7 +213,10 @@ public class ApplyFormService {
     }
 
     public JSONObject getPageByDistrict(String district, Integer page, Integer number, String sorts) {
-        logger.info("根据区："+district+"查询补贴申请列表");
+        logger.info("根据区："+district+"查询补贴申请列表，结果分页");
+        logger.info("按照"+sorts+"进行降序排序");
+        logger.info("每页显示："+number+"条数据");
+        logger.info("当前为第"+page+"页");
         Pageable pageable = PageUtils.getPage(page, number, sorts);
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         List<Integer> ids = new ArrayList<>();
@@ -440,16 +455,20 @@ public class ApplyFormService {
     }
 
     public void exportExcel(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
+        logger.info("机构下全部补贴申请导出");
         Optional<Organization> organizationOptional = organizationRepository.findById(organizationId);
         String fileName = "ApplyFormList";
         if (organizationOptional.isPresent()) {
-            fileName += "_" + organizationOptional.get().getName();
+            String name = organizationOptional.get().getName()==null?"":organizationOptional.get().getName();
+            logger.info("机构为："+name);
+            fileName += "_" + name;
         }
         fileName += "_" + sdf.format(new Date()) + ".xls";
         ExcelUtils.exportExcel(fileName, columnNames, getListsByOrganizationId(organizationId), request, response);
     }
 
     public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
+        logger.info("区:"+district+"全部补贴申请导出");
         String fileName = "ApplyFormList_" + district + "_" + sdf.format(new Date()) + ".xls";
         ExcelUtils.exportExcel(fileName, columnNames, getListsByDistrict(district), request, response);
     }
@@ -461,6 +480,7 @@ public class ApplyFormService {
      * @return 结果
      */
     public JSONObject getStatistic(String district) {
+        logger.info("区:"+district+"残疾人之家托养服务补贴申请数量统计");
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         List<JSONObject> objectList = new ArrayList<>();
         for (Organization organization : organizationList) {

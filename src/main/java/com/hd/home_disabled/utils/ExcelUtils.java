@@ -35,6 +35,7 @@ public class ExcelUtils {
             "java.lang.Short", "java.lang.Integer", "java.lang.Long", "java.lang.Float", "java.lang.Double"};
 
     public static void exportExcel(String fileName,String[] columnNames, List<JSONArray> jsonArray, HttpServletRequest request, HttpServletResponse response) {
+        logger.info("Excel导出工具");
         //创建excel工作簿
         HSSFWorkbook workbook = new HSSFWorkbook();
         //创建第一页

@@ -1,7 +1,10 @@
 package com.hd.home_disabled.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hd.home_disabled.utils.validation.phonevalidation.PhoneValidation;
 import lombok.Data;
+import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,13 +18,14 @@ import java.util.Date;
  * @Version
  */
 @Data
+@ToString
 public class Organization {
     private Integer id;
 /*    @NotBlank(message = "机构名称不能为空")
     @NotNull(message = "机构名称不能为空")*/
     private String name;            //机构名称
 //    @NotNull(message = "登记注册时间不能为空")
-    private Date registrationTime;  //登记注册时间
+    private String registrationTime;  //登记注册时间
 /*    @NotBlank(message = "注册证书编号不能为空")
     @NotNull(message = "注册证书编号不能为空")*/
     private String registrationCertificateNumber;    //注册证书编号
@@ -109,6 +113,10 @@ public class Organization {
     @NotNull(message = "机构信息提交人不能为空")
     private Integer adminId;       //机构信息提交人
     private String adminName;       //机构信息提交人姓名
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;        //创建时间
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastModifyTime;        //最新修改时间
 }
