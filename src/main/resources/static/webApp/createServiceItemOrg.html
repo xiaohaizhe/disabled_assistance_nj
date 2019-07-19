@@ -134,6 +134,7 @@
 		form.on('submit(formDemo)', function(data){
 			// layer.msg(JSON.stringify(data.field));
             var _data = data.field;
+            delete _data['file'];
             _data.adminId = 1;
             _data.organizationId = 2;
             $.ajax({
