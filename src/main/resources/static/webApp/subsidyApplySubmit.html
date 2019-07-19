@@ -279,7 +279,7 @@
             $.ajax({
                 type: "POST",
                 url: "/api/apply/saveAndFlush",
-                data: _data,
+                data: JSON.stringify(_data),
                 success: function (data) {
                     console.log(data);
 
