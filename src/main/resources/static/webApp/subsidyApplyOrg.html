@@ -52,7 +52,7 @@
 
 		table.render({
 			elem: '#mainTable'
-            ,url: '/api/apply/getStatistic?organizationId=2&sorts=modifyTime' //数据接口
+            ,url: '/api/apply/getPageByOrganization?organizationId=2&sorts=modifyTime' //数据接口
             , request: {
 				pageName: 'page', //页码的参数名称，默认：page
 				limitName: 'number' //每页数据量的参数名，默认：limit
@@ -69,10 +69,10 @@
 				};
 			}
 			,cols: [[
-				{field:'id', width:120, title: '审核状态', sort: true},
-				{field:'name', width:120, title: '机构名称', sort: true},
-				{field:'registrationCertificateNumber', width:130, title: '登记注册时间', sort: true},
-				{field:'detailedAddress', width:130, title: '地址'},
+				{field:'status', width:120, title: '审核状态', sort: true},
+				{field:'adminName', width:120, title: '机构名称', sort: true},
+				{field:'registrationTime', width:130, title: '登记注册时间', sort: true},
+				{field:'address', width:130, title: '地址'},
 				{field:'personInCharge', title: '负责人', minWidth: 120, sort: true},
 				{field:'area', width:80, title: '机构面积', sort: true},
 				{field:'bedNum', width:80, title: '床位数', sort: true},
