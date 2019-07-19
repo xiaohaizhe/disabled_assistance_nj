@@ -133,7 +133,9 @@ public class UserService {
         u.setIdNumber(user.getIdNumber());
         u.setDisabilityCertificateNumber(user.getDisabilityCertificateNumber());
         u.setTypeOfDisabilityId(user.getTypeOfDisability().getId());
+        u.setTypeOfDisability(user.getTypeOfDisability().getName());
         u.setDisabilityDegreeId(user.getDisabilityDegree().getId());
+        u.setDisabilityDegree(user.getDisabilityDegree().getType());
         u.setAddress(user.getAddress());
         u.setContactNumber(user.getContactNumber());
         u.setNursingModeId(user.getNursingMode().getId());

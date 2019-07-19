@@ -33,8 +33,10 @@ public class User {
     private String disabilityCertificateNumber; //残疾证号码
     @NotNull(message = "残疾类别不能为空")
     private Integer typeOfDisabilityId;  //残疾类别
+    private String typeOfDisability;    //残疾类别
     @NotNull(message = "残疾程度不能为空")
     private Integer disabilityDegreeId;  //残疾程度
+    private String disabilityDegree;    //残疾程度
     private String block;               //残疾人所属机构街道
 //    @NotNull(message = "家庭住址不能为空")
 //    @NotBlank(message = "家庭住址不能为空")
