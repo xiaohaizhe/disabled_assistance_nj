@@ -26,7 +26,7 @@
 		</div>
 		<div class="layui-form-item operate-bar" style="margin:0;padding:0 10px;">
 			<div class="layui-input-block">
-				<span id="export" style="margin-right: 10px;"><i
+				<span onclick="exportfile()" id="export" style="margin-right: 10px;"><i
 						class="layui-icon layui-icon-file"></i>导出Excel
 				</span>
 				<span><i
@@ -53,21 +53,40 @@
 
 		table.render({
 			elem: '#mainTable',
-			url:'/demo/table/user/',
+			url:'/api/user/statistic',
+            request: {
+                pageName: 'page', //页码的参数名称，默认：page
+                limitName: 'number' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            },
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": 200, //解析接口状态
+//                    "msg": res.message, //解析提示文本
+                    "count": res.pageSize, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            },
 			cols: [[
-				{field:'id', width:"11%", title: '街道名称', sort: true},
-				{field:'username', width:"11%", title: '视力残疾', sort: true},
-				{field:'sex', width:"11%", title: '听力残疾', sort: true},
-				{field:'city', width:"11%", title: '言语残疾', sort: true},
-				{field:'sign', title: '肢体残疾', minWidth: "11%", sort: true},
-				{field:'experience', width:"11%", title: '智力残疾', sort: true},
-				{field:'score', width:"11%", title: '精神残疾', sort: true},
-				{field:'classify', width:"11%", title: '多重残疾', sort: true},
-				{field:'wealth', width:"11%", title: '合计', sort: true}
+				{field:'block', width:"20%", title: '街道名称', sort: true},
+				{field:'visualDisability', width:"10%", title: '视力残疾', sort: true},
+				{field:'hearingDisability', width:"10%", title: '听力残疾', sort: true},
+				{field:'speechDisability', width:"10%", title: '言语残疾', sort: true},
+				{field:'physicalDisability', title: '肢体残疾', width:"10%", sort: true},
+				{field:'intellectualDisability', width:"10%", title: '智力残疾', sort: true},
+				{field:'mentalDisability', width:"10%", title: '精神残疾', sort: true},
+				{field:'multipleDisability', width:"10%", title: '多重残疾', sort: true},
+				{field:'sum', width:"10%", title: '合计', sort: true}
 			]]
 			,page: true
 		});
 	});
+
+	function exportfile() {
+		window.location = "/api/user/statisticExcel";
+    }
 
 
 

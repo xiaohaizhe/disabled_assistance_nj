@@ -47,111 +47,8 @@
 <![endif]-->
 <div class="nav-title">全区残疾人之家托养服务补贴资金统计</div>
 <div class="layui-fluid">
-    <div class="layui-row">
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm3">
-            <div class="grid-project">
-                <div class="project-info">
-                    <div>
-                        <button onclick="gotoDetail()" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>
-                        <h2>全区残疾人之家托养服务补贴资金统计</h2>
-                        <div class="numbers">
-                            <p>残疾人托养服务补贴资金申请记录: <span class="bold-text">3</span> 条</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div id="boxs" class="layui-row">
+
 
     </div>
 </div>
@@ -160,8 +57,41 @@
 <script src="../layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script>
-    function gotoDetail() {
-        window.open("disabledFundInfo.html")
+    layui.use('table', function(){
+       var $ = layui.$;
+
+        $.ajax({
+            type: "GET",
+            url: "/api/apply/getStatistic?district=雨花台区",
+            success: function (data) {
+                if(data.data){
+                    $("#boxs").html(setBox(data.data));
+                }
+            }
+        })
+
+    });
+
+    function setBox(array) {
+        var html = [];
+        for (var i = 0; i < array.length; i++) {
+            html.push('<div class="layui-col-sm3">');
+            html.push('<div class="grid-project">');
+            html.push('<div class="project-info">');
+            html.push('<div>');
+            html.push('<button onclick="gotoDetail('+array[i].id+')" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>');
+            html.push('<h2>'+array[i].name+'</h2>');
+            html.push('<div class="numbers">');
+            html.push('<p>残疾人托养服务补贴资金申请记录: <span class="bold-text">'+array[i].applySum+'</span> 条</p>');
+            html.push('</div> </div> </div> </div> </div>');
+        }
+
+        return html.join("")
+
+    }
+
+    function gotoDetail(id) {
+        window.open("disabledFundInfo.html?organizationId="+id)
     }
 </script>
 

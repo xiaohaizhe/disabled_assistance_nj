@@ -26,7 +26,7 @@
 		</div>
 		<div class="layui-form-item operate-bar" style="margin:0;padding:0 10px;">
 			<div class="layui-input-block">
-				<span id="export" style="margin-right: 10px;"><i
+				<span onclick="exportfile()" id="export" style="margin-right: 10px;"><i
 						class="layui-icon layui-icon-file"></i>导出Excel
 				</span>
 				<span><i
@@ -53,25 +53,44 @@
 
 		table.render({
 			elem: '#mainTable',
-			url:'/demo/table/user/',
+			url:'/api/project/getPagesByDistrict?district=雨花台区&sorts=modifyTime',
+            request: {
+                pageName: 'page', //页码的参数名称，默认：page
+                limitName: 'number' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            },
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": 200, //解析接口状态
+//                    "msg": res.message, //解析提示文本
+                    "count": res.pageSize, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            },
 			cols: [[
-				{field:'id', width:"8%", title: '残疾人服务内容大类', sort: true},
-				{field:'username', width:"8%", title: '创建项目名称', sort: true},
-				{field:'sex', width:"8%", title: '所属机构名称', sort: true},
-				{field:'city', width:"8%", title: '项目负责人', sort: true},
-				{field:'sign', title: '项目简介', minWidth: "8%", sort: true},
-				{field:'experience', width:"8%", title: '总服务人数', sort: true},
-				{field:'score', width:"8%", title: '总服务人次', sort: true},
-				{field:'classify', width:"8%", title: '总服务时长', sort: true},
-				{field:'classify', width:"8%", title: '平均服务时长', sort: true},
-				{field:'classify', width:"8%", title: '提交人', sort: true},
-				{field:'classify', width:"8%", title: '提交时间', sort: true},
-				{field:'wealth', width:"8%", title: '更新时间', sort: true}
+				{field:'projectType', width:160, title: '残疾人服务内容大类', sort: true},
+				{field:'name', width:160, title: '创建项目名称', sort: true},
+				{field:'organizationName', width:200, title: '所属机构名称', sort: true},
+				{field:'leader', width:160, title: '项目负责人', sort: true},
+				{field:'description', title: '项目简介', unresize: true, sort: true},
+				{field:'personTimeSum', width:200, title: '总服务人数', sort: true},
+				{field:'personCountSum', width:200, title: '总服务人次', sort: true},
+				{field:'totalTimeSum', width:200, title: '总服务时长', sort: true},
+				{field:'averageTime', width:200, title: '平均服务时长', sort: true},
+				{field:'adminName', width:100, title: '提交人', sort: true},
+				{field:'createTime', width:160, title: '提交时间', sort: true},
+				{field:'lastModifyTime', width:160, title: '更新时间', sort: true}
 			]]
 			,page: true
 		});
 	});
 
+
+    function exportfile() {
+        window.location = "/api/project/projectListExport?district=雨花台区";
+    }
 
 
 </script>
