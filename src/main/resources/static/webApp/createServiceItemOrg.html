@@ -24,7 +24,7 @@
 	</form>
 </div>
 
-<form class="layui-form" action="">
+<form class="layui-form" lay-filter="org-form" action="">
 	<div class="layui-form-item">
 		<label class="layui-form-label">残疾人服务内容大类</label>
 		<div class="layui-input-inline">
@@ -84,13 +84,13 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目开始时间</label>
 		<div class="layui-input-inline">
-			<input type="text" name="startTime" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			<input id="startime"  placeholder="yyyy-MM-dd" type="text" name="startTime" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目结束时间</label>
 		<div class="layui-input-inline">
-			<input type="text" name="endTime" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			<input id="endtime"  placeholder="yyyy-MM-dd" type="text" name="endTime" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 
@@ -109,9 +109,21 @@
 
 
 <script>
-	layui.use(['laydate','form','upload'], function(){
+	layui.use(['laydate','layer','form','upload'], function(){
 		var form = layui.form;
         var upload = layui.upload;
+        var laydate = layui.laydate;
+        var layer = layui.layer;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#startime' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#endtime' //指定元素
+        });
 
         //执行实例
         var uploadInst = upload.render({
@@ -130,6 +142,18 @@
             }
         });
 
+        $.ajax({
+            type: "GET",
+            url: "/api/org/getById",
+            data: {id:2},
+            success: function (data) {
+                // console.log(data);
+                form.render();
+                form.val("org-form", data.data);
+
+            }
+        })
+
 		//监听提交
 		form.on('submit(formDemo)', function(data){
 			// layer.msg(JSON.stringify(data.field));
@@ -145,8 +169,10 @@
                 contentType : 'application/json;charset=utf-8',
                 processData: false,
                 success: function (data) {
-                    console.log(data);
-
+                    layer.alert(data.msg, {icon: 1});
+                },
+				error:function () {
+                    layer.msg('提交失败');
                 }
             })
 			return false;

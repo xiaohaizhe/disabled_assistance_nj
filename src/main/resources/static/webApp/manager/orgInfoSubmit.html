@@ -35,7 +35,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">登记注册时间</label>
 			<div class="layui-input-inline">
-				<input type="text" name="registrationTime" class="layui-input"  placeholder="请选择时间">
+				<input type="text" name="registrationTime" class="layui-input" id="registDate"  autocomplete="off"  placeholder="yyyy-MM-dd" placeholder="请选择时间">
 			</div>
 		</div>
 	</div>
@@ -100,23 +100,21 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">地址</label>
 		<div class="layui-input-inline">
-			<select id="province_sele" name="province" lay-verify="required">
+			<select lay-filter="province_sele" id="province_sele" name="province" lay-verify="required">
 				<option value="">省/自治区/直辖市</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select id="city_sele" name="city" lay-verify="required">
-				<option value="南京市">南京市</option>
+			<select lay-filter="city_sele" id="city_sele" name="city" lay-verify="required">
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select id="cdistinct_sele" name="distinct" lay-verify="required">
+			<select lay-filter="cdistinct_sele" id="cdistinct_sele" name="distinct" lay-verify="required">
 				<option value="雨花台区">区/县</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select id="" name="block" lay-verify="required">
-				<option value="xx街道">街道</option>
+			<select id="block_sele" name="block" lay-verify="required">
 			</select>
 		</div>
 
@@ -147,7 +145,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">出生年月</label>
 			<div class="layui-input-inline">
-				<input type="text" name="birthMonth" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="birthMonth" required  lay-verify="required" autocomplete="off" class="layui-input" id="birthDate" placeholder="yyyy-MM-dd">
 			</div>
 		</div>
 		<div class="layui-inline">
@@ -161,7 +159,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-inline">
-				<input type="text" name="contactNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="number" name="contactNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -249,6 +247,25 @@
 		var upload = layui.upload;
         var layer = layui.layer;
 		var $ = layui.$;
+
+        getAddress("cityList");
+        getAddress("city","110000");
+        getAddress("distinct","110101",form);
+        form.render('select');
+
+        form.on('select(province_sele)', function(data){
+            getAddress("city",data.value);
+            form.render('select');
+        });
+
+        form.on('select(city_sele)', function(data){
+            getAddress("distinct",data.value);
+            form.render('select');
+        });
+
+        form.on('select(cdistinct_sele)', function(data){
+            getAddress("distinct",data.value,form);
+        });
 
         $.ajax({
             type: "GET",
@@ -345,15 +362,21 @@
 		laydate.render({
 			elem: '#registDate' //指定元素
 		});
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#birthDate' //指定元素
+        });
 		//监听提交
 		form.on('submit(formDemo)', function(data){
 			// layer.msg(JSON.stringify(data.field));
 			var _data = data.field;
             delete _data['file'];
 			_data.adminId = "1";
-            _data.block = "xxx";
-            _data.addressId = "ccccccc";
-            _data.addressId = "4324";
+            _data.addressId = "140930";
+            if(!_data.city){
+                _data.city = _data.province
+			}
 
             $.ajax({
                 type: "POST",
@@ -363,8 +386,10 @@
                 contentType : 'application/json;charset=utf-8',
                 processData: false,
                 success: function (data) {
-                    console.log(data);
-
+                    layer.alert(data.msg, {icon: 1});
+                },
+				error:function () {
+                    layer.msg('提交失败');
                 }
             })
 			return false;
@@ -380,19 +405,63 @@
         $("#fwcqxz").html(html.join(""));
     }
 
-	function getAddress(type, name) {
+	function getAddress(type,value,form) {
 	    var html = [];
-        for (var i = 0; i < provinceList.length; i++) {
-            if(provinceList[i][type] && !name){
-                html.push('<option value="'+provinceList[i].name+'">'+provinceList[i].name+'</option>');
-			}else if(provinceList[i].name == name){
+	    var iszxs = false;
+	    var zxs = [];
 
+	    for(var key in provinceList){
+	        if(type == "cityList" && key.indexOf("0000") !== -1){
+                html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+            }else if(type == "city"
+				&& key.indexOf("0000") == -1
+				&& key.slice(0,3) == value.slice(0,3)
+			){
+	            if(key.slice(-2) == "00"){
+	                iszxs = true;
+                    html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+                }else {
+                    zxs.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+                }
+			}else if(type == "distinct"
+				&& key.indexOf("0000") == -1
+                && value.slice(-2) == "00"
+                && key.slice(0,4) == value.slice(0,4)
+			){
+                if(key.slice(-2) !== "00"){
+                    html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+                }
 			}
+		}
+
+		if(html.length == 0 && zxs.length == 0){
+            $.ajax({
+                url: 'http://passer-by.com/data_location/town/' + value + '.json',
+                dataType: 'json',
+                success: function(town) {
+                    for(var key in town){
+                        html.push('<option value="'+key+'">'+town[key]+'</option>');
+					}
+                    $("#block_sele").html(html.join(""))
+                    form.render('select');
+                }
+            });
+		}
+
+        // return html.join("");
+		if(!value){
+            $("#province_sele").html(html.join(""))
+		}else if(iszxs && type == "city"){
+            $("#city_sele").html(html.join(""));
+        }else if(type == "city" ){
+            $("#cdistinct_sele").html(zxs.join(""));
+        }else if(type == "distinct" && html.length !== 0){
+            $("#cdistinct_sele").html(html.join(""));
         }
-        return html.join("");
     }
 
-    $("#province_sele").html(getAddress("cityList", null));
+
+
 
 </script>
 </body>

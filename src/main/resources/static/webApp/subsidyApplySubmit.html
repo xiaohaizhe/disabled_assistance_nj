@@ -43,38 +43,21 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">地址</label>
 		<div class="layui-input-inline">
-			<select id="province_sele" name="province" lay-verify="required">
-				<option value="江苏省">省/自治区/直辖市</option>
-				<option value="0">北京</option>
-				<option value="1">上海</option>
-				<option value="2">广州</option>
-				<option value="3">深圳</option>
-				<option value="4">杭州</option>
+			<select lay-filter="province_sele" id="province_sele" name="province" lay-verify="required">
+				<option value="">省/自治区/直辖市</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select name="city" lay-verify="required">
-				<option value="南京市">市</option>
-				<option value="0">北京</option>
-				<option value="1">上海</option>
-				<option value="2">广州</option>
-				<option value="3">深圳</option>
-				<option value="4">杭州</option>
+			<select lay-filter="city_sele" id="city_sele" name="city" lay-verify="required">
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select name="distinct" lay-verify="required">
-				<option value="雨花台">区/县</option>
-				<option value="0">北京</option>
-				<option value="1">上海</option>
-				<option value="2">广州</option>
-				<option value="3">深圳</option>
-				<option value="4">杭州</option>
+			<select lay-filter="cdistinct_sele" id="cdistinct_sele" name="distinct" lay-verify="required">
+				<option value="雨花台区">区/县</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select id="" name="block" lay-verify="required">
-				<option value="xx街道">街道</option>
+			<select id="block_sele" name="block" lay-verify="required">
 			</select>
 		</div>
 
@@ -215,11 +198,31 @@
 
 
 <script>
-	layui.use(['laydate','form','upload'], function(){
+	layui.use(['laydate','form','upload','layer'], function(){
 		var form = layui.form;
 		var laydate = layui.laydate;
 		var upload = layui.upload;
+        var layer = layui.layer;
 		var $ = layui.$;
+
+        getAddress("cityList");
+        getAddress("city","110000");
+        getAddress("distinct","110101",form);
+        form.render('select');
+
+        form.on('select(province_sele)', function(data){
+            getAddress("city",data.value);
+            form.render('select');
+        });
+
+        form.on('select(city_sele)', function(data){
+            getAddress("distinct",data.value);
+            form.render('select');
+        });
+
+        form.on('select(cdistinct_sele)', function(data){
+            getAddress("distinct",data.value,form);
+        });
 
         $.ajax({
             type: "GET",
@@ -240,7 +243,8 @@
             ,data:{type:"nursingList"}
             ,done: function(res){
                 if(res.data){
-                    layer.msg('上传成功');
+                    // layer.msg('上传成功');
+
                     $("#tycjrmd").val(res.data.fileUrl)
                 }
                 //上传完毕回调
@@ -284,14 +288,69 @@
                 contentType : 'application/json;charset=utf-8',
                 processData: false,
                 success: function (data) {
-                    console.log(data);
-
+                    layer.alert(data.msg, {icon: 1});
+                },
+				error:function () {
+                    layer.alert('提交失败', {icon: 2});
                 }
             })
 			return false;
 		});
 	});
+    function getAddress(type,value,form) {
+        var html = [];
+        var iszxs = false;
+        var zxs = [];
 
+        for(var key in provinceList){
+            if(type == "cityList" && key.indexOf("0000") !== -1){
+                html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+            }else if(type == "city"
+                && key.indexOf("0000") == -1
+                && key.slice(0,3) == value.slice(0,3)
+            ){
+                if(key.slice(-2) == "00"){
+                    iszxs = true;
+                    html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+                }else {
+                    zxs.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+                }
+            }else if(type == "distinct"
+                && key.indexOf("0000") == -1
+                && value.slice(-2) == "00"
+                && key.slice(0,4) == value.slice(0,4)
+            ){
+                if(key.slice(-2) !== "00"){
+                    html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
+                }
+            }
+        }
+
+        if(html.length == 0 && zxs.length == 0){
+            $.ajax({
+                url: 'http://passer-by.com/data_location/town/' + value + '.json',
+                dataType: 'json',
+                success: function(town) {
+                    for(var key in town){
+                        html.push('<option value="'+key+'">'+town[key]+'</option>');
+                    }
+                    $("#block_sele").html(html.join(""))
+                    form.render('select');
+                }
+            });
+        }
+
+        // return html.join("");
+        if(!value){
+            $("#province_sele").html(html.join(""))
+        }else if(iszxs && type == "city"){
+            $("#city_sele").html(html.join(""));
+        }else if(type == "city" ){
+            $("#cdistinct_sele").html(zxs.join(""));
+        }else if(type == "distinct" && html.length !== 0){
+            $("#cdistinct_sele").html(html.join(""));
+        }
+    }
 
 </script>
 </body>
