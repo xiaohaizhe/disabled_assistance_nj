@@ -69,7 +69,9 @@
 				};
 			}
 			,cols: [[
-				{field:'status', width:120, title: '审核状态', sort: true},
+				{field:'status', width:120, title: '审核状态', sort: true,templet: function(d){
+            return ["删除","待审批","已审批","已拒绝"][d.status]
+        }},
 				{field:'adminName', width:120, title: '机构名称', sort: true},
 				{field:'registrationTime', width:130, title: '登记注册时间', sort: true},
 				{field:'address', width:130, title: '地址'},

@@ -225,8 +225,8 @@
 
         </div>
         <div class="layui-form-item" style="text-align: center;">
-            <button type="button" class="layui-btn" style="width: 100px;">同意</button>
-            <button type="button" class="layui-btn layui-btn-danger" style="width: 100px;">拒绝</button>
+            <button onclick="agreefn()" type="button" class="layui-btn" style="width: 100px;">同意</button>
+            <button onclick="refusefn()" type="button" class="layui-btn layui-btn-danger" style="width: 100px;">拒绝</button>
         </div>
     </form>
 </div>
@@ -237,12 +237,57 @@
     <a class="layui-btn layui-btn-xs" lay-event="edit">审核</a>
 </script>
 <script>
-    layui.use(['table','form'], function(){
+    var pageid = "";
+    var tableIns = null;
+    var quotaIndex = null;
+
+    function agreefn() {
+        $.ajax({
+            type: "GET",
+            url: "/api/apply/changeStatusToApproval?adminId=1&id="+pageid,
+            dataType:"json",
+            contentType : 'application/json;charset=utf-8',
+            processData: false,
+            success: function (data) {
+                layer.alert(data.msg, {icon: 1});
+                tableIns.reload();
+                layer.close(quotaIndex);
+            },
+            error:function () {
+                layer.alert('操作失败', {icon: 2});
+            }
+        })
+    }
+
+    function refusefn(){
+        var str=prompt("请输入拒绝理由","")
+        if (str!=null && str!="")
+        {
+            $.ajax({
+                type: "GET",
+                url: "/api/apply/changeStatusToRejection?adminId=1&id="+pageid+'&reason='+str,
+                dataType:"json",
+                contentType : 'application/json;charset=utf-8',
+                processData: false,
+                success: function (data) {
+                    layer.alert(data.msg, {icon: 1});
+                    tableIns.reload();
+                    layer.close(quotaIndex);
+                },
+                error:function () {
+                    layer.alert('操作失败', {icon: 2});
+                }
+            })
+        }
+    }
+
+    layui.use(['table','form','layer'], function(){
         var table = layui.table;
         var form = layui.form;
         $ = layui.$;
+        var layer = layui.layer;
         //第一个实例
-        table.render({
+        tableIns = table.render({
             elem: '#demo'
             ,height: 600
             ,url: '/api/apply/getPageByOrganization'+location.search+'&sorts=modifyTime' //数据接口
@@ -263,7 +308,9 @@
             }
             ,page: true //开启分页
             ,cols: [[ //表头
-                {field: 'status', title: '审核状态', width:200, sort: true, fixed: 'left'}
+                {field: 'status', title: '审核状态', width:200, sort: true, fixed: 'left',templet: function(d){
+                        return ["删除","待审批","已审批","已拒绝"][d.status]
+                    }}
                 ,{field: 'adminName', title: '机构名称', width:180, sort: true}
                 ,{field: 'registrationTime', title: '登记注册时间', width:180, sort: true}
                 ,{field: 'address', title: '地址', width:380, sort: true}
@@ -287,16 +334,26 @@
             ]]
         });
 
+
+
         //监听行工具事件
         table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
                 ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(data.status != 1){
+                layer.msg("不可再次审核");
+                return;
+            }
+            pageid = data.id;
             if(layEvent === 'edit'){
-                layer.open({
+                 quotaIndex = layer.open({
                     type: 1,
                     title: "残疾人托养服务补贴资金申请",
                     content: $("#editPanel").html(),
-                    area: ['1000px', '900px']
+                    area: ['1000px', '900px'],
+                    success: function(layero, index){
+
+                    }
                 });
                 form.render();
                 form.val("edit-form", data);
