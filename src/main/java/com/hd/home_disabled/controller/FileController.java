@@ -57,12 +57,30 @@ public class FileController {
         if (file.isEmpty()) return RESCODE.FAILURE.getJSONRES("文件不存在");
         String fileName = file.getOriginalFilename();  // 文件名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
-        String filePath = System.getProperty("user.dir")+"\\picture"+"\\" + type + "\\"; // 上传后的路径,即本地磁盘
+        String filePath = System.getProperty("user.dir")+"\\picture";
+//        String filePath = System.getProperty("user.dir")+"\\picture"+"\\" + type + "\\"; // 上传后的路径,即本地磁盘
         fileName = UUID.randomUUID() + suffixName; // 新文件名
-        File dest = new File(filePath + fileName);
-        if (!dest.getParentFile().exists()) {
-            dest.getParentFile().mkdirs();
+//        File dest = new File(filePath + fileName);
+        File dest = new File(filePath);
+        boolean result;
+        if (!dest.exists()) {
+            logger.info(filePath+"不存在，创建文件夹");
+            result =dest.mkdir();
+            if (!result){
+                return RESCODE.FAILURE.getJSONRES("创建文件夹失败");
+            }
         }
+        filePath += "\\" + type;
+        dest = new File(filePath);
+        if (!dest.exists()) {
+            logger.info(filePath+"不存在，创建文件夹");
+            result = dest.mkdir();
+            if (!result){
+                return RESCODE.FAILURE.getJSONRES("创建文件夹失败");
+            }
+        }
+        filePath+= "\\"+fileName;
+        dest = new File(filePath);
         try {
             file.transferTo(dest);
         } catch (IOException e) {
