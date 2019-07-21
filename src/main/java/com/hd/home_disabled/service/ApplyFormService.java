@@ -139,7 +139,7 @@ public class ApplyFormService {
                         organization.setApplySum(1);
                     }
                 }
-                applyForm1.setStatus(1);
+                applyForm1.setStatus(1);//待审核
                 ApplyForm applyForm2 = applyFormRepository.saveAndFlush(applyForm1);
                 return RESCODE.SUCCESS.getJSONRES(getModel(applyForm2));
             }
@@ -156,7 +156,7 @@ public class ApplyFormService {
      */
     public JSONObject delete(Integer id) {
         logger.info("进入补贴申请删除");
-        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id, 1);
+        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatusGreaterThanEqual(id, 1);
         if (applyFormOptional.isPresent()) {
             ApplyForm applyForm = applyFormOptional.get();
             Optional<Organization> organizationOptional = organizationRepository.findByIdAndStatus(applyForm.getOrganization().getId(), 1);
@@ -182,7 +182,7 @@ public class ApplyFormService {
      */
     public JSONObject getById(Integer id) {
         logger.info("根据id:"+id+"查询补贴申请");
-        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatus(id, 1);
+        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatusGreaterThanEqual(id, 1);
         if (applyFormOptional.isPresent()) {
             return RESCODE.SUCCESS.getJSONRES(getModel(applyFormOptional.get()));
         }
@@ -216,7 +216,7 @@ public class ApplyFormService {
 
 
     public JSONObject changeStatusToApproval(Integer id,Integer adminId){
-        Optional<ApplyForm> applyFormOptional=applyFormRepository.findByIdAndStatus(id,1);
+        Optional<ApplyForm> applyFormOptional=applyFormRepository.findByIdAndStatusGreaterThanEqual(id,1);
         Optional<Admin> adminOptional = adminRepository.findById(adminId);
         if (applyFormOptional.isPresent()){
             if (adminOptional.isPresent()){
@@ -232,7 +232,7 @@ public class ApplyFormService {
 
 
     public JSONObject changeStatusToRejection(Integer id,Integer adminId,String reason){
-        Optional<ApplyForm> applyFormOptional=applyFormRepository.findByIdAndStatus(id,1);
+        Optional<ApplyForm> applyFormOptional=applyFormRepository.findByIdAndStatusGreaterThanEqual(id,1);
         Optional<Admin> adminOptional = adminRepository.findById(adminId);
         if (applyFormOptional.isPresent()){
             if (adminOptional.isPresent()){

@@ -23,18 +23,18 @@ import static org.hibernate.jpa.QueryHints.HINT_COMMENT;
  */
 public interface ApplyFormRepository extends JpaRepository<ApplyForm,Integer> {
     @QueryHints(value = {@QueryHint(name = HINT_COMMENT ,value= "a query for pageable")})
-    @Query("select u from ApplyForm u where u.organization.id = ?1 and u.status = ?2")
+    @Query("select u from ApplyForm u where u.organization.id = ?1 and u.status >= ?2")
     Page<ApplyForm> findByOrganizationAndStatus(Integer organizationId, Integer status, Pageable page);
 
-    Optional<ApplyForm> findByIdAndStatus(Integer id, Integer status);
+    Optional<ApplyForm> findByIdAndStatusGreaterThanEqual(Integer id, Integer status);
 
-    @Query("select u from ApplyForm u where u.organization.id = ?1 and u.status = ?2")
+    @Query("select u from ApplyForm u where u.organization.id = ?1 and u.status >= ?2")
     List<ApplyForm> findByOrganizationAndStatus(Integer organizationId, Integer status);
 
-    @Query("select u from ApplyForm u where u.organization.id in ?1 and u.status = ?2")
+    @Query("select u from ApplyForm u where u.organization.id in ?1 and u.status >= ?2")
     List<ApplyForm> findByOrganizationAndStatus(List<Integer> ids, Integer status);
 
     @QueryHints(value = {@QueryHint(name = HINT_COMMENT ,value= "a query for pageable")})
-    @Query("select u from ApplyForm u where u.organization.id in ?1 and u.status = ?2")
+    @Query("select u from ApplyForm u where u.organization.id in ?1 and u.status >= ?2")
     Page<ApplyForm> findByOrganizationAndStatus(List<Integer> ids, Integer status, Pageable page);
 }
