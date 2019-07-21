@@ -60,7 +60,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
         //2.添加fastjson的配置信息，比如：是否要格式化返回json数据
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
         fastJsonConfig.setSerializerFeatures(
-                SerializerFeature.PrettyFormat
+                SerializerFeature.PrettyFormat,
+                SerializerFeature.DisableCircularReferenceDetect
         );
         SerializeConfig serializeConfig = SerializeConfig.globalInstance;
         serializeConfig.put(BigInteger.class, ToStringSerializer.instance);
