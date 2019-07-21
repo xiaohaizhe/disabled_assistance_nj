@@ -11,6 +11,8 @@ import com.hd.home_disabled.repository.ApplyFormRepository;
 import com.hd.home_disabled.repository.OrganizationRepository;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
+import com.test.disabled.App;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -210,6 +212,39 @@ public class ApplyFormService {
             applyFormList.add(getModel(applyForm));
         }
         return RESCODE.SUCCESS.getJSONRES(applyFormList, applyFormPage.getTotalPages(), applyFormPage.getTotalElements());
+    }
+
+
+    public JSONObject changeStatusToApproval(Integer id,Integer adminId){
+        Optional<ApplyForm> applyFormOptional=applyFormRepository.findByIdAndStatus(id,1);
+        Optional<Admin> adminOptional = adminRepository.findById(adminId);
+        if (applyFormOptional.isPresent()){
+            if (adminOptional.isPresent()){
+                ApplyForm applyForm = applyFormOptional.get();
+                applyForm.setAdmin(adminOptional.get());
+                applyForm.setStatus(2);
+                return RESCODE.SUCCESS.getJSONRES();
+            }
+            return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
+        }
+        return RESCODE.APPLY_FORM_NOT_EXIST.getJSONRES();
+    }
+
+
+    public JSONObject changeStatusToRejection(Integer id,Integer adminId,String reason){
+        Optional<ApplyForm> applyFormOptional=applyFormRepository.findByIdAndStatus(id,1);
+        Optional<Admin> adminOptional = adminRepository.findById(adminId);
+        if (applyFormOptional.isPresent()){
+            if (adminOptional.isPresent()){
+                ApplyForm applyForm = applyFormOptional.get();
+                applyForm.setAdmin(adminOptional.get());
+                applyForm.setStatus(3);
+                applyForm.setReasonForRegression(reason);
+                return RESCODE.SUCCESS.getJSONRES();
+            }
+            return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
+        }
+        return RESCODE.APPLY_FORM_NOT_EXIST.getJSONRES();
     }
 
     public JSONObject getPageByDistrict(String district, Integer page, Integer number, String sorts) {

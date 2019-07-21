@@ -5,6 +5,7 @@ import com.hd.home_disabled.model.dto.ApplyForm;
 import com.hd.home_disabled.service.ApplyFormService;
 import com.hd.home_disabled.utils.DealWithBindingResult;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,6 +59,18 @@ public class ApplyFormController {
     @RequestMapping(value = "/getPageByOrganization", method = RequestMethod.GET)
     public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number, String sorts) {
         return applyFormService.getPageByOrganizationId(organizationId, page, number, sorts);
+    }
+
+    @ApiOperation(value = "补贴审核", notes = "通过")
+    @RequestMapping(value = "/changeStatusToApproval", method = RequestMethod.GET)
+    public JSONObject changeStatusToApproval(Integer id, Integer adminId) {
+        return applyFormService.changeStatusToApproval(id,adminId);
+    }
+
+    @ApiOperation(value = "补贴审核", notes = "拒绝")
+    @RequestMapping(value = "/changeStatusToRejection", method = RequestMethod.GET)
+    public JSONObject changeStatusToRejection(Integer id, Integer adminId,String reason) {
+        return applyFormService.changeStatusToRejection(id,adminId,reason);
     }
 
     @ApiOperation(value = "机构下补贴申请导出", notes = "excel导出")

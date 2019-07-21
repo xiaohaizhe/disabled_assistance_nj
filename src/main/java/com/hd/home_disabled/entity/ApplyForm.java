@@ -38,7 +38,7 @@ public class ApplyForm {
     private String lowIncomeCertificate;            //低保或其他低收入证明
 
     private String reasonForRegression;           //申请退回原因
-    private Integer status;                         //申请状态:0-删除,1-有效，2-退回，3-审核完成
+    private Integer status;                         //申请状态:0-删除,1-待审批，2-已审批，3-已拒绝
     //数据创建信息
     @OneToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
