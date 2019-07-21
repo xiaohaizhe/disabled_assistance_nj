@@ -70,124 +70,172 @@
     <form class="layui-form layui-form-pane" lay-filter="edit-form" action="" target="asyncSubmieForm"
           style="margin-top:15px;">
         <div class="layui-form-item">
-            <label class="layui-form-label">审核状态</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
+            <div class="layui-inline">
+                <label class="layui-form-label">审核状态</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="status" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">机构名称</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="adminName" class="layui-input" disabled>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">登记注册时间</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="registrationTime" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">更新时间</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="lastModifyTime" class="layui-input" disabled>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">负责人</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="personInCharge" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">机构面积</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="area" class="layui-input" disabled>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">床位数</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="bedNum" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">机构性质</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="nature" class="layui-input" disabled>
+                </div>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">机构名称</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="username" class="layui-input" disabled>
+            <div class="layui-inline">
+                <label class="layui-form-label">庇护性劳动项目</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="asylumLaborProjects" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">符合条件的全托人数</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="numOfEligibleDayNursery" class="layui-input" disabled>
+                </div>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">登记注册时间</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
+            <div class="layui-inline">
+                <label class="layui-form-label">符合条件的日托人数</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="numOfEligibleBoardingNursery" class="layui-input" disabled>
+                </div>
             </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">申请机构全托运营补贴资金总额</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="subsidyFundForBoardingNursery" class="layui-input" disabled>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">上年当地资金投入情况</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="localInvestmentOfLastYear last_year" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">申请托养机构运营补贴资金总额合计</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="totalSubsidyFunds" class="layui-input" disabled>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">托养残疾人名单</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="nursingList" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">低保或其他低收入证明</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="lowIncomeCertificate" class="layui-input" disabled>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">提交人</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="adminName" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">提交时间</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <input type="text" name="createTime" class="layui-input" disabled>
+                </div>
+            </div>
+
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">地址</label>
             <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
+                <input type="text" name="address" class="layui-input" disabled>
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">负责人</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
+        <div class="layui-form-item" style="min-height: 100px;">
+            <div class="layui-inline">
+                <label class="layui-form-label">托养残疾人名单</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <img id="cjrmd" src="" alt="" style="width: 100px;">
+                </div>
             </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">低保或其他低收入证明</label>
+                <div class="layui-input-block" style="padding-right:15px;">
+                    <img id="dsrzm" src="" alt="" style="width: 100px;">
+                </div>
+            </div>
+
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">机构面积</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">床位数</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">机构性质</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">庇护性劳动项目</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">符合条件的全托人数</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">符合条件的日托人数</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">申请机构全托运营补贴资金总额</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">上年当地资金投入情况</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">申请托养机构运营补贴资金总额合计</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">托养残疾人名单</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">低保或其他低收入证明</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">提交人</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">提交时间</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">更新时间</label>
-            <div class="layui-input-block" style="padding-right:15px;">
-                <input type="text" name="id" class="layui-input" disabled>
-            </div>
+        <div class="layui-form-item" style="text-align: center;">
+            <button type="button" class="layui-btn" style="width: 100px;">同意</button>
+            <button type="button" class="layui-btn layui-btn-danger" style="width: 100px;">拒绝</button>
         </div>
     </form>
 </div>
 
 <script src="../layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">审核</a>
+</script>
 <script>
     layui.use(['table','form'], function(){
         var table = layui.table;
@@ -234,27 +282,31 @@
                 ,{field: 'adminName', title: '提交人', width: 135, sort: true}
                 ,{field: 'createTime', title: '提交时间', width: 135, sort: true}
                 ,{field: 'lastModifyTime', title: '更新时间', width: 135, sort: true}
+                ,{fixed: 'right', width: 120, align:'center', toolbar: '#barDemo'}
 
             ]]
         });
 
-        //监听行单击事件（单击事件为：rowDouble）
-        table.on('row(test)', function(obj){
-            var data = obj.data;
-
-            sessionStorage.setItem("operateCode", "edit");
-            layer.open({
-                type: 1,
-                title: "残疾人托养服务补贴资金申请",
-                content: $("#editPanel").html(),
-                area: ['600px', '800px']
-            });
-            form.render();
-            form.val("edit-form", data);
-
-            //标注选中样式
+        //监听行工具事件
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'edit'){
+                layer.open({
+                    type: 1,
+                    title: "残疾人托养服务补贴资金申请",
+                    content: $("#editPanel").html(),
+                    area: ['1000px', '900px']
+                });
+                form.render();
+                form.val("edit-form", data);
+                $("#dsrzm").attr("src",data.lowIncomeCertificate);
+                $("#cjrmd").attr("src",data.nursingList);
+            }
             obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+
         });
+
 
     });
 </script>
