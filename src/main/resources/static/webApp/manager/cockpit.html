@@ -150,23 +150,23 @@
 					<div class="leftTitle">全区服务数据统计</div>
 					<div class="leftContent">
 						<div class="card">
-							<div class="card_value"><span class="value">6571</span><span>人</span></div>
+							<div class="card_value"><span class="value" id="personCountSum">0</span><span>人</span></div>
 							<div><img src="../../images/disabled/tubiao_11.png" alt="">全区总服务人数</div>
 						</div>
 						<div class="card">
-							<div class="card_value"><span class="value">71</span><span>次</span></div>
+							<div class="card_value"><span class="value" id="personTimeSum">0</span><span>次</span></div>
 							<div><img src="../../images/disabled/tubiao_13.png" alt="">全区总服务人次</div>
 						</div>
 						<div class="card">
-							<div class="card_value"><span class="value">21</span><span>项</span></div>
+							<div class="card_value"><span class="value" id="projectSum">0</span><span>项</span></div>
 							<div><img src="../../images/disabled/tubiao_15.png" alt="">全区服务项目总数</div>
 						</div>
 						<div class="card">
-							<div class="card_value"><span class="value">6571</span><span>小时</span></div>
+							<div class="card_value"><span class="value" id="totalTimeSum">0</span><span>小时</span></div>
 							<div><img src="../../images/disabled/tubiao_21.png" alt="">全区总服务时长</div>
 						</div>
 						<div class="card">
-							<div class="card_value"><span class="value">4534</span><span>小时</span></div>
+							<div class="card_value"><span class="value" id="averageTime">0</span><span>小时</span></div>
 							<div><img src="../../images/disabled/tubiao_20.png" alt="">全区平均服务时长</div>
 						</div>
 					</div>
@@ -182,46 +182,46 @@
 			<div class="subContent" id="analysis"></div>
 		</div>
 		<div class="chart">
-			<div class="subTitle">各区各级残疾人数据统计</div>
-			<div class="subContent">
-				<div class="left" id="disabledCount"></div>
-				<div class="right">
-					<div class="legend">
-						<div>
-							<span class="color color_one">1</span>
-							<span>言语残疾</span>
-						</div>
-						<div>54431人</div>
-					</div>
-					<div class="legend">
-						<div>
-							<span class="color color_two">2</span>
-							<span>言语残疾</span>
-						</div>
-						<div>54431人</div>
-					</div>
-					<div class="legend">
-						<div>
-							<span class="color color_three">3</span>
-							<span>言语残疾</span>
-						</div>
-						<div>54431人</div>
-					</div>
-					<div class="legend">
-						<div>
-							<span class="color color_four">4</span>
-							<span>言语残疾</span>
-						</div>
-						<div>54431人</div>
-					</div>
-					<div class="legend">
-						<div>
-							<span class="color color_five">5</span>
-							<span>言语残疾</span>
-						</div>
-						<div>54431人</div>
-					</div>
-				</div>
+			<div class="subTitle">全区各类残疾人参与服务率分析</div>
+			<div class="subContent" id="disabledCount">
+				<!--<div class="left"></div>-->
+				<!--<div class="right">-->
+					<!--<div class="legend">-->
+						<!--<div>-->
+							<!--<span class="color color_one">1</span>-->
+							<!--<span>言语残疾</span>-->
+						<!--</div>-->
+						<!--<div>54431人</div>-->
+					<!--</div>-->
+					<!--<div class="legend">-->
+						<!--<div>-->
+							<!--<span class="color color_two">2</span>-->
+							<!--<span>言语残疾</span>-->
+						<!--</div>-->
+						<!--<div>54431人</div>-->
+					<!--</div>-->
+					<!--<div class="legend">-->
+						<!--<div>-->
+							<!--<span class="color color_three">3</span>-->
+							<!--<span>言语残疾</span>-->
+						<!--</div>-->
+						<!--<div>54431人</div>-->
+					<!--</div>-->
+					<!--<div class="legend">-->
+						<!--<div>-->
+							<!--<span class="color color_four">4</span>-->
+							<!--<span>言语残疾</span>-->
+						<!--</div>-->
+						<!--<div>54431人</div>-->
+					<!--</div>-->
+					<!--<div class="legend">-->
+						<!--<div>-->
+							<!--<span class="color color_five">5</span>-->
+							<!--<span>言语残疾</span>-->
+						<!--</div>-->
+						<!--<div>54431人</div>-->
+					<!--</div>-->
+				<!--</div>-->
 			</div>
 		</div>
 	</div>
@@ -238,6 +238,63 @@
 
 
 <script>
+	$.ajax({
+		url: "/api/project/overview1",
+		type: "GET",
+		data: { district: ""},
+		success: function(res) {
+//			console.log("overview1",res);
+		}
+
+	});
+	$.ajax({
+		url: "/api/project/overview2",
+		type: "GET",
+		success: function(res) {
+			if(res ){
+				const {data ={}	} = res;
+				const keys = ["averageTime","personCountSum","personTimeSum","projectSum","totalTimeSum"];
+				keys.forEach(function(item){
+					$("#"+item).html(data[item] || 0);
+				});
+			}
+		}
+
+	});
+	$.ajax({
+		url: "/api/project/overview3",
+		type: "GET",
+		dataType:"json",
+		success: function(res) {
+			if(res) {
+				const {data = {}} =res;
+				const lineData = formatServiceLine(data);
+				const legend= {"averageTime":"平均服务时长","personCountSum": "总服务人数","personTimeSum":"总服务人次","totalTimeSum":"总服务时长"};
+				const xData = Object.keys(data);
+				showLineData(legend,lineData,xData);
+			}
+		}
+
+	});
+	function formatServiceLine(data) {
+		const keys = Object.keys(data);
+		if(!keys.length) return [];
+		const format = {
+			"averageTime": [],
+			"personCountSum": [],
+			"personTimeSum": [],
+			"totalTimeSum": []
+		};
+		return keys.reduce(function(all,item) {
+			const value = data[item];
+			const subKeys = Object.keys(value);
+			subKeys.forEach(function(i) {
+				all[i] = all[i].concat(value[i]);
+			});
+			return all;
+		},format);
+	}
+
 	var option = {
 //		title: {
 //			text: '全区最喜爱残疾人项目分析'
@@ -283,84 +340,54 @@
 	var myChart = echarts.init(document.getElementById('favorite'));
 	myChart.setOption(option);
 
-	var option2 = {
-		legend: {
-			data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
-		},
-		grid: {
-			left: '3%',
-			right: '4%',
-			bottom: '3%',
-			containLabel: true
-		},
+	function showLineData(legend,data,xData) {
+		const keys = Object.keys(data);
+		const series = keys.map(function(i) {
+			return {
+				name: legend[i],
+				type:'line',
+				stack: '总量',
+				data: data[i]
+			};
+		});
+		var option2 = {
+			legend: {
+				data:Object.values(legend)
+			},
+			grid: {
+				left: '3%',
+				right: '4%',
+				bottom: '3%',
+				containLabel: true
+			},
+			xAxis: {
+				type: 'category',
+				boundaryGap: false,
+				data: xData
+			},
+			yAxis: {
+				type: 'value'
+			},
+			series: series
+		};
+		var myChart = echarts.init(document.getElementById('analysis'));
+		myChart.setOption(option2);
+	}
+
+
+	var cellSize = [80, 80];
+	var option3 = {
 		xAxis: {
 			type: 'category',
-			boundaryGap: false,
-			data: ['周一','周二','周三','周四','周五','周六','周日']
+			data: ['精神残疾', '视力残疾', '听力残疾', '言语残疾', '肢体残疾', '智力残疾']
 		},
 		yAxis: {
 			type: 'value'
 		},
-		series: [
-			{
-				name:'邮件营销',
-				type:'line',
-				stack: '总量',
-				data:[120, 132, 101, 134, 90, 230, 210]
-			},
-			{
-				name:'联盟广告',
-				type:'line',
-				stack: '总量',
-				data:[220, 182, 191, 234, 290, 330, 310]
-			},
-			{
-				name:'视频广告',
-				type:'line',
-				stack: '总量',
-				data:[150, 232, 201, 154, 190, 330, 410]
-			},
-			{
-				name:'直接访问',
-				type:'line',
-				stack: '总量',
-				data:[320, 332, 301, 334, 390, 330, 320]
-			},
-			{
-				name:'搜索引擎',
-				type:'line',
-				stack: '总量',
-				data:[820, 932, 901, 934, 1290, 1330, 1320]
-			}
-		]
-	};
-	var myChart = echarts.init(document.getElementById('analysis'));
-	myChart.setOption(option2);
-
-	var cellSize = [80, 80];
-	var option3 = {
-		series : [
-			{
-				name: '访问来源',
-				type: 'pie',
-				radius : '55%',
-				center: ['50%', '60%'],
-				data:[
-					{value:335, name:'直接访问'},
-					{value:310, name:'邮件营销'},
-					{value:234, name:'联盟广告'},
-					{value:135, name:'视频广告'},
-					{value:1548, name:'搜索引擎'}
-				],
-				itemStyle: {
-					emphasis: {
-						shadowBlur: 10,
-						shadowOffsetX: 0,
-						shadowColor: 'rgba(0, 0, 0, 0.5)'
-					}
-				}
-			}
-		]
+		series: [{
+			data: [1, 1, 1, 1, 1, 1.5],
+			type: 'line'
+		}]
 	};
 	var myChart = echarts.init(document.getElementById('disabledCount'));
 	myChart.setOption(option3);
