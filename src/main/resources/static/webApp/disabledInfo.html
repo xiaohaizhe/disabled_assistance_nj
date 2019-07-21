@@ -554,7 +554,9 @@
                 {field: 'disabilityDegree', title: '残疾等级', align: 'center', width: 120, unresize: true},
                 {field: 'address', title: '家庭住址', align: 'center', unresize: true},
 				{field: 'contactNumber', title: '联系电话', align: 'center', unresize: true},
-                {field: 'nursingModeId', title: '托养方式', align: 'center', unresize: true},
+                {field: 'nursingModeId', title: '托养方式', align: 'center', unresize: true,templet: function(d){
+                        return ["其他","日托","全托"][d.nursingModeId]
+                    }},
                 {field: 'nursingMonth', title: '托养月数', align: 'center', unresize: true},
                 {field: 'subsidies', title: '补贴金额', align: 'center', unresize: true},
                 {field: 'createTime', title: '提交时间', align: 'center', unresize: true},
