@@ -73,7 +73,7 @@
             <div class="layui-inline">
                 <label class="layui-form-label">审核状态</label>
                 <div class="layui-input-block" style="padding-right:15px;">
-                    <input type="text" name="status" class="layui-input" disabled>
+                    <input type="text" name="spzt" class="layui-input" disabled>
                 </div>
             </div>
             <div class="layui-inline">
@@ -346,7 +346,7 @@
                     type: 1,
                     title: "残疾人托养服务补贴资金申请",
                     content: $("#editPanel").html(),
-                    area: ['1000px', '900px'],
+                    area: ['1000px', '850px'],
                     success: function(layero, index){
                         if(data.status != 1){
                             $(".detail-btn").hide();
@@ -355,6 +355,7 @@
                         }
                     }
                 });
+                data.spzt = ["删除","待审批","已审批","已拒绝"][data.status];
                 form.render();
                 form.val("edit-form", data);
                 $("#dsrzm").attr("src",data.lowIncomeCertificate);

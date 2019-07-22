@@ -198,8 +198,9 @@
 
 
 <script>
+    var form = null;
 	layui.use(['laydate','form','upload','layer'], function(){
-		var form = layui.form;
+		form = layui.form;
 		var laydate = layui.laydate;
 		var upload = layui.upload;
         var layer = layui.layer;
@@ -297,10 +298,11 @@
 			return false;
 		});
 	});
-    function getAddress(type,value,form) {
+    function getAddress(type,value,_form) {
         var html = [];
         var iszxs = false;
         var zxs = [];
+        var ciitys = [];
 
         for(var key in provinceList){
             if(type == "cityList" && key.indexOf("0000") !== -1){
@@ -311,6 +313,7 @@
             ){
                 if(key.slice(-2) == "00"){
                     iszxs = true;
+                    ciitys.push(key);
                     html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
                 }else {
                     zxs.push('<option value="'+key+'">'+provinceList[key]+'</option>');
@@ -321,6 +324,7 @@
                 && key.slice(0,4) == value.slice(0,4)
             ){
                 if(key.slice(-2) !== "00"){
+                    ciitys.push(key);
                     html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
                 }
             }
@@ -335,7 +339,7 @@
                         html.push('<option value="'+key+'">'+town[key]+'</option>');
                     }
                     $("#block_sele").html(html.join(""))
-                    form.render('select');
+                    _form.render('select');
                 }
             });
         }
@@ -345,11 +349,15 @@
             $("#province_sele").html(html.join(""))
         }else if(iszxs && type == "city"){
             $("#city_sele").html(html.join(""));
+            getAddress("distinct",""+ciitys[0]);
         }else if(type == "city" ){
             $("#cdistinct_sele").html(zxs.join(""));
+
         }else if(type == "distinct" && html.length !== 0){
             $("#cdistinct_sele").html(html.join(""));
+            getAddress("distinct",""+ciitys[0],form);
         }
+
     }
 
 </script>
