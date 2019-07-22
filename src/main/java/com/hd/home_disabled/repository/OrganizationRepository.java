@@ -15,4 +15,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, Inte
 
     Optional<Organization> findByIdAndStatus(Integer id,Integer status);
 
+    Optional<Organization> findByAdmin_IdAndStatus(Integer adminId,Integer status);
+
 }

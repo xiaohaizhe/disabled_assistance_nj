@@ -208,6 +208,23 @@ public class OrganizationService {
     }
 
     /**
+     * 查询单个机构
+     *
+     * @param id 机构id
+     * @return 结果
+     */
+    public JSONObject getByAdminId(Integer adminId) {
+        logger.info("查询单个机构");
+        Optional<Organization> optional = organizationRepository.findByAdmin_IdAndStatus(adminId,1);
+        if (optional.isPresent()) {
+            com.hd.home_disabled.model.dto.Organization organization = dealWithOrganization(optional.get());
+            return RESCODE.SUCCESS.getJSONRES(organization);
+        }
+        logger.info("机构不存在");
+        return RESCODE.ORGANIZATION_ID_NOT_EXIST.getJSONRES();
+    }
+
+    /**
      * 查询区机构列表
      *
      * @param district 区名

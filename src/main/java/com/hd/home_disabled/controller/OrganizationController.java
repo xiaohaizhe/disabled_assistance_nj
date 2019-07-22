@@ -55,6 +55,12 @@ public class OrganizationController {
         return organizationService.getById(id);
     }
 
+    @ApiOperation(value = "查询单个机构", notes = "根据id查询")
+    @RequestMapping(value = "/getByAdminId", method = RequestMethod.GET)
+    public JSONObject getByAdminId(Integer adminId) {
+        return organizationService.getByAdminId(adminId);
+    }
+
     @ApiOperation(value = "查询区机构列表", notes = "查询")
     @RequestMapping(value = "/getListByDistrict", method = RequestMethod.GET)
     public JSONObject getOrgList1(String district) {
