@@ -191,7 +191,7 @@ layui.use(['table', 'form'], function () {
     $.ajax({
         type: "GET",
         url: "/api/project/getProjectStatistic",
-        data:{organizationId:"2"},
+        data:{organizationId:localStorage.getItem("jgid")},
         success: function (data) {
             console.log(data);
             setBox(data.data,$("#projects"))

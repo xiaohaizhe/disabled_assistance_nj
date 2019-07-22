@@ -449,7 +449,7 @@
     }
 
     $("#export").click(function () {
-        window.location = "/api/user/export_excel?organizationId=2";
+        window.location = "/api/user/export_excel?organizationId="+localStorage.getItem("jgid");
         // $.ajax({
         //     type: "get",
         //     url: "/api/user/export_excel",
@@ -526,7 +526,7 @@
 
         var options = {
             elem: '#mainTable'
-            , url: '/api/user/getPageByOrganization?sorts=id&'+("")+'organizationId=2'+("")
+            , url: '/api/user/getPageByOrganization?sorts=id&'+("")+'organizationId='+localStorage.getItem("jgid")
             , request: {
                 pageName: 'page', //页码的参数名称，默认：page
                 limitName: 'number' //每页数据量的参数名，默认：limit
@@ -839,8 +839,8 @@
                     }
                     formData.append("adminId", "1");
                     formData.append("organizationId", "2");
-                    _obj.adminId = 1;
-                    _obj.organizationId = 2;
+                    _obj.adminId = localStorage.getItem("userId");
+                    _obj.organizationId = localStorage.getItem("jgid");
                     $.ajax({
                         type: "POST",
                         url: "/api/user/saveAndFlush",

@@ -49,14 +49,14 @@
 <script>
 
     function exportfile() {
-        window.location = "/api/apply/export_excel1?organizationId=2";
+        window.location = "/api/apply/export_excel1?organizationId="+localStorage.getItem("jgid");
     }
 	layui.use('table', function(){
 		var table = layui.table;
 
 		table.render({
 			elem: '#mainTable'
-            ,url: '/api/apply/getPageByOrganization?organizationId=2&sorts=modifyTime' //数据接口
+            ,url: '/api/apply/getPageByOrganization?organizationId='+localStorage.getItem("jgid")+'&sorts=modifyTime' //数据接口
             , request: {
 				pageName: 'page', //页码的参数名称，默认：page
 				limitName: 'number' //每页数据量的参数名，默认：limit

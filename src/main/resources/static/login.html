@@ -148,6 +148,7 @@
                 success: function (data) {
                     console.log(data);
                     if (data.msg == "成功") {
+                        localStorage.setItem("userId",data.data.id);
                         if(data.data.adminType.id == "1"){
                             window.location.href = "managerIndex.html";
                             sessionStorage.setItem("menuUrl","webApp/manager/cockpit.html");

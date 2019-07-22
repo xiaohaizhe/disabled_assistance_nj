@@ -160,8 +160,8 @@
 			// layer.msg(JSON.stringify(data.field));
             var _data = data.field;
             delete _data['file'];
-            _data.adminId = 1;
-            _data.organizationId = 2;
+            _data.adminId = localStorage.getItem("userId");
+            _data.organizationId = localStorage.getItem("jgid");
             $.ajax({
                 type: "POST",
                 url: "/api/project/saveAndFlush",

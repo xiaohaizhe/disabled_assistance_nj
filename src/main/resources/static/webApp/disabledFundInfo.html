@@ -225,8 +225,8 @@
 
         </div>
         <div class="layui-form-item" style="text-align: center;">
-            <button onclick="agreefn()" type="button" class="layui-btn" style="width: 100px;">同意</button>
-            <button onclick="refusefn()" type="button" class="layui-btn layui-btn-danger" style="width: 100px;">拒绝</button>
+            <button onclick="agreefn()" type="button" class="layui-btn detail-btn" style="width: 100px;">同意</button>
+            <button onclick="refusefn()" type="button" class="layui-btn detail-btn layui-btn-danger" style="width: 100px;">拒绝</button>
         </div>
     </form>
 </div>
@@ -340,10 +340,6 @@
         table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
                 ,layEvent = obj.event; //获得 lay-event 对应的值
-            if(data.status != 1){
-                layer.msg("不可再次审核");
-                return;
-            }
             pageid = data.id;
             if(layEvent === 'edit'){
                  quotaIndex = layer.open({
@@ -352,7 +348,11 @@
                     content: $("#editPanel").html(),
                     area: ['1000px', '900px'],
                     success: function(layero, index){
-
+                        if(data.status != 1){
+                            $(".detail-btn").hide();
+                        }else {
+                            $(".detail-btn").show();
+                        }
                     }
                 });
                 form.render();

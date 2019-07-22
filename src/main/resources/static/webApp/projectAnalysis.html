@@ -99,7 +99,7 @@
     </div>
     <div style="padding: 10px;">
         <div class="table-box">
-            <p>项目名称</p>
+            <p>项目汇总</p>
             <table id="demo" lay-filter="test"></table>
         </div>
     </div>
@@ -113,26 +113,33 @@
         var table = layui.table;
         var $ = layui.$;
         var searchData = location.search || "?id=2";
-        var _id = location.search.split("=");
-        $("[datakey]").each(function () {
-            var _data = JSON.parse(localStorage.getItem(_id[1]));
-            if(_data){
-                $(this).text(_data[$(this).attr("datakey")]);
-            }
-        });
 
-        var _url = "";
-        if(searchData.indexOf("organizationId") == -1){
-            _url = '/api/project/getProjectAnalysis2'+searchData+'&sorts=modifyTime' //数据接口
-        }else {
-            _url = '/api/project/getProjectAnalysis3'+searchData+'&sorts=modifyTime' //数据接口
-        }
+        $.ajax({
+            type: "GET",
+            url: "/api/project/getProjectAnalysis1?id="+localStorage.getItem("jgid"),
+            dataType:"json",
+            contentType : 'application/json;charset=utf-8',
+            processData: false,
+            success: function (data) {
+                // $("[datakey]").each(function () {
+                //     var _data = JSON.parse(localStorage.getItem(_id[1]));
+                //     if(_data){
+                //         $(this).text(_data[$(this).attr("datakey")]);
+                //     }
+                // });
+            },
+            error:function () {
+
+            }
+        })
+
+
 
         //第一个实例
         table.render({
             elem: '#demo'
             ,height: 400
-            ,url: _url
+            ,url: '/api/project/getProjectAnalysis3'+searchData+localStorage.getItem("jgid")+'&sorts=modifyTime'
             , request: {
                 pageName: 'page', //页码的参数名称，默认：page
                 limitName: 'number' //每页数据量的参数名，默认：limit
@@ -150,21 +157,13 @@
             }
             ,page: true //开启分页
             ,cols: [[ //表头
-                {field: 'userName', title: '残疾人姓名', width:200, sort: true, fixed: 'left'}
-                ,{field: 'userIdNumber', title: '身份证号', width:180, sort: true}
-                ,{field: 'userDisabilityCertificateNumber', title: '残疾证号', width:180, sort: true}
-                ,{field: 'userTypeOfDisability', title: '残疾类别', width:180, sort: true}
-                ,{field: 'userDisabilityDegree', title: '残疾等级', width: 177, sort: true}
-                ,{field: 'start', title: '本次刷卡签到时间', width: 280, sort: true}
-                ,{field: 'end', title: '本次刷卡离开时间', width: 280, sort: true}
-                ,{field: 'lengthOfService', title: '本次服务时长', width: 180, sort: true}
-                ,{field: 'serviceSum', title: '总服务次数', width: 135, sort: true}
-                ,{field: 'totalLengthOfService', title: '总服务时长', width: 135, sort: true}
-                ,{field: 'wealth', title: '每次服务时间汇总', width: 180, sort: true}
-                ,{field: 'subsidies', title: '补贴单价与价格', width: 135, sort: true}
-                ,{field: 'adminName', title: '提交人', width: 135, sort: true}
-                ,{field: 'createTime', title: '提交时间', width: 135, sort: true}
-                ,{field: 'lastModifyTime', title: '更新时间', width: 135, sort: true}
+                {field: 'name', title: '创建项目名称', width:200, sort: true, fixed: 'left'}
+                ,{field: 'projectType', title: '残疾人服务内容大类', width:280, sort: true}
+                ,{field: 'leader', title: '项目负责人', width:180, sort: true}
+                ,{field: 'description', title: '项目简介', unresize: true, sort: true}
+                ,{field: 'image', title: '项目图片', unresize: true, sort: true}
+                ,{field: 'startTime', title: '提交时间', width: 135, sort: true}
+                ,{field: 'endTime', title: '更新时间', width: 135, sort: true}
 
             ]]
         });
