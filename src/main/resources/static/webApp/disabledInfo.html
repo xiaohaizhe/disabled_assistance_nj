@@ -171,22 +171,22 @@
 					   class="layui-input">
 			</div>
 		</div>
-		<div class="layui-form-item">
-			<label class="layui-form-label">托养方式</label>
-			<div class="layui-input-block" style="padding-right:15px;">
-				<select name="nursingModeId">
-					<option value="1">全托</option>
-					<option value="2">日托</option>
-				</select>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<label class="layui-form-label">托养月数</label>
-			<div class="layui-input-block" style="padding-right:15px;">
-				<input type="number" name="nursingMonth" lay-verify="required" placeholder="" autocomplete="off"
-					   class="layui-input">
-			</div>
-		</div>
+		<!--<div class="layui-form-item">-->
+			<!--<label class="layui-form-label">托养方式</label>-->
+			<!--<div class="layui-input-block" style="padding-right:15px;">-->
+				<!--<select name="nursingModeId">-->
+					<!--<option value="1">全托</option>-->
+					<!--<option value="2">日托</option>-->
+				<!--</select>-->
+			<!--</div>-->
+		<!--</div>-->
+		<!--<div class="layui-form-item">-->
+			<!--<label class="layui-form-label">托养月数</label>-->
+			<!--<div class="layui-input-block" style="padding-right:15px;">-->
+				<!--<input type="number" name="nursingMonth" lay-verify="required" placeholder="" autocomplete="off"-->
+					   <!--class="layui-input">-->
+			<!--</div>-->
+		<!--</div>-->
 		<div class="layui-form-item">
 			<label class="layui-form-label">补贴金额</label>
 			<div class="layui-input-block" style="padding-right:15px;">
@@ -561,8 +561,8 @@
                 {field: 'nursingModeId', title: '托养方式', align: 'center', unresize: true,templet: function(d){
                         return ["其他","日托","全托"][d.nursingModeId]
                     }},
-                {field: 'nursingMonth', title: '托养月数', align: 'center', unresize: true},
-                {field: 'subsidies', title: '补贴金额', align: 'center', unresize: true},
+//                {field: 'nursingMonth', title: '托养月数', align: 'center', unresize: true},
+//                {field: 'subsidies', title: '补贴金额', align: 'center', unresize: true},
                 {field: 'createTime', title: '提交时间', align: 'center', unresize: true},
                 {field: 'lastModifyTime', title: '更新时间', align: 'center', unresize: true},
                 {field: 'adminName', title: '提交人', align: 'center', unresize: true}
