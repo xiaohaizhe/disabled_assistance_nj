@@ -405,6 +405,20 @@ public class ProjectService {
         return RESCODE.PROJECT_ID_NOT_EXIST.getJSONRES(projectUserList);
     }
 
+    public JSONObject getProjectAnalysis3(Integer organizationId, Integer page, Integer number, String sorts) {
+        Optional<Organization> organizationOptional = organizationRepository.findByIdAndStatus(organizationId, 1);
+        if (organizationOptional.isPresent()){
+            Pageable pageable = PageUtils.getPage(page, number, sorts);
+            Page<Project> projectPage = projectRepository.findByOrganizationAndStatus(organizationId,1,pageable);
+            List<com.hd.home_disabled.model.dto.Project> projectList = new ArrayList<>();
+            for (Project project : projectPage.getContent()){
+                projectList.add(getModel(project));
+            }
+            return RESCODE.SUCCESS.getJSONRES(projectList,projectPage.getTotalPages(),projectPage.getTotalElements());
+        }
+        return RESCODE.ORGANIZATION_ID_NOT_EXIST.getJSONRES();
+    }
+
     private List<JSONArray> getProjectIdUserListByProjectId(Integer id) {
         List<JSONArray> jsonArray = new ArrayList<>();
         List<ProjectUser> projectUsers = projectUserRepository.findByProject(id);

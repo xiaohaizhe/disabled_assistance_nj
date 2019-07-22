@@ -88,6 +88,12 @@ public class ProjectController {
         return projectService.getProjectAnalysis2(id,page,number,sorts);
     }
 
+    @ApiOperation(value = "查询机构下服务项目数据分析",notes = " 项目详情分页")
+    @RequestMapping(value = "/getProjectAnalysis3", method = RequestMethod.GET)
+    public JSONObject getProjectAnalysis3(Integer organizationId,Integer page,Integer number,String sorts){
+        return projectService.getProjectAnalysis3(organizationId,page,number,sorts);
+    }
+
     @ApiOperation(value = "机构下服务项目参与残疾人数据导出",notes = " excel导出")
     @RequestMapping(value = "/userListExport", method = RequestMethod.GET)
     public void getProjectAnalysis3(Integer id,HttpServletRequest request, HttpServletResponse response){
