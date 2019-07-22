@@ -100,6 +100,12 @@ public class ProjectController {
          projectService.getProjectAnalysis3(id,request,response);
     }
 
+    @ApiOperation(value = "机构下服务项目详情导出",notes = " excel导出")
+    @RequestMapping(value = "/organizationProjectListExport", method = RequestMethod.GET)
+    public void organizationProjectListExport(Integer organizationId,HttpServletRequest request, HttpServletResponse response){
+        projectService.organizationProjectListExport(organizationId,request,response);
+    }
+
     @ApiOperation(value = "全区服务项目分页",notes = "分页")
     @RequestMapping(value = "/getPagesByDistrict", method = RequestMethod.GET)
     public JSONObject getPagesByDistrict(String district,Integer page,Integer number,String sorts){

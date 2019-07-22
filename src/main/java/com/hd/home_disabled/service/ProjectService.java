@@ -491,6 +491,45 @@ public class ProjectService {
         return jsonArray;
     }
 
+    private List<JSONArray> organizationProjectList(Integer organizationId) {
+        List<JSONArray> jsonArray = new ArrayList<>();
+        List<Project> projectList = projectRepository.findByOrganizationAndStatus(organizationId,1);
+        for (Project project : projectList) {
+            JSONArray array = new JSONArray();
+
+            JSONObject object2 = new JSONObject();
+            object2.put("userName", project.getProjectType().getName());
+            array.add(object2);
+
+            JSONObject object1 = new JSONObject();
+            object1.put("userIdNumber", project.getName());
+            array.add(object1);
+
+            JSONObject object3 = new JSONObject();
+            object3.put("userDisabilityCertificateNumber", project.getLeader());
+            array.add(object3);
+
+            JSONObject object4 = new JSONObject();
+            object4.put("userTypeOfDisability", project.getDescription());
+            array.add(object4);
+
+            JSONObject object5 = new JSONObject();
+            object5.put("userDisabilityDegree", project.getImage());
+            array.add(object5);
+
+            JSONObject object6 = new JSONObject();
+            object6.put("start", project.getStartTime());
+            array.add(object6);
+
+            JSONObject object7 = new JSONObject();
+            object7.put("end", project.getEndTime());
+            array.add(object7);
+
+            jsonArray.add(array);
+        }
+        return jsonArray;
+    }
+
     /**
      * 机构下服务项目数据分析
      * 数据内容2:
@@ -508,6 +547,25 @@ public class ProjectService {
             ExcelUtils.exportExcel(fileName, columnNames, getProjectIdUserListByProjectId(id), request, response);
         }
     }
+
+    /**
+     * 机构下全部服务项目导出
+     * 项目负责人、项目简介、项目图片、项目开始时间、项目结束时间
+     * @param organizationId 机构id
+     * @param request request
+     * @param response response
+     */
+    public void organizationProjectListExport(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
+        String[] columnNames = new String[]{"残疾人服务内容大类", "创建项目名称", "项目负责人", "项目简介", "项目图片",
+                "项目开始时间", "项目结束时间"};
+        Optional<Project> projectOptional = projectRepository.findByIdAndStatus(organizationId, 1);
+        if (projectOptional.isPresent()) {
+            String fileName = "userList_" + projectOptional.get().getName() + "_" + sdf.format(new Date()) + ".xls";
+            ExcelUtils.exportExcel(fileName, columnNames, organizationProjectList(organizationId), request, response);
+        }
+    }
+
+
 
     /**
      * 区服务项目分页
