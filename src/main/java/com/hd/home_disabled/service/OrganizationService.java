@@ -361,6 +361,7 @@ public class OrganizationService {
             JSONObject object = new JSONObject();
             object.put("id",organization.getId());
             object.put("name",organization.getName());
+            object.put("userNum",organization.getUserList().size());
             objectList.add(object);
         }
         return objectList;
