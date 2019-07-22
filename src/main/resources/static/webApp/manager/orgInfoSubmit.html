@@ -78,6 +78,7 @@
 			<label class="layui-form-label">机构面积</label>
 			<div class="layui-input-inline">
 				<input type="text" name="area" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<span style="float: right;position: absolute;right: 10px;top:10px;">m²</span>
 			</div>
 		</div>
 		<div class="layui-inline">
@@ -159,7 +160,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-inline">
-				<input type="number" name="contactNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="contactNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -285,7 +286,7 @@
 			,done: function(res){
 			    if(res.data){
                     layer.msg('上传成功');
-					$("#yyzzhdjzs").val(res.data.fileUrl)
+					$("#yyzzhdjzs").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
 				}
 				//上传完毕回调
 			}
@@ -301,7 +302,7 @@
 			,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#yhkhxkz").val(res.data.fileUrl)
+                    $("#yhkhxkz").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
                 }
 				//上传完毕回调
 			}
@@ -317,7 +318,7 @@
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#mtjslgnjy").val(res.data.fileUrl)
+                    $("#mtjslgnjy").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
                 }
                 //上传完毕回调
             }
@@ -333,7 +334,7 @@
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#zzgzrymd").val(res.data.fileUrl)
+                    $("#zzgzrymd").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
                 }
                 //上传完毕回调
             }
@@ -349,7 +350,7 @@
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#glzd").val(res.data.fileUrl)
+                    $("#glzd").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
                 }
                 //上传完毕回调
             }
