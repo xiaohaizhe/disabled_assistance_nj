@@ -116,17 +116,17 @@
 
         $.ajax({
             type: "GET",
-            url: "/api/project/getProjectAnalysis1?id="+localStorage.getItem("jgid"),
+            url: "/api/project/getProjectAnalysis1?organizationId="+localStorage.getItem("jgid"),
             dataType:"json",
             contentType : 'application/json;charset=utf-8',
             processData: false,
             success: function (data) {
-                // $("[datakey]").each(function () {
-                //     var _data = JSON.parse(localStorage.getItem(_id[1]));
-                //     if(_data){
-                //         $(this).text(_data[$(this).attr("datakey")]);
-                //     }
-                // });
+                var _obj = data.data;
+                $("[datakey]").each(function () {
+                    if(_obj){
+                        $(this).text(_obj[$(this).attr("datakey")]);
+                    }
+                });
             },
             error:function () {
 
