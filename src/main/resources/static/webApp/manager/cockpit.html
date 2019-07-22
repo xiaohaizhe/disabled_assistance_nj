@@ -156,7 +156,7 @@
 				<span> 数据统计</span>
 				<div class="toggleData" id="toggleData">
 					<span class="active">全区数据</span>
-					<span>当天数据</span>
+					<span>【<span id="today"></span>】当天数据</span>
 				</div>
 			</div>
 			<div class="subContent">
@@ -252,43 +252,59 @@
 
 
 <script>
-	$.ajax({
-		url: "/api/project/overview1",
-		type: "GET",
-		data: { district: "雨花台区"},
-		success: function(res) {
-			if(res ){
-				const {data ={}	} = res;
-				const keys = ["averageTime","personCountSum","personTimeSum","projectSum","totalTimeSum"];
-				keys.forEach(function(item){
-					$("#"+item).html(data[item] || 0);
-				});
-			}
-		}
+	const now = new Date();
+	$("#today").html(` ${now.getMonth()}月${now.getDate()}日 `);
 
-	});
-	$.ajax({
-		url: "/api/project/overview2",
-		type: "GET",
-		success: function(res) {
-			if(res ){
 
-			}
-		}
 
-	});
 	$("#toggleData").on("click","span",function(e) {
 		const target = $(e.target);
 		if(target.hasClass("active"))
 			return false;
 		target.addClass("active").siblings().removeClass("active");
 		if(target.text() === "全区数据") {
-
+			analysisAll();
+			allAreaView();
 		} else {
-
+			todayView();
+			analysisToday();
 		}
 	});
 	analysisAll();
+	allAreaView();
+	function allAreaView() {
+		$.ajax({
+			url: "/api/project/overview1",
+			type: "GET",
+			data: { district: "雨花台区"},
+			success: function(res) {
+				if(res ){
+					const {data ={}	} = res;
+					const keys = ["averageTime","personCountSum","personTimeSum","projectSum","totalTimeSum"];
+					keys.forEach(function(item){
+						$("#"+item).html(data[item] || 0);
+					});
+				}
+			}
+
+		});
+	}
+
+	function todayView() {
+		$.ajax({
+			url: "/api/project/overview2",
+			type: "GET",
+			success: function(res) {
+				if(res ){
+					const {data ={}	} = res;
+					const keys = ["averageTime","personCountSum","personTimeSum","projectSum","totalTimeSum"];
+					keys.forEach(function(item){
+						$("#"+item).html(data[item] || 0);
+					});
+				}
+			}
+		});
+	}
 	function analysisAll() {
 		$.ajax({
 			url: "/api/project/usersPreferenceAnalysis",
@@ -309,6 +325,7 @@
 
 		});
 	}
+
 
 	function analysisToday() {
 		$.ajax({

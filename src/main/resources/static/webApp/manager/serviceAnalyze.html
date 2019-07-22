@@ -146,7 +146,7 @@
 				<div class="xzxm">今日新增项目(项)</div>
 				<div class="wcjd">完成进度</div>
 			</div>
-			<div class="table_content">
+			<div class="table_content" id="tableContent">
 				<div class="table_row">
 					<div class="xh">1</div>
 					<div class="xmmc name">日间照料</div>
@@ -158,72 +158,72 @@
 						</div>
 					</div>
 				</div>
-				<div class="table_row">
-					<div class="xh">2</div>
-					<div class="xmmc name">辅助性就业</div>
-					<div class="wcxm color_blue">15</div>
-					<div class="xzxm color_orange">15</div>
-					<div class="wcjd">
-						<div class="processBar">
-							<div class="process"></div>
-						</div>
-					</div>
-				</div>
-				<div class="table_row">
-					<div class="xh">3</div>
-					<div class="xmmc name">康复服务</div>
-					<div class="wcxm color_blue">645</div>
-					<div class="xzxm color_orange">645</div>
-					<div class="wcjd">
-						<div class="processBar">
-							<div class="process"></div>
-						</div>
-					</div>
-				</div>
-				<div class="table_row">
-					<div class="xh">4</div>
-					<div class="xmmc name">学习培训</div>
-					<div class="wcxm color_blue">23</div>
-					<div class="xzxm color_orange">23</div>
-					<div class="wcjd">
-						<div class="processBar">
-							<div class="process"></div>
-						</div>
-					</div>
-				</div>
-				<div class="table_row">
-					<div class="xh">5</div>
-					<div class="xmmc name">志愿者服务</div>
-					<div class="wcxm color_blue">23</div>
-					<div class="xzxm color_orange">23</div>
-					<div class="wcjd">
-						<div class="processBar">
-							<div class="process"></div>
-						</div>
-					</div>
-				</div>
-				<div class="table_row">
-					<div class="xh">6</div>
-					<div class="xmmc name">问题活动</div>
-					<div class="wcxm color_blue">23</div>
-					<div class="xzxm color_orange">23</div>
-					<div class="wcjd">
-						<div class="processBar">
-							<div class="process"></div>
-						</div>
-					</div>
-				</div>
-				<div class="table_row">
-					<div class="xh">7</div>
-					<div class="xmmc name">其他</div>
-					<div class="wcxm color_blue">23</div>
-					<div class="xzxm color_orange">23</div>
-					<div class="wcjd">
-						<div class="processBar">
-							<div class="process"></div>
-						</div>
-					</div>
-				</div>
+				<!--<div class="table_row">-->
+					<!--<div class="xh">2</div>-->
+					<!--<div class="xmmc name">辅助性就业</div>-->
+					<!--<div class="wcxm color_blue">15</div>-->
+					<!--<div class="xzxm color_orange">15</div>-->
+					<!--<div class="wcjd">-->
+						<!--<div class="processBar">-->
+							<!--<div class="process"></div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+				<!--<div class="table_row">-->
+					<!--<div class="xh">3</div>-->
+					<!--<div class="xmmc name">康复服务</div>-->
+					<!--<div class="wcxm color_blue">645</div>-->
+					<!--<div class="xzxm color_orange">645</div>-->
+					<!--<div class="wcjd">-->
+						<!--<div class="processBar">-->
+							<!--<div class="process"></div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+				<!--<div class="table_row">-->
+					<!--<div class="xh">4</div>-->
+					<!--<div class="xmmc name">学习培训</div>-->
+					<!--<div class="wcxm color_blue">23</div>-->
+					<!--<div class="xzxm color_orange">23</div>-->
+					<!--<div class="wcjd">-->
+						<!--<div class="processBar">-->
+							<!--<div class="process"></div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+				<!--<div class="table_row">-->
+					<!--<div class="xh">5</div>-->
+					<!--<div class="xmmc name">志愿者服务</div>-->
+					<!--<div class="wcxm color_blue">23</div>-->
+					<!--<div class="xzxm color_orange">23</div>-->
+					<!--<div class="wcjd">-->
+						<!--<div class="processBar">-->
+							<!--<div class="process"></div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+				<!--<div class="table_row">-->
+					<!--<div class="xh">6</div>-->
+					<!--<div class="xmmc name">问题活动</div>-->
+					<!--<div class="wcxm color_blue">23</div>-->
+					<!--<div class="xzxm color_orange">23</div>-->
+					<!--<div class="wcjd">-->
+						<!--<div class="processBar">-->
+							<!--<div class="process"></div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+				<!--<div class="table_row">-->
+					<!--<div class="xh">7</div>-->
+					<!--<div class="xmmc name">其他</div>-->
+					<!--<div class="wcxm color_blue">23</div>-->
+					<!--<div class="xzxm color_orange">23</div>-->
+					<!--<div class="wcjd">-->
+						<!--<div class="processBar">-->
+							<!--<div class="process"></div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
 			</div>
 		</div>
 	</div>
@@ -240,49 +240,116 @@
 
 
 <script>
-
-	var option = {
-		series: [
-			{
-				name:'访问来源',
-				type:'pie',
-				radius: ['50%', '70%'],
-				avoidLabelOverlap: false,
-				label: {
-					normal: {
-						show: true,
-//						position: 'center'
-					},
-					emphasis: {
-						show: true,
-						textStyle: {
-							fontSize: '30',
-							fontWeight: 'bold'
-						}
-					}
-				},
-				labelLine: {
-					normal: {
-						show: true
-					}
-				},
-				data:[
-					{value:335, name:'辅助性就业'},
-					{value:310, name:'康复服务'},
-					{value:234, name:'日间照料'},
-					{value:135, name:'文体活动'},
-					{value:1548, name:'学习培训'},
-					{value:135, name:'志愿者服务'},
-					{value:135, name:'其他'}
-				]
-			}
-		]
-	};
-
 	var myChart = echarts.init(document.getElementById('allArea'));
-	myChart.setOption(option);
-	var myChart = echarts.init(document.getElementById('today'));
-	myChart.setOption(option);
+	var myChart2 = echarts.init(document.getElementById('today'));
+
+	$.ajax({
+		url: "/api/project/projectAnalysis",
+		type: "GET",
+		data: {district: "雨花台区"},
+		success: function(res) {
+			console.log("/api/project/projectAnalysis",res);
+			if(res ){
+				const { data = {}} = res;
+				const param = Object.keys(data).map(function(item){
+					return {
+						name: item, value: data[item]
+					}
+				});
+				const option = getOption(param);
+				myChart.setOption(option);
+			}
+		}
+
+	});
+
+	$.ajax({
+		url: "/api/project/projectAnalysisToday",
+		type: "GET",
+		success: function(res) {
+			console.log("/api/project/projectAnalysisToday",res);
+			if(res ){
+				const { data = {}} = res;
+				const param = Object.keys(data).map(function(item){
+					return {
+						name: item, value: data[item]
+					}
+				});
+				const option = getOption(param);
+				myChart2.setOption(option);
+			}
+		}
+
+	});
+
+	$.ajax({
+		url: "/api/project/projectAnalysisData",
+		type: "GET",
+		success: function(res) {
+			console.log(123,res);
+			if(res ){
+				const {data =[]	} = res;
+				if(data.length) {
+					const content = data.reduce(function(all,item){
+						const {
+									finishedNum = 0,
+									finishedNumToday = 0,
+									name= "--",
+									percent=0
+								} = item;
+						return `${all}<div class="table_row">
+							<div class="xh">1</div>
+							<div class="xmmc name">${name}</div>
+							<div class="wcxm color_blue">${finishedNum}</div>
+							<div class="xzxm color_orange">${finishedNumToday}</div>
+							<div class="wcjd">
+								<div class="processBar">
+									<div class="process" style="width:${percent*100}%"></div>
+								</div>
+							</div>
+						</div>`;
+					},"");
+					$("#tableContent").html(content);
+				}
+			}
+		}
+	});
+
+	function getOption(data) {
+		var option = {
+			series: [
+				{
+					name:'访问来源',
+					type:'pie',
+					radius: ['50%', '70%'],
+					avoidLabelOverlap: false,
+					label: {
+						normal: {
+							show: true,
+//						position: 'center'
+						},
+						emphasis: {
+							show: true,
+							textStyle: {
+								fontSize: '30',
+								fontWeight: 'bold'
+							}
+						}
+					},
+					labelLine: {
+						normal: {
+							show: true
+						}
+					},
+					data: data
+				}
+			]
+		};
+		return option;
+	}
+
+
+
 </script>
 </body>
 </html>
