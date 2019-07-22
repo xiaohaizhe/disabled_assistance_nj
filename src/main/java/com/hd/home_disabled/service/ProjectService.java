@@ -1,9 +1,7 @@
 package com.hd.home_disabled.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.Organization;
 import com.hd.home_disabled.entity.Project;
@@ -255,10 +253,10 @@ public class ProjectService {
         ProjectStatistic projectStatistic = new ProjectStatistic();
         projectStatistic.setId(project.getId());
         projectStatistic.setName(project.getName());
-        projectStatistic.setPersonCountSum(project.getPersonCountSum()==null?0:project.getPersonCountSum());
-        projectStatistic.setPersonTimeSum(project.getPersonTimeSum()==null?0:project.getPersonTimeSum());
-        projectStatistic.setTotalTimeSum(project.getTotalTimeSum()==null?0f:project.getTotalTimeSum());
-        projectStatistic.setAverageTime(project.getAverageTime()==null?0f:project.getAverageTime());
+        projectStatistic.setPersonCountSum(project.getPersonCountSum() == null ? 0 : project.getPersonCountSum());
+        projectStatistic.setPersonTimeSum(project.getPersonTimeSum() == null ? 0 : project.getPersonTimeSum());
+        projectStatistic.setTotalTimeSum(project.getTotalTimeSum() == null ? 0f : project.getTotalTimeSum());
+        projectStatistic.setAverageTime(project.getAverageTime() == null ? 0f : project.getAverageTime());
         return projectStatistic;
     }
 
@@ -277,17 +275,33 @@ public class ProjectService {
      * 数据内容1:
      * 项目运行数据统计（总服务人数，总服务人次，总服务时长，平均服务时长）
      *
-     * @param id 项目id
+     * @param organizationId 机构id
      * @return 结果
      */
-    public JSONObject getProjectAnalysis1(Integer id) {
-        Optional<Project> projectOptional = projectRepository.findByIdAndStatus(id, 1);
-        if (projectOptional.isPresent()) {
-            Project project = projectOptional.get();
-            ProjectStatistic projectStatistic = getStatistic(project);
+    public JSONObject getProjectAnalysis1(Integer organizationId) {
+        Optional<Organization> organizationOptional = organizationRepository.findByIdAndStatus(organizationId, 1);
+        if (organizationOptional.isPresent()) {
+            ProjectStatistic projectStatistic = new ProjectStatistic();
+            projectStatistic.setName("统计");
+            int personCountSum = 0; //服务人数总数
+            int personTimeSum = 0;  //服务总人次
+            float totalTimeSum = 0f;   //服务总时长（分钟）
+            float averageTime = 0f;        //平均服务时长：总时长/总人次
+            List<Project> projectList = projectRepository.findByOrganizationAndStatus(organizationId, 1);
+            for (Project project : projectList) {
+                if (project.getPersonCountSum() != null) personCountSum += project.getPersonCountSum();
+                if (project.getPersonTimeSum() != null) personTimeSum += project.getPersonTimeSum();
+                if (project.getTotalTimeSum() != null) totalTimeSum += project.getTotalTimeSum();
+            }
+            if (personTimeSum != 0)
+                averageTime = (float) Math.round(( totalTimeSum / personTimeSum) * 100) / 100;
+            projectStatistic.setPersonCountSum(personCountSum);
+            projectStatistic.setPersonTimeSum(personTimeSum);
+            projectStatistic.setTotalTimeSum(totalTimeSum);
+            projectStatistic.setAverageTime(averageTime);
             return RESCODE.SUCCESS.getJSONRES(projectStatistic);
         }
-        return RESCODE.PROJECT_ID_NOT_EXIST.getJSONRES();
+        return RESCODE.ORGANIZATION_ID_NOT_EXIST.getJSONRES();
     }
 
     /**
@@ -407,14 +421,14 @@ public class ProjectService {
 
     public JSONObject getProjectAnalysis3(Integer organizationId, Integer page, Integer number, String sorts) {
         Optional<Organization> organizationOptional = organizationRepository.findByIdAndStatus(organizationId, 1);
-        if (organizationOptional.isPresent()){
+        if (organizationOptional.isPresent()) {
             Pageable pageable = PageUtils.getPage(page, number, sorts);
-            Page<Project> projectPage = projectRepository.findByOrganizationAndStatus(organizationId,1,pageable);
+            Page<Project> projectPage = projectRepository.findByOrganizationAndStatus(organizationId, 1, pageable);
             List<com.hd.home_disabled.model.dto.Project> projectList = new ArrayList<>();
-            for (Project project : projectPage.getContent()){
+            for (Project project : projectPage.getContent()) {
                 projectList.add(getModel(project));
             }
-            return RESCODE.SUCCESS.getJSONRES(projectList,projectPage.getTotalPages(),projectPage.getTotalElements());
+            return RESCODE.SUCCESS.getJSONRES(projectList, projectPage.getTotalPages(), projectPage.getTotalElements());
         }
         return RESCODE.ORGANIZATION_ID_NOT_EXIST.getJSONRES();
     }
@@ -493,7 +507,7 @@ public class ProjectService {
 
     private List<JSONArray> organizationProjectList(Integer organizationId) {
         List<JSONArray> jsonArray = new ArrayList<>();
-        List<Project> projectList = projectRepository.findByOrganizationAndStatus(organizationId,1);
+        List<Project> projectList = projectRepository.findByOrganizationAndStatus(organizationId, 1);
         for (Project project : projectList) {
             JSONArray array = new JSONArray();
 
@@ -551,9 +565,10 @@ public class ProjectService {
     /**
      * 机构下全部服务项目导出
      * 项目负责人、项目简介、项目图片、项目开始时间、项目结束时间
+     *
      * @param organizationId 机构id
-     * @param request request
-     * @param response response
+     * @param request        request
+     * @param response       response
      */
     public void organizationProjectListExport(Integer organizationId, HttpServletRequest request, HttpServletResponse response) {
         String[] columnNames = new String[]{"残疾人服务内容大类", "创建项目名称", "项目负责人", "项目简介", "项目图片",
@@ -564,7 +579,6 @@ public class ProjectService {
             ExcelUtils.exportExcel(fileName, columnNames, organizationProjectList(organizationId), request, response);
         }
     }
-
 
 
     /**
@@ -696,6 +710,7 @@ public class ProjectService {
 
     /**
      * 领导驾驶舱：全区数据2，当天数据
+     *
      * @return 结果
      */
     public JSONObject overview2() {
@@ -716,7 +731,7 @@ public class ProjectService {
         Set<User> users = new HashSet<>();
         personTimeSum = projectUserDetailList.size();
         for (ProjectUserDetail projectUserDetail : projectUserDetailList) {
-            logger.info("详情id"+projectUserDetail.getId());
+            logger.info("详情id" + projectUserDetail.getId());
             totalTimeSum += projectUserDetail.getLengthOfService();
             projects.add(projectUserDetail.getProject());
             users.add(projectUserDetail.getUser());
@@ -1063,49 +1078,49 @@ public class ProjectService {
         if (planOptional.isPresent()) {
             Plan plan = planOptional.get();
             JSONObject object = new JSONObject();
-            object.put("name","日间照料");
+            object.put("name", "日间照料");
             object.put("finishedNum", count1);
             object.put("finishedNumToday", count11);
             object.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count1 / plan.getProject_type0()) * 100) / 100);
             array.add(object);
 
             JSONObject object1 = new JSONObject();
-            object1.put("name","辅助性就业");
+            object1.put("name", "辅助性就业");
             object1.put("finishedNum", count2);
             object1.put("finishedNumToday", count21);
             object1.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count2 / plan.getProject_type0()) * 100) / 100);
             array.add(object1);
 
             JSONObject object2 = new JSONObject();
-            object2.put("name","康复服务");
+            object2.put("name", "康复服务");
             object2.put("finishedNum", count3);
             object2.put("finishedNumToday", count31);
             object2.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count3 / plan.getProject_type0()) * 100) / 100);
             array.add(object2);
 
             JSONObject object3 = new JSONObject();
-            object3.put("name","文体活动");
+            object3.put("name", "文体活动");
             object3.put("finishedNum", count4);
             object3.put("finishedNumToday", count41);
             object3.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count4 / plan.getProject_type0()) * 100) / 100);
             array.add(object3);
 
             JSONObject object4 = new JSONObject();
-            object4.put("name","学习培训");
+            object4.put("name", "学习培训");
             object4.put("finishedNum", count5);
             object4.put("finishedNumToday", count51);
             object4.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count5 / plan.getProject_type0()) * 100) / 100);
             array.add(object4);
 
             JSONObject object5 = new JSONObject();
-            object5.put("name","志愿服务");
+            object5.put("name", "志愿服务");
             object5.put("finishedNum", count6);
             object5.put("finishedNumToday", count61);
             object5.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count6 / plan.getProject_type0()) * 100) / 100);
             array.add(object5);
 
             JSONObject object6 = new JSONObject();
-            object6.put("name","其他");
+            object6.put("name", "其他");
             object6.put("finishedNum", count7);
             object6.put("finishedNumToday", count71);
             object6.put("percent", plan.getProject_type0() < 1 ? null : (float) Math.round(((float) count7 / plan.getProject_type0()) * 100) / 100);
@@ -1113,49 +1128,49 @@ public class ProjectService {
 
         } else {
             JSONObject object = new JSONObject();
-            object.put("name","日间照料");
+            object.put("name", "日间照料");
             object.put("finishedNum", count1);
             object.put("finishedNumToday", count11);
             object.put("percent", null);
             array.add(object);
 
             JSONObject object1 = new JSONObject();
-            object1.put("name","辅助性就业");
+            object1.put("name", "辅助性就业");
             object1.put("finishedNum", count2);
             object1.put("finishedNumToday", count21);
             object1.put("percent", null);
             array.add(object1);
 
             JSONObject object2 = new JSONObject();
-            object2.put("name","康复服务");
+            object2.put("name", "康复服务");
             object2.put("finishedNum", count3);
             object2.put("finishedNumToday", count31);
             object2.put("percent", null);
             array.add(object2);
 
             JSONObject object3 = new JSONObject();
-            object3.put("name","文体活动");
+            object3.put("name", "文体活动");
             object3.put("finishedNum", count4);
             object3.put("finishedNumToday", count41);
             object3.put("percent", null);
             array.add(object3);
 
             JSONObject object4 = new JSONObject();
-            object4.put("name","学习培训");
+            object4.put("name", "学习培训");
             object4.put("finishedNum", count5);
             object4.put("finishedNumToday", count51);
             object4.put("percent", null);
             array.add(object4);
 
             JSONObject object5 = new JSONObject();
-            object5.put("name","志愿服务");
+            object5.put("name", "志愿服务");
             object5.put("finishedNum", count6);
             object5.put("finishedNumToday", count61);
             object5.put("percent", null);
             array.add(object5);
 
             JSONObject object6 = new JSONObject();
-            object6.put("name","其他");
+            object6.put("name", "其他");
             object6.put("finishedNum", count7);
             object6.put("finishedNumToday", count71);
             object6.put("percent", null);

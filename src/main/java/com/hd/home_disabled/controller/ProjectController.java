@@ -78,8 +78,8 @@ public class ProjectController {
     @ApiOperation(value = "查询机构下服务项目数据分析",
             notes = "项目运行数据统计（总服务人数，总服务人次，总服务时长，平均服务时长）")
     @RequestMapping(value = "/getProjectAnalysis1", method = RequestMethod.GET)
-    public JSONObject getProjectAnalysis(Integer id){
-        return projectService.getProjectAnalysis1(id);
+    public JSONObject getProjectAnalysis(Integer organizationId){
+        return projectService.getProjectAnalysis1(organizationId);
     }
 
     @ApiOperation(value = "查询机构下服务项目数据分析",notes = " 参与项目残疾人列表")
