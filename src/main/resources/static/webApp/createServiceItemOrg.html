@@ -44,27 +44,27 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">创建项目名称</label>
 		<div class="layui-input-inline">
-			<input type="text" name="name" required  lay-verify="required" placeholder="请输入项目名称" autocomplete="off" class="layui-input">
+			<input type="text" name="name" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">所属机构名称</label>
 		<div class="layui-input-inline">
-			<input type="text" name="name" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			<input type="text" id="jg_name" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目负责人</label>
 		<div class="layui-input-inline">
-			<input type="text" name="leader" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			<input type="text" name="leader" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目简介</label>
 		<div class="layui-input-inline">
-			<input type="text" name="description" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			<input type="text" name="description" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 
@@ -75,7 +75,7 @@
 				<button type="button" class="layui-btn" id="test1">
 					<i class="layui-icon">&#xe67c;</i>选择文件
 				</button>
-				<input style="display: none;" id="xmtp" type="text" name="image" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+				<input style="display: none;" id="xmtp" type="text" name="image" required autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -84,13 +84,13 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目开始时间</label>
 		<div class="layui-input-inline">
-			<input id="startime"  placeholder="yyyy-MM-dd" type="text" name="startTime" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			<input id="startime"  placeholder="yyyy-MM-dd" type="text" name="startTime" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目结束时间</label>
 		<div class="layui-input-inline">
-			<input id="endtime"  placeholder="yyyy-MM-dd" type="text" name="endTime" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			<input id="endtime"  placeholder="yyyy-MM-dd" type="text" name="endTime" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 
@@ -134,7 +134,7 @@
                 //上传完毕回调
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#xmtp").val(res.data.fileUrl)
+                    $("#xmtp").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">');
                 }
             }
             ,error: function(){
@@ -148,8 +148,9 @@
             data: {id:2},
             success: function (data) {
                 // console.log(data);
-                form.render();
-                form.val("org-form", data.data);
+                // form.render();
+                // form.val("org-form", data.data);
+                $("#jg_name").val(data.data.name);
 
             }
         })

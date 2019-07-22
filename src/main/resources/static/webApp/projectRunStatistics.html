@@ -203,6 +203,7 @@ layui.use(['table', 'form'], function () {
     function setBox(array,dom) {
         var html = [];
         for (var i = 0; i < array.length; i++) {
+            localStorage.setItem(array[i].id,JSON.stringify(array[i]));
             html.push('<div class="layui-col-sm3">');
             html.push(' <div class="grid-project">');
             html.push(' <div class="project-info">');

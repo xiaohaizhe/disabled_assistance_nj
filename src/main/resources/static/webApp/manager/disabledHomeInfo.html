@@ -25,7 +25,7 @@
 		</div>
 		<div class="layui-form-item operate-bar" style="margin:0;padding:0 10px;">
 			<div class="layui-input-block">
-				<span id="export" style="margin-right: 10px;"><i
+				<span onclick="exportfile()" style="margin-right: 10px;"><i
 						class="layui-icon layui-icon-file"></i>导出Excel
 				</span>
 				<span><i
@@ -47,6 +47,11 @@
 
 
 <script>
+
+    function exportfile() {
+        window.location = "/api/org/export_excel?district=雨花台区";
+    }
+
 	layui.use('table', function(){
 		var table = layui.table;
 

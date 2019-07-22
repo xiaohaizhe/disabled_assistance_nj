@@ -60,7 +60,7 @@
                     <div>
                         <h2>项目总服务人数:</h2>
                         <div class="numbers">
-                            <p><span class="bold-text">200</span></p>
+                            <p><span datakey="personCountSum" class="bold-text">200</span></p>
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                 <div class="project-info">
                     <h2>总服务人次:</h2>
                     <div class="numbers">
-                        <p><span class="bold-text">6000</span></p>
+                        <p><span datakey="personTimeSum" class="bold-text">6000</span></p>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                 <div class="project-info">
                     <h2>总服务时长:</h2>
                     <div class="numbers">
-                        <p><span class="bold-text">12000分钟</span></p>
+                        <p><span datakey="averageTime" class="bold-text">12000</span>分钟</p>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@
                 <div class="project-info">
                     <h2>平均服务时长:</h2>
                     <div class="numbers">
-                        <p><span class="bold-text">20分钟</span></p>
+                        <p><span datakey="totalTimeSum" class="bold-text">20</span>分钟</p>
                     </div>
                 </div>
             </div>
@@ -111,12 +111,21 @@
 <script>
     layui.use('table', function(){
         var table = layui.table;
+        var $ = layui.$;
+        var searchData = location.search || "?id=2";
+        var _id = location.search.split("=");
+        $("[datakey]").each(function () {
+            var _data = JSON.parse(localStorage.getItem(_id[1]));
+            if(_data){
+                $(this).text(_data[$(this).attr("datakey")]);
+            }
+        });
 
         //第一个实例
         table.render({
             elem: '#demo'
             ,height: 400
-            ,url: '/api/project/getProjectAnalysis2'+location.search+'&sorts=modifyTime' //数据接口
+            ,url: '/api/project/getProjectAnalysis2'+searchData+'&sorts=modifyTime' //数据接口
             , request: {
                 pageName: 'page', //页码的参数名称，默认：page
                 limitName: 'number' //每页数据量的参数名，默认：limit
