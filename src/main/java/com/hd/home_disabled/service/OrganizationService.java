@@ -210,7 +210,7 @@ public class OrganizationService {
     /**
      * 查询单个机构
      *
-     * @param id 机构id
+     * @param adminId 机构id
      * @return 结果
      */
     public JSONObject getByAdminId(Integer adminId) {
@@ -391,11 +391,16 @@ public class OrganizationService {
         Sort sort3 = new Sort(new Sort.Order(Sort.Direction.DESC, "personTimeSum"));
         Sort sort4 = new Sort(new Sort.Order(Sort.Direction.DESC, "totalTimeSum"));
         Sort sort5 = new Sort(new Sort.Order(Sort.Direction.DESC, "averageTime"));
-        List<Organization> organizationList1 = organizationRepository.findAll(sort1).subList(0,3);
-        List<Organization> organizationList2 = organizationRepository.findAll(sort2).subList(0,3);
-        List<Organization> organizationList3 = organizationRepository.findAll(sort3).subList(0,3);
-        List<Organization> organizationList4 = organizationRepository.findAll(sort4).subList(0,3);
-        List<Organization> organizationList5 = organizationRepository.findAll(sort5).subList(0,3);
+        List<Organization> organizationList1 = organizationRepository.findAll(sort1);
+        if (organizationList1.size()>3) organizationList1 = organizationList1.subList(0,3);
+        List<Organization> organizationList2 = organizationRepository.findAll(sort2);
+        if (organizationList2.size()>3) organizationList2 = organizationList2.subList(0,3);
+        List<Organization> organizationList3 = organizationRepository.findAll(sort3);
+        if (organizationList3.size()>3) organizationList3 = organizationList3.subList(0,3);
+        List<Organization> organizationList4 = organizationRepository.findAll(sort4);
+        if (organizationList4.size()>3) organizationList4 = organizationList4.subList(0,3);
+        List<Organization> organizationList5 = organizationRepository.findAll(sort5);
+        if (organizationList5.size()>3) organizationList5 = organizationList5.subList(0,3);
         object.put("projectSum",getOrganization(organizationList1));
         object.put("personCountSum",getOrganization(organizationList2));
         object.put("personTimeSum",getOrganization(organizationList3));
@@ -407,7 +412,8 @@ public class OrganizationService {
             orders.add(new Sort.Order(Sort.Direction.DESC, sort));
         }
         Sort sort6 = new Sort(orders);
-        List<Organization> organizationList6 = organizationRepository.findAll(sort6).subList(0,3);
+        List<Organization> organizationList6 = organizationRepository.findAll(sort6);
+        if (organizationList6.size()>3) organizationList6 = organizationList6.subList(0,3);
         object.put("ranking",getOrganization(organizationList6));
         return RESCODE.SUCCESS.getJSONRES(object);
     }
