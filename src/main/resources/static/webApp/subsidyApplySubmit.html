@@ -246,7 +246,7 @@
                 if(res.data){
                     // layer.msg('上传成功');
 
-                    $("#tycjrmd").val(res.data.fileUrl)
+                    $("#tycjrmd").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
                 }
                 //上传完毕回调
             }
@@ -262,7 +262,7 @@
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#dbhqtdsrzm").val(res.data.fileUrl)
+                    $("#dbhqtdsrzm").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
                 }
                 //上传完毕回调
             }
