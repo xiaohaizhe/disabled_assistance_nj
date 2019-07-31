@@ -240,13 +240,14 @@
 		//执行实例
 		var uploadInst = upload.render({
 			elem: '#test1' //绑定元素
+            ,accept:"file"
             ,url: '/api/file/upload' //上传接口
             ,data:{type:"nursingList"}
             ,done: function(res){
                 if(res.data){
-                    // layer.msg('上传成功');
+                    layer.msg('上传成功');
 
-                    $("#tycjrmd").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
+                    $("#tycjrmd").val(res.data.fileUrl).after(smail(res.data.fileUrl))
                 }
                 //上传完毕回调
             }
@@ -262,7 +263,7 @@
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#dbhqtdsrzm").val(res.data.fileUrl).after('<img style="width: 60px;" src="'+res.data.fileUrl+'" alt="">')
+                    $("#dbhqtdsrzm").val(res.data.fileUrl).after(smail(res.data.fileUrl));
                 }
                 //上传完毕回调
             }
@@ -270,6 +271,17 @@
 				//请求异常回调
 			}
 		});
+
+        function smail(str){
+            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                return '<img src="'+str+'" style="width: 60px;">'
+            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                return '<img src="../images/word.png" style="width: 60px;">'
+            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                return '<img src="../images/xls.png" style="width: 60px;">'
+            }
+
+        }
 
 		//执行一个laydate实例
 		laydate.render({

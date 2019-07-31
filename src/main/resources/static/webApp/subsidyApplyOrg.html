@@ -54,6 +54,17 @@
 	layui.use('table', function(){
 		var table = layui.table;
 
+        function smail(str){
+            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                return '<img src="'+str+'" style="width: 30px;">'
+            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                return '<img src="../images/word.png" style="width: 30px;">'
+            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                return '<img src="../images/xls.png" style="width: 30px;">'
+            }
+
+        }
+
 		table.render({
 			elem: '#mainTable'
             ,url: '/api/apply/getPageByOrganization?organizationId='+localStorage.getItem("jgid")+'&sorts=modifyTime' //数据接口
@@ -90,8 +101,12 @@
 				{field:'subsidyFundForDayNursery', width:135, title: '申请机构日托运营补贴资金总额', sort: true},
 				{field:'localInvestmentOfLastYear last_year', width:135, title: '上年当地资金投入情况', sort: true},
 				{field:'totalSubsidyFunds', width:135, title: '申请托养机构运营补贴资金总额合计'},
-				{field:'nursingList', width:135, title: '托养残疾人名单'},
-				{field:'lowIncomeCertificate', width:135, title: '低保或其他低收入证明'},
+				{field:'nursingList', width:135, title: '托养残疾人名单',templet: function(d){
+                        return smail(d.nursingList);
+                    }},
+				{field:'lowIncomeCertificate', width:135, title: '低保或其他低收入证明',templet: function(d){
+                        return smail(d.lowIncomeCertificate);
+                    }},
 				{field:'adminName', width:135, title: '提交人'},
 				{field:'createTime', width:135, title: '提交时间', sort: true}
 			]]

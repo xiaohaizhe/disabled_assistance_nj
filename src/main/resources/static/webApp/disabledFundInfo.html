@@ -212,14 +212,12 @@
         <div class="layui-form-item" style="min-height: 100px;">
             <div class="layui-inline">
                 <label class="layui-form-label">托养残疾人名单</label>
-                <div class="layui-input-block" style="padding-right:15px;">
-                    <img id="cjrmd" src="" alt="" style="width: 100px;">
+                <div id="cjrmd"  class="layui-input-block" style="padding-right:15px;">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label">低保或其他低收入证明</label>
-                <div class="layui-input-block" style="padding-right:15px;">
-                    <img id="dsrzm" src="" alt="" style="width: 100px;">
+                <div id="dsrzm" class="layui-input-block" style="padding-right:15px;">
                 </div>
             </div>
 
@@ -324,8 +322,12 @@
                 ,{field: 'subsidyFundForBoardingNursery', title: '申请机构全托运营补贴资金总额', width: 235, sort: true}
                 ,{field: 'localInvestmentOfLastYear last_year', title: '上年当地资金投入情况', width: 235, sort: true}
                 ,{field: 'totalSubsidyFunds', title: '申请托养机构运营补贴资金总额合计', width: 235, sort: true}
-                ,{field: 'nursingList', title: '托养残疾人名单', width: 135, sort: true}
-                ,{field: 'lowIncomeCertificate', title: '低保或其他低收入证明', width: 135, sort: true}
+                ,{field: 'nursingList', title: '托养残疾人名单', width: 135, sort: true ,templet: function(d){
+                        return smail(d.nursingList);
+                    }}
+                ,{field: 'lowIncomeCertificate', title: '低保或其他低收入证明', width: 135, sort: true ,templet: function(d){
+                        return smail(d.lowIncomeCertificate);
+                    }}
                 ,{field: 'adminName', title: '提交人', width: 135, sort: true}
                 ,{field: 'createTime', title: '提交时间', width: 135, sort: true}
                 ,{field: 'lastModifyTime', title: '更新时间', width: 135, sort: true}
@@ -335,14 +337,34 @@
         });
 
 
+        function smail(str){
+            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                return '<img src="'+str+'" style="width: 30px;">'
+            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                return '<img src="../images/word.png" style="width: 30px;">'
+            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                return '<img src="../images/xls.png" style="width: 30px;">'
+            }
+
+        }
+
+        function setDown(dom,str){
+            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                dom.html('<a target="_blank" href="'+str+'"><img src="'+str+'" style="width: 100px;"></a>')
+            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                dom.html('<a target="_blank" href="'+str+'"><img src="../images/word.png" style="width: 100px;"></a>')
+            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                dom.html('<a target="_blank" href="'+str+'"><img src="../images/xls.png" style="width: 100px;"></a>')
+            }
+        }
 
         //监听行工具事件
         table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
                 ,layEvent = obj.event; //获得 lay-event 对应的值
             pageid = data.id;
-            $("#dsrzm").attr("src",data.lowIncomeCertificate);
-            $("#cjrmd").attr("src",data.nursingList);
+            setDown($("#dsrzm"),data.lowIncomeCertificate);
+            setDown($("#cjrmd"),data.nursingList);
             if(layEvent === 'edit'){
                  quotaIndex = layer.open({
                     type: 1,
