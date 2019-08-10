@@ -46,5 +46,5 @@ var before = {
             }
         })
     }
-}
+};
 before.getTowns();

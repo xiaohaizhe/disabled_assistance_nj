@@ -34,4 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.idNumber = ?1 and u.status = ?2")
     Optional<User> findByIdNumberAndStatus(String idNumber,Integer status);
+
+    @Query("select u from User u where u.contactNumber = ?1 and u.status = 1")
+    Optional<User> findByContactNumber(String contactNumber);
 }

@@ -958,6 +958,7 @@ public class ProjectService {
         Date date = new Date();
         try {
             date = sdf.parse(sdf.format(date));
+
         } catch (ParseException e) {
             return RESCODE.TIME_PARSE_FAILURE.getJSONRES(e.getMessage());
         }

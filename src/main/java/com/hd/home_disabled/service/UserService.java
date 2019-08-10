@@ -677,21 +677,21 @@ public class UserService {
      * 残疾人打卡项目
      * @param projectId 项目id
      * @param userId    残疾人id
-     * @param s    打卡开始时间
-     * @param e      打卡结束时间
+     * @param start    打卡开始时间
+     * @param end      打卡结束时间
      * @return  结果
      */
     @Transactional
-    public JSONObject clockIn(Integer projectId, Long userId, String s,String e,Integer adminId){
+    public JSONObject clockIn(Integer projectId, Long userId, Date start,Date end,Integer adminId){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date start;
+        /*Date start;
         Date end;
         try {
             start = sdf.parse(s);
             end = sdf.parse(e);
         } catch (ParseException ex) {
             return RESCODE.TIME_PARSE_FAILURE.getJSONRES();
-        }
+        }*/
         Optional<Project> projectOptional = projectRepository.findByIdAndStatus(projectId,1);
         if (projectOptional.isPresent()){
             Optional<Admin> adminOptional =adminRepository.findById(adminId);

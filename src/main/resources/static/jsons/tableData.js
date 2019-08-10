@@ -529,4 +529,4 @@ var tableData = [
         ability_level:"4级 重度失能",
         evaluate_time:"2017-02-13"
     }
-]
+];

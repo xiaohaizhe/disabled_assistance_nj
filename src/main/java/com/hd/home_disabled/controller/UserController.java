@@ -85,9 +85,9 @@ public class UserController {
         return  userService.statisticData();
     }
 
-    @ApiOperation(value = "残疾人参与项目打卡", notes = "统计")
+/*    @ApiOperation(value = "残疾人参与项目打卡", notes = "统计")
     @RequestMapping(value = "/clockIn",method = RequestMethod.GET)
     public JSONObject clockIn(Integer projectId, Long userId, String start,String end,Integer adminId) {
         return  userService.clockIn(projectId,userId,start,end,adminId);
-    }
+    }*/
 }
