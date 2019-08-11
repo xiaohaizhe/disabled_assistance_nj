@@ -55,7 +55,7 @@ public class DingUserService {
 
     public List<DingUserAttendanceRecord> getDingUserAttendanceRecord() {
         Date from = new Date();
-        from.setMinutes(from.getMinutes() - 2000);
+        from.setMinutes(from.getMinutes() - 10);
         Date to = new Date();
         List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserAttendanceRecordRepository.findByStatus((byte) 0, from, to);
         return dingUserAttendanceRecords;
