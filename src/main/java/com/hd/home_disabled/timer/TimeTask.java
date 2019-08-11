@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.AccessToken;
 import com.hd.home_disabled.entity.DingUser;
 import com.hd.home_disabled.entity.DingUserAttendanceRecord;
+import com.hd.home_disabled.entity.User;
 import com.hd.home_disabled.repository.AccessTokenRepository;
 import com.hd.home_disabled.repository.DingUserAttendanceRecordRepository;
 import com.hd.home_disabled.repository.DingUserRepository;
 import com.hd.home_disabled.service.DingUserService;
+import com.hd.home_disabled.service.UserService;
 import com.hd.home_disabled.utils.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,8 @@ public class TimeTask {
     private DingUserRepository dingUserRepository;
     @Autowired
     private DingUserAttendanceRecordRepository dingUserAttendanceRecordRepository;
+    @Autowired
+    private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
 
@@ -141,33 +145,34 @@ public class TimeTask {
             Date end = new Date();
             Date start = new Date();
             start.setMinutes(start.getMinutes() - 10);
-            String url = getAttendanceList+"?access_token=" + accessToken;
+            String url = getAttendanceList + "?access_token=" + accessToken;
             JSONObject params = new JSONObject();
             params.put("checkDateFrom", sdf.format(start));
             params.put("checkDateTo", sdf.format(end));
             params.put("isI18n", false);
 
-            List<DingUser> users= dingUserRepository.findAll();
+            List<DingUser> users = dingUserRepository.findAll();
             String[] userIds = new String[users.size()];
             for (int i = 0; i < users.size(); i++) {
                 userIds[i] = String.valueOf(users.get(i).getUserId());
             }
-            params.put("userIds",userIds );
-            try{
+            params.put("userIds", userIds);
+            try {
                 JSONObject result = HttpUtils.sendPost(url, params);
                 Integer errcode = result.getInteger("errcode");
-                if (errcode==0){
+                if (errcode == 0) {
                     JSONArray array = result.getJSONArray("recordresult");
                     for (int i = 0; i < array.size(); i++) {
-                        JSONObject object = (JSONObject)array.get(i);
-                        if (object.getString("checkType")!=null){
+                        JSONObject object = (JSONObject) array.get(i);
+                        if (object.getString("checkType") != null) {
                             Date userCheckTime = new Date(object.getLong("userCheckTime"));
                             String dingUserId = object.getString("userId");
-                            Byte status = (byte)1;  //项目结束
-                            if (object.getString("checkType").equals("OnDuty")){
-                                status = (byte)0;   //项目开始
-                            }else{
-                                System.out.println();
+                            Byte status = (byte) 1;  //项目结束
+                            if (object.getString("checkType").equals("OnDuty")) {
+                                status = (byte) 0;   //项目开始
+                            } else {
+                                logger.info("项目结束，记录项目时间");
+                                clockIn(dingUserId, userCheckTime);
                             }
                             DingUserAttendanceRecord dingUserAttendanceRecord = new DingUserAttendanceRecord();
                             dingUserAttendanceRecord.setDingUserId(dingUserId);
@@ -176,11 +181,27 @@ public class TimeTask {
                             dingUserAttendanceRecordRepository.save(dingUserAttendanceRecord);
                         }
                     }
-                }else{
+                } else {
                     logger.error(result.toJSONString());
                 }
-            }catch (IOException e){
+            } catch (IOException e) {
                 logger.error(e.getMessage());
+            }
+        }
+    }
+
+    private void clockIn(String dingUserId, Date userCheckTime) {
+        Sort.Order order = new Sort.Order(Sort.Direction.DESC, "userCheckTime");
+        Sort sort = new Sort(order);
+        List<DingUserAttendanceRecord> records = dingUserAttendanceRecordRepository.findByDingUserId(dingUserId, sort);
+        if (records.size() > 0
+                && records.get(0).getStatus() == 0
+                && records.get(0).getProjectId() != null) {
+            Integer projectId = records.get(0).getProjectId();
+            User user = dingUserService.getUserId(dingUserId);
+            Date start = records.get(0).getUserCheckTime();
+            if (user != null) {
+                userService.clockIn(projectId, user.getId(), start, userCheckTime, 1);
             }
         }
     }

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.AccessToken;
 import com.hd.home_disabled.entity.DingUser;
 import com.hd.home_disabled.entity.DingUserAttendanceRecord;
+import com.hd.home_disabled.entity.User;
 import com.hd.home_disabled.repository.AccessTokenRepository;
 import com.hd.home_disabled.repository.DingUserAttendanceRecordRepository;
 import com.hd.home_disabled.repository.DingUserRepository;
@@ -134,9 +135,9 @@ public class HelloController {
                                 if (dingUserAttendanceRecords.size()>0
                                         && dingUserAttendanceRecords.get(0).getStatus()==(byte)0
                                         && dingUserAttendanceRecords.get(0).getProjectId()!=null){
-                                    Long userId = dingUserService.getUserId(dingUserId);
-                                    if (userId!=0L){
-                                        userService.clockIn(dingUserAttendanceRecords.get(0).getProjectId(),userId,
+                                    User user = dingUserService.getUserId(dingUserId);
+                                    if (user!=null){
+                                        userService.clockIn(dingUserAttendanceRecords.get(0).getProjectId(),user.getId(),
                                                 dingUserAttendanceRecords.get(0).getUserCheckTime(),userCheckTime,1);
                                     }
                                 }
@@ -205,4 +206,11 @@ public class HelloController {
             }
         }
     }*/
+
+    @RequestMapping(value = "/getRecord", method = RequestMethod.GET)
+    public void getUserRecord(){
+        for (DingUserAttendanceRecord record:dingUserService.getDingUserAttendanceRecord()){
+            System.out.println(record.toString());
+        }
+    }
 }

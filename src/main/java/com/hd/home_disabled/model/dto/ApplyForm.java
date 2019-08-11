@@ -1,6 +1,7 @@
 package com.hd.home_disabled.model.dto;
 
 import com.hd.home_disabled.entity.Organization;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import javax.persistence.CascadeType;
