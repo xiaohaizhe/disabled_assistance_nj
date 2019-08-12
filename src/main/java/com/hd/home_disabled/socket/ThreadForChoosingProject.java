@@ -25,11 +25,11 @@ public class ThreadForChoosingProject extends Thread{
     public void run() {
         try {
             this.dingUserService= BeanContext.getApplicationContext().getBean(DingUserService.class);
-            while (true){
-                List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserService.getDingUserAttendanceRecord();
-                logger.info("一共有"+dingUserAttendanceRecords.size()+"条数据");
-                for (DingUserAttendanceRecord record:
-                        dingUserAttendanceRecords) {
+            List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserService.getDingUserAttendanceRecord();
+            logger.info("一共有"+dingUserAttendanceRecords.size()+"条数据");
+            for (DingUserAttendanceRecord record:
+                    dingUserAttendanceRecords) {
+                if (record.getProjectId()==null){
                     logger.info("根据钉钉用户id："+record.getDingUserId()+"查找系统用户");
                     if (dingUserService.getUserId(record.getDingUserId())!=null){
                         User user = dingUserService.getUserId(record.getDingUserId());
