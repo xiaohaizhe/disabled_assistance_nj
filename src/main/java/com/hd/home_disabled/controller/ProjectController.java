@@ -164,4 +164,10 @@ public class ProjectController {
     public JSONObject projectAnalysisData() {
         return projectService.projectAnalysisData();
     }
+
+    @ApiOperation(value = "获取机构下项目列表", notes = "查询")
+    @RequestMapping(value = "/getProjectList", method = RequestMethod.GET)
+    public JSONObject getProjectList(Integer organizationId){
+        return projectService.getProjectList(organizationId);
+    }
 }

@@ -1179,4 +1179,9 @@ public class ProjectService {
         }
         return RESCODE.SUCCESS.getJSONRES(array);
     }
+
+    public JSONObject getProjectList(Integer organizationId){
+        List<Project> projectList = projectRepository.findByOrganizationAndStatus(organizationId, 1);
+        return RESCODE.SUCCESS.getJSONRES(projectList);
+    }
 }
