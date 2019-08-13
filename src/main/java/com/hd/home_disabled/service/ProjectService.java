@@ -1182,6 +1182,11 @@ public class ProjectService {
 
     public JSONObject getProjectList(Integer organizationId){
         List<Project> projectList = projectRepository.findByOrganizationAndStatus(organizationId, 1);
-        return RESCODE.SUCCESS.getJSONRES(projectList);
+        List<com.hd.home_disabled.model.dto.Project> projectList2 = new ArrayList<>();
+        for (Project project :
+                projectList) {
+            projectList2.add(getModel(project));
+        }
+        return RESCODE.SUCCESS.getJSONRES(projectList2);
     }
 }
