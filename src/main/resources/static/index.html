@@ -139,84 +139,15 @@
 		<p style="width: 50px;">操作</p>
 	</div>
 	<div class="users-body">
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
-		<div>
-			<p style="width: 70px;">黄飞鸿</p>
-			<p style="width: 200px;">225544546545846</p>
-			<p style="width: 170px;">xx项目</p>
-			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
-		</div>
 
 	</div>
 </div>
 <script src="js/jquery.min.js"></script>
 <script src="layui/layui.js"></script>
 <script>
+
+    var ws = null;
+
     window.onload = function () {
         //iframe 路由切换
         var menuUrl = sessionStorage.menuUrl;
@@ -233,12 +164,6 @@
         e.preventDefault();
     })
 
-    $(".message-box").slideToggle("slow");
-    setTimeout(function () {
-        $(".message-box").slideToggle("slow");
-    },1000)
-
-
 
     $.ajax({
         type: "get",
@@ -246,8 +171,18 @@
         data: {adminId:localStorage.getItem("userId")},
         success: function (data) {
             localStorage.setItem("jgid",data.data.id);
+            $.ajax({
+                type: "get",
+                url: "api/project/getProjectList",
+                data: {organizationId:data.data.id},
+                success: function (rs) {
+                    debugger
+                }
+            })
         }
     })
+
+
 
     //JavaScript代码区域
     layui.use('element', function(){
@@ -265,6 +200,16 @@
             }
         });
     });
+
+    function pushUser (obj){
+        $(".users-body").append('<div><p style="width: 70px;">'+obj.name+'</p><p style="width: 200px;">'+obj.disabilityCertificateNumber+'</p><p style="width: 170px;">xx项目</p><p style="width: 50px;"><input type="checkbox" onclick="setUserAction('+obj.id+')" name="" lay-skin="primary"></p></div>');
+        $(".message-box").slideToggle("slow");
+	}
+
+    function setUserAction (id){
+        ws.send('{"id": '+id+',"projectId": }');
+	}
+
     WebSocketTest()
 
     function WebSocketTest()
@@ -272,7 +217,7 @@
         if ("WebSocket" in window)
         {
             // 打开一个 web socket
-            var ws = new WebSocket("ws://localhost:8081/websocket");
+            ws = new WebSocket("ws://localhost:8081/websocket");
 
             ws.onopen = function()
             {
@@ -286,6 +231,10 @@
                 var received_msg = evt.data;
                 console.log("数据已接收...");
                 console.log(received_msg);
+                if(received_msg.indexOf("disabilityCertificateNumber") != -1){
+                    pushUser(JSON.parse(received_msg));
+				}
+
             };
 
             ws.onclose = function()
