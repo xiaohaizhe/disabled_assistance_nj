@@ -15,6 +15,42 @@
 		.layui-footer span{
 			margin:0 20px;
 		}
+		.message-box {
+			position: fixed;
+			bottom: 5px;
+			right: 0;
+			height: 260px;
+			width: 515px;
+			z-index: 2000;
+			display: none;
+		}
+		.users-body p,
+		.users-head  p {
+			float: left;
+			height: 32px;
+			line-height: 32px;
+			text-align: center;
+			border-bottom: 1px solid #e6e6e6;
+			border-right: 1px solid #e6e6e6;
+			overflow: hidden;
+		}
+		.users-head  {
+			background-color: #f2f2f2;
+			height: 32px;
+			border-left: 1px solid #e6e6e6;
+			border-top: 1px solid #e6e6e6;
+		}
+		.users-body {
+			border-left: 1px solid #e6e6e6;
+			border-bottom: 1px solid #e6e6e6;
+			height: 225px;
+			width: 100%;
+			background-color: #fff;
+			overflow: auto;
+		}
+		.users-body div {
+			clear: both;
+		}
 	</style>
 </head>
 <body class="layui-layout-body">
@@ -95,6 +131,89 @@
 		<span>技术支持：xxx有限公司</span>
 	</div>
 </div>
+<div class="message-box">
+	<div class="users-head">
+		<p style="width: 70px;">姓名</p>
+		<p style="width: 200px;">身份证号</p>
+		<p style="width: 170px;">项目</p>
+		<p style="width: 50px;">操作</p>
+	</div>
+	<div class="users-body">
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+		<div>
+			<p style="width: 70px;">黄飞鸿</p>
+			<p style="width: 200px;">225544546545846</p>
+			<p style="width: 170px;">xx项目</p>
+			<p style="width: 50px;"><input type="checkbox" name="" title="发呆" lay-skin="primary"> </p>
+		</div>
+
+	</div>
+</div>
 <script src="js/jquery.min.js"></script>
 <script src="layui/layui.js"></script>
 <script>
@@ -113,6 +232,11 @@
     $(".layui-side a").on("click",function(e){
         e.preventDefault();
     })
+
+    $(".message-box").slideToggle("slow");
+    setTimeout(function () {
+        $(".message-box").slideToggle("slow");
+    },1000)
 
 
 
@@ -141,6 +265,42 @@
             }
         });
     });
+    WebSocketTest()
+
+    function WebSocketTest()
+    {
+        if ("WebSocket" in window)
+        {
+            // 打开一个 web socket
+            var ws = new WebSocket("ws://localhost:8081/websocket");
+
+            ws.onopen = function()
+            {
+                // Web Socket 已连接上，使用 send() 方法发送数据
+                console.log("连接成功");
+                ws.send("message=on");
+            };
+
+            ws.onmessage = function (evt)
+            {
+                var received_msg = evt.data;
+                console.log("数据已接收...");
+                console.log(received_msg);
+            };
+
+            ws.onclose = function()
+            {
+                // 关闭 websocket
+                console.log("连接已关闭...");
+            };
+        }
+
+        else
+        {
+            // 浏览器不支持 WebSocket
+            alert("您的浏览器不支持 WebSocket!");
+        }
+    }
 </script>
 </body>
 </html>
