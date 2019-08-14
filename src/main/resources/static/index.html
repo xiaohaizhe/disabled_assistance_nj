@@ -19,10 +19,11 @@
 			position: fixed;
 			bottom: 5px;
 			right: 0;
-			height: 260px;
+			height: 300px;
 			width: 515px;
 			z-index: 2000;
 			display: none;
+			background-color: #fff;
 		}
 		.users-body p,
 		.users-head  p {
@@ -141,12 +142,14 @@
 	<div class="users-body">
 
 	</div>
+	<button onclick="senData()" type="button" class="layui-btn layui-btn-primary layui-btn-xs">提交操作</button>
 </div>
 <script src="js/jquery.min.js"></script>
 <script src="layui/layui.js"></script>
 <script>
 
     var ws = null;
+    var seledom = "";
 
     window.onload = function () {
         //iframe 路由切换
@@ -176,7 +179,8 @@
                 url: "api/project/getProjectList",
                 data: {organizationId:data.data.id},
                 success: function (rs) {
-                    debugger
+                    seledom = setProjectList(rs.data)
+                    WebSocketTest()
                 }
             })
         }
@@ -201,16 +205,37 @@
         });
     });
 
-    function pushUser (obj){
-        $(".users-body").append('<div><p style="width: 70px;">'+obj.name+'</p><p style="width: 200px;">'+obj.disabilityCertificateNumber+'</p><p style="width: 170px;">xx项目</p><p style="width: 50px;"><input type="checkbox" onclick="setUserAction('+obj.id+')" name="" lay-skin="primary"></p></div>');
-        $(".message-box").slideToggle("slow");
+    function pushUser (array){
+        for (var i = 0; i < array.length; i++) {
+            var obj = array[i];
+            $(".users-body").append('<div class="user_id'+obj.id+'" ><p style="width: 70px;">'+obj.name+'</p><p style="width: 200px;">'+obj.disabilityCertificateNumber+'</p><p class="project_list" style="width: 170px;">'+seledom+'</p><p style="width: 50px;"><input type="checkbox" onclick="setUserAction('+obj.id+')" name="" lay-skin="primary"></p></div>');
+        }
+        $(".message-box").slideDown("slow");
 	}
+
+	var SENDATA = [];
 
     function setUserAction (id){
-        ws.send('{"id": '+id+',"projectId": }');
+        var sq = ".user_id"+id+" select";
+        SENDATA.push({id:id,projectId:$(sq).val()})
 	}
 
-    WebSocketTest()
+	function senData() {
+        ws.send(JSON.stringify(SENDATA));
+        $(".message-box").slideUp("slow");
+    }
+
+	function setProjectList(data){
+        var html = [];
+        html.push('<select>');
+        for (var i = 0; i < data.length; i++) {
+            html.push('<option value="'+data[i].id+'">'+data[i].adminName+'</option>');
+        }
+        html.push('</select>');
+        return html.join("")
+	}
+
+
 
     function WebSocketTest()
     {
