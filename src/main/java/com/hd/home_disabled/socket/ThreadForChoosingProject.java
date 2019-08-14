@@ -1,5 +1,6 @@
 package com.hd.home_disabled.socket;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.DingUserAttendanceRecord;
 import com.hd.home_disabled.entity.User;
@@ -27,6 +28,7 @@ public class ThreadForChoosingProject extends Thread{
             this.dingUserService= BeanContext.getApplicationContext().getBean(DingUserService.class);
             List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserService.getDingUserAttendanceRecord();
             logger.info("一共有"+dingUserAttendanceRecords.size()+"条数据");
+            JSONArray array = new JSONArray();
             for (DingUserAttendanceRecord record:
                     dingUserAttendanceRecords) {
                 if (record.getProjectId()==null){
@@ -37,9 +39,10 @@ public class ThreadForChoosingProject extends Thread{
                         object.put("id",record.getId());
                         object.put("name",user.getName());
                         object.put("disabilityCertificateNumber",user.getDisabilityCertificateNumber());
-                        this.session.getBasicRemote().sendText(object.toJSONString());
+                        array.add(object);
                     }
                 }
+                this.session.getBasicRemote().sendText(array.toJSONString());
             }
         } catch (IOException e) {
             logger.error(e.getMessage());

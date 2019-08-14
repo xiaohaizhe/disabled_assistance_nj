@@ -63,7 +63,7 @@ public class CheckInWebsocket {
      * @param message 客户端发送过来的消息
      */
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String message, Session session) throws IOException {
         logger.info("来自客户端的消息:" + message);
         if (message.equals("on")){
             thread = new ThreadForChoosingProject(session);
@@ -73,7 +73,7 @@ public class CheckInWebsocket {
         }
     }
 
-    private void dealWithMessage(String message){
+    private void dealWithMessage(String message) {
         JSONObject object = JSONObject.parseObject(message);
         logger.info(object.toJSONString());
         DingUserAttendanceRecord record = new DingUserAttendanceRecord();
