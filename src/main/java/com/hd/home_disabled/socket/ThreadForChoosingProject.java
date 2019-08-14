@@ -42,8 +42,8 @@ public class ThreadForChoosingProject extends Thread{
                         array.add(object);
                     }
                 }
-                this.session.getBasicRemote().sendText(array.toJSONString());
             }
+            this.session.getBasicRemote().sendText(array.toJSONString());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
