@@ -1,8 +1,9 @@
 package com.hd.home_disabled.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hd.home_disabled.Application;
 import com.hd.home_disabled.entity.Admin;
+import com.hd.home_disabled.entity.DingUserAttendanceRecord;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.AdminRepository;
 import com.hd.home_disabled.utils.JasyptUtil;
@@ -23,14 +24,16 @@ import java.util.Optional;
 @Service
 @Transactional
 public class AdminService {
+    private final DingUserService dingUserService;
     private final AdminRepository adminRepository;
     private final JasyptUtil jasyptUtil;
 
     private static final Logger logger = LoggerFactory.getLogger(AdminService.class);
 
-    public AdminService(AdminRepository adminRepository, JasyptUtil jasyptUtil) {
+    public AdminService(AdminRepository adminRepository, JasyptUtil jasyptUtil, DingUserService dingUserService) {
         this.adminRepository = adminRepository;
         this.jasyptUtil = jasyptUtil;
+        this.dingUserService = dingUserService;
     }
 
     /**
@@ -41,7 +44,7 @@ public class AdminService {
      * @return 登陆成功返回用户信息
      */
     public JSONObject login(String name, String password) {
-        logger.info("====管理员:"+name+",准备登陆====");
+        logger.info("====管理员:" + name + ",准备登陆====");
         Optional<Admin> adminOptional = adminRepository.findByName(name);
         if (adminOptional.isPresent()) {
             String newPwd = jasyptUtil.decrypt(adminOptional.get().getPassword());
@@ -59,5 +62,39 @@ public class AdminService {
     public String encrypt(String password) {
         logger.info("====开始加密管理员密码====");
         return jasyptUtil.encrypt(password);
+    }
+
+    public JSONObject dealWithUserInfo(JSONArray array) {
+        boolean flag = true;
+        JSONArray array1 = new JSONArray();
+        System.out.println(array);
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject object = (JSONObject) array.get(i);
+            DingUserAttendanceRecord record = new DingUserAttendanceRecord();
+            if (object.getLong("id") != null
+                    && object.getInteger("projectId") != null) {
+                Long id = object.getLong("id");
+                Integer projectId = object.getInteger("projectId");
+                logger.info("id:" + id);
+                logger.info("projectId:" + projectId);
+                if (dingUserService.getById(id) != null) {
+                    DingUserAttendanceRecord dingUserAttendanceRecord = dingUserService.getById(id);
+                    dingUserAttendanceRecord.setProjectId(projectId);
+                    dingUserService.updateDingUserAttendanceRecord(dingUserAttendanceRecord);
+                } else {
+                    flag = false;
+                    array1.add(object);
+                }
+            } else {
+                flag = false;
+                array1.add(object);
+            }
+        }
+        if (flag) {
+            return RESCODE.SUCCESS.getJSONRES();
+        } else {
+            return RESCODE.FAILURE.getJSONRES(array1);
+        }
+
     }
 }

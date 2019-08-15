@@ -1,8 +1,10 @@
 package com.hd.home_disabled.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.service.AdminService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +35,12 @@ public class AdminController {
     @RequestMapping(value = "/encrypt", method = RequestMethod.GET)
     public String encrypt(String password){
         return adminService.encrypt(password);
+    }
+
+    @ApiOperation(value = "用户选择项目", notes = "管理员为用户选择项目")
+    @RequestMapping(value = "/chooseProjectForUser", method = RequestMethod.POST)
+    public JSONObject dealWithUserInfo(@RequestBody JSONArray array){
+        return adminService.dealWithUserInfo(array);
     }
 
 }
