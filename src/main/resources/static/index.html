@@ -217,12 +217,23 @@
 
     function setUserAction (id){
         var sq = ".user_id"+id+" select";
-        SENDATA.push({id:id,projectId:$(sq).val()})
+        SENDATA.push({id:id,projectId:$(sq).val()-0})
 	}
 
 	function senData() {
-        ws.send(JSON.stringify(SENDATA));
-        $(".message-box").slideUp("slow");
+        $.ajax({
+            type: "POST",
+            url: "/api/admin/chooseProjectForUser",
+            data: JSON.stringify(SENDATA),
+            dataType:"json",
+            contentType : 'application/json;charset=utf-8',
+            processData: false,
+            success: function (data) {
+                $(".message-box").slideUp("slow");
+                $(".users-body").empty();
+            }
+        })
+
     }
 
 	function setProjectList(data){
