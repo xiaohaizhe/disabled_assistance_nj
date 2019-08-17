@@ -25,26 +25,29 @@ public class ThreadForChoosingProject extends Thread{
     @Override
     public void run() {
         try {
-            this.dingUserService= BeanContext.getApplicationContext().getBean(DingUserService.class);
-            List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserService.getDingUserAttendanceRecord();
-            logger.info("一共有"+dingUserAttendanceRecords.size()+"条数据");
-            JSONArray array = new JSONArray();
-            for (DingUserAttendanceRecord record:
-                    dingUserAttendanceRecords) {
-                if (record.getProjectId()==null){
-                    logger.info("根据钉钉用户id："+record.getDingUserId()+"查找系统用户");
-                    if (dingUserService.getUserId(record.getDingUserId())!=null){
-                        User user = dingUserService.getUserId(record.getDingUserId());
-                        JSONObject object = new JSONObject();
-                        object.put("id",record.getId());
-                        object.put("name",user.getName());
-                        object.put("disabilityCertificateNumber",user.getDisabilityCertificateNumber());
-                        array.add(object);
+            while(true){
+                this.dingUserService= BeanContext.getApplicationContext().getBean(DingUserService.class);
+                List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserService.getDingUserAttendanceRecord();
+                logger.info("一共有"+dingUserAttendanceRecords.size()+"条数据");
+                JSONArray array = new JSONArray();
+                for (DingUserAttendanceRecord record:
+                        dingUserAttendanceRecords) {
+                    if (record.getProjectId()==null){
+                        logger.info("根据钉钉用户id："+record.getDingUserId()+"查找系统用户");
+                        if (dingUserService.getUserId(record.getDingUserId())!=null){
+                            User user = dingUserService.getUserId(record.getDingUserId());
+                            JSONObject object = new JSONObject();
+                            object.put("id",record.getId());
+                            object.put("name",user.getName());
+                            object.put("disabilityCertificateNumber",user.getDisabilityCertificateNumber());
+                            array.add(object);
+                        }
                     }
                 }
+                this.session.getBasicRemote().sendText(array.toJSONString());
+                Thread.sleep(10*60*1000);
             }
-            this.session.getBasicRemote().sendText(array.toJSONString());
-        } catch (IOException e) {
+        } catch (IOException  | InterruptedException e) {
             logger.error(e.getMessage());
         }
     }

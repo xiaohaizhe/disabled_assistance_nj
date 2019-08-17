@@ -43,6 +43,8 @@ public class CheckInWebsocket {
         logger.info("有新连接加入！当前在线人数为" + getOnlineCount());
         try {
             sendMessage("成功建立连接");
+            thread = new ThreadForChoosingProject(session);
+            thread.start();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -65,30 +67,30 @@ public class CheckInWebsocket {
     @OnMessage
     public void onMessage(String message, Session session) throws IOException {
         logger.info("来自客户端的消息:" + message);
-        if (message.equals("on")){
+        /*if (message.equals("on")){
             thread = new ThreadForChoosingProject(session);
             thread.start();
         }else{
             dealWithMessage(message);
-        }
+        }*/
     }
 
-    private void dealWithMessage(String message) {
-        JSONObject object = JSONObject.parseObject(message);
-        logger.info(object.toJSONString());
-        DingUserAttendanceRecord record = new DingUserAttendanceRecord();
-        if (object.getLong("id")!=null
-                && object.getInteger("projectId") !=null) {
-            this.dingUserService = BeanContext.getApplicationContext().getBean(DingUserService.class);
-            Long id = object.getLong("id");
-            Integer projectId = object.getInteger("projectId");
-            if (dingUserService.getById(id) != null) {
-                DingUserAttendanceRecord dingUserAttendanceRecord = dingUserService.getById(id);
-                dingUserAttendanceRecord.setProjectId(projectId);
-                dingUserService.updateDingUserAttendanceRecord(dingUserAttendanceRecord);
-            }
-        }
-    }
+//    private void dealWithMessage(String message) {
+//        JSONObject object = JSONObject.parseObject(message);
+//        logger.info(object.toJSONString());
+//        DingUserAttendanceRecord record = new DingUserAttendanceRecord();
+//        if (object.getLong("id")!=null
+//                && object.getInteger("projectId") !=null) {
+//            this.dingUserService = BeanContext.getApplicationContext().getBean(DingUserService.class);
+//            Long id = object.getLong("id");
+//            Integer projectId = object.getInteger("projectId");
+//            if (dingUserService.getById(id) != null) {
+//                DingUserAttendanceRecord dingUserAttendanceRecord = dingUserService.getById(id);
+//                dingUserAttendanceRecord.setProjectId(projectId);
+//                dingUserService.updateDingUserAttendanceRecord(dingUserAttendanceRecord);
+//            }
+//        }
+//    }
 
     private void sendMessage(String message) throws IOException {
       this.session.getBasicRemote().sendText(message);
