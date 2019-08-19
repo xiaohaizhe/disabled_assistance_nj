@@ -144,6 +144,7 @@
 	</div>
 	<button onclick="senData()" type="button" class="layui-btn layui-btn-primary layui-btn-xs">提交操作</button>
 </div>
+<script src="js/config.js"></script>
 <script src="js/jquery.min.js"></script>
 <script src="layui/layui.js"></script>
 <script>
@@ -253,13 +254,13 @@
         if ("WebSocket" in window)
         {
             // 打开一个 web socket
-            ws = new WebSocket("ws://localhost:8081/websocket");
+            ws = new WebSocket("ws://"+HOST_CONFIG+":8081/websocket");
 
             ws.onopen = function()
             {
                 // Web Socket 已连接上，使用 send() 方法发送数据
                 console.log("连接成功");
-                ws.send("on");
+                //ws.send("on");
             };
 
             ws.onmessage = function (evt)
