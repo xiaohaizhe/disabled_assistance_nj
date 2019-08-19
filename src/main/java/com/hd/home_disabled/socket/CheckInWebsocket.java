@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.DingUserAttendanceRecord;
 import com.hd.home_disabled.service.AdminService;
 import com.hd.home_disabled.service.DingUserService;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,9 +28,8 @@ public class CheckInWebsocket {
     private static CopyOnWriteArraySet<CheckInWebsocket> webSocketSet = new CopyOnWriteArraySet<>();
 
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
+    @Getter
     private Session session;
-
-    ThreadForChoosingProject thread;
     private DingUserService dingUserService;
 
     /**
@@ -43,8 +43,6 @@ public class CheckInWebsocket {
         logger.info("有新连接加入！当前在线人数为" + getOnlineCount());
         try {
             sendMessage("成功建立连接");
-            thread = new ThreadForChoosingProject(session);
-            thread.start();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

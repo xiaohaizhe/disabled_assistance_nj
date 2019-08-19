@@ -12,6 +12,7 @@ import com.hd.home_disabled.repository.DingUserAttendanceRecordRepository;
 import com.hd.home_disabled.repository.DingUserRepository;
 import com.hd.home_disabled.service.DingUserService;
 import com.hd.home_disabled.service.UserService;
+import com.hd.home_disabled.socket.CheckInWebsocket;
 import com.hd.home_disabled.timer.TimeTask;
 import com.hd.home_disabled.utils.HttpUtils;
 import io.swagger.annotations.ApiOperation;
@@ -23,12 +24,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
+import javax.websocket.Session;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @ClassName HelloController
@@ -64,15 +69,21 @@ public class HelloController {
     private DingUserAttendanceRecordRepository dingUserAttendanceRecordRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CheckInWebsocket websocket;
 
     private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
     private final static SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 
     @ApiOperation(value = "测试", notes = "测试")
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String hello() {
+    public String hello() throws  IOException {
+
+//        getField()
         return "Hello!";
     }
+
+
 
     @RequestMapping(value = "/updateToken", method = RequestMethod.GET)
     public String testAccessToken(){

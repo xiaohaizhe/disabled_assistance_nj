@@ -9,7 +9,7 @@ import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @SpringBootTest
 public class HomeDisabledApplicationTests {
 

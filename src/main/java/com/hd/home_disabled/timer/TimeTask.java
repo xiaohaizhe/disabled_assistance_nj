@@ -11,6 +11,7 @@ import com.hd.home_disabled.repository.DingUserAttendanceRecordRepository;
 import com.hd.home_disabled.repository.DingUserRepository;
 import com.hd.home_disabled.service.DingUserService;
 import com.hd.home_disabled.service.UserService;
+import com.hd.home_disabled.socket.CheckInWebsocket;
 import com.hd.home_disabled.utils.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.websocket.Session;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @ClassName TimeTask
@@ -63,6 +67,8 @@ public class TimeTask {
     private DingUserAttendanceRecordRepository dingUserAttendanceRecordRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CheckInWebsocket websocket;
 
     private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
 
@@ -135,7 +141,7 @@ public class TimeTask {
     }
 
     @Scheduled(cron = "0 */10 * * * ?") // 每10分钟执行一次
-    public void getAttendanceRecord() {
+    public void getAttendanceRecord() throws ClassNotFoundException, NoSuchFieldException, IOException {
         //获取更新用户打卡信息
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "id");
         Sort sort = new Sort(order);
@@ -188,6 +194,41 @@ public class TimeTask {
                 logger.error(e.getMessage());
             }
         }
+        CopyOnWriteArraySet<CheckInWebsocket> webSocketSet = (CopyOnWriteArraySet<CheckInWebsocket>)getField(websocket,websocket.getClass(),"webSocketSet");
+        for (CheckInWebsocket websocket:webSocketSet){
+            Session session = websocket.getSession();
+            List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserService.getDingUserAttendanceRecord();
+            logger.info("一共有"+dingUserAttendanceRecords.size()+"条数据");
+            JSONArray array = new JSONArray();
+            for (DingUserAttendanceRecord record:
+                    dingUserAttendanceRecords) {
+                if (record.getProjectId()==null){
+                    logger.info("根据钉钉用户id："+record.getDingUserId()+"查找系统用户");
+                    if (dingUserService.getUserId(record.getDingUserId())!=null){
+                        User user = dingUserService.getUserId(record.getDingUserId());
+                        JSONObject object = new JSONObject();
+                        object.put("id",record.getId());
+                        object.put("name",user.getName());
+                        object.put("disabilityCertificateNumber",user.getDisabilityCertificateNumber());
+                        array.add(object);
+                    }
+                }
+            }
+            session.getBasicRemote().sendText(array.toJSONString());
+        }
+    }
+
+    private static Object getField(Object obj, Class<?> clazz, String fieldName) {
+        for (; clazz != Object.class; clazz = clazz.getSuperclass()) {
+            try {
+                Field field;
+                field = clazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return field.get(obj);
+            } catch (Exception e) {
+            }
+        }
+        return null;
     }
 
     private void clockIn(String dingUserId, Date userCheckTime) {
