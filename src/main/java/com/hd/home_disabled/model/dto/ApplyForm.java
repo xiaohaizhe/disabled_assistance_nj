@@ -1,5 +1,6 @@
 package com.hd.home_disabled.model.dto;
 
+import com.hd.home_disabled.entity.ApplyFormUser;
 import com.hd.home_disabled.entity.Organization;
 import io.swagger.models.auth.In;
 import lombok.Data;
@@ -11,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName ApplyForm
@@ -45,9 +47,7 @@ public class ApplyForm {
 //    @NotNull(message = "申请托养机构运营补贴资金总额合计不能为空")
     private Float totalSubsidyFunds;              //申请托养机构运营补贴资金总额合计
 
-/*    @NotBlank(message = "托养残疾人名单不能为空")
-    @NotNull(message = "托养残疾人名单不能为空")*/
-    private String nursingList;                    //托养残疾人名单
+    private List<ApplyFormUser> userList;       //补贴名单
 /*    @NotBlank(message = "低保或其他低收入证明不能为空")
     @NotNull(message = "低保或其他低收入证明不能为空")*/
     private String lowIncomeCertificate;            //低保或其他低收入证明

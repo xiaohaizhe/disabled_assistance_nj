@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName ApplyForm
@@ -34,7 +35,8 @@ public class ApplyForm {
     private Float localInvestmentOfLastYear;        //上年当地资金投入
     private Float totalSubsidyFunds;              //申请托养机构运营补贴资金总额合计
 
-    private String nursingList;                    //托养残疾人名单
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "applyForm")
+    private List<ApplyFormUser> userList;                    //托养残疾人名单
     private String lowIncomeCertificate;            //低保或其他低收入证明
 
     private String reasonForRegression;           //申请退回原因

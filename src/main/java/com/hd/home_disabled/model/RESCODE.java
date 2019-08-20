@@ -17,7 +17,10 @@ public enum RESCODE {
     PROJECTTYPE_NOT_EXIST(1,"项目类型不存在"),
     PROJECT_ID_NOT_EXIST(1,"服务项目不存在"),
     APPLY_FORM_NOT_EXIST(1,"补贴申请不存在"),
+    APPLY_FORM_CANT_MODIFY(1,"补贴申请不可修改"),
     TIME_PARSE_FAILURE(1,"时间格式转换失败"),
+    IO_ERROR(1,"文件读取失败"),
+    FORMAT_ERROR(1,"格式转换错误"),
     CLOCK_IN_WRONG(1,"打卡时间错误");
     private int code;
     private String msg;
