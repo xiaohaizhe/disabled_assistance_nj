@@ -100,7 +100,7 @@ public class ApplyFormService {
         applyForm1.setNature(applyForm.getOrganization().getNature());
         applyForm1.setAsylumLaborProjects(applyForm.getOrganization().getAsylumLaborProjects());
 
-        applyForm1.setUserList(applyForm.getUserList());
+//        applyForm1.setUserList(applyForm.getUserList());
 
         applyForm1.setSubsidyFundForDayNursery(applyForm.getSubsidyFundForDayNursery());
         applyForm1.setSubsidyFundForBoardingNursery(applyForm.getSubsidyFundForBoardingNursery());
