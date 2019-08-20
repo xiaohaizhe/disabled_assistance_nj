@@ -166,7 +166,7 @@
 				<button type="button" class="layui-btn" id="test1">
 					<i class="layui-icon">&#xe67c;</i>上传EXCEL
 				</button>
-				<a href="../jsons/moban.xlsx" download="模板">下载模板</a>
+				<a href="/api/apply/export_excel" download="模板">下载模板</a>
 
 				<input style="display: none;" id="tycjrmd" type="text" name="nursingList" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
 			</div>
@@ -243,12 +243,11 @@
 		var uploadInst = upload.render({
 			elem: '#test1' //绑定元素
             ,accept:"file"
-            ,url: '/api/file/upload' //上传接口
+            ,url: '/api/apply/import_excel' //上传接口
             ,data:{type:"nursingList"}
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-
                     $("#tycjrmd").val(res.data.fileUrl).after(smail(res.data.fileUrl))
                 }
                 //上传完毕回调
@@ -293,6 +292,7 @@
 		form.on('submit(formDemo)', function(data){
             var _data = data.field;
             delete _data['file'];
+            _data.userList = [];
             _data.adminId = localStorage.getItem("userId");
             _data.organizationId = localStorage.getItem("jgid");
             $.ajax({
