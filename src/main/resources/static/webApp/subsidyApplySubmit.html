@@ -248,7 +248,7 @@
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-                    $("#tycjrmd").val(res.data.fileUrl).after(smail(res.data.fileUrl))
+                    $("#tycjrmd").data("user",res.data).after(smail("../images/xls.png"))
                 }
                 //上传完毕回调
             }
@@ -292,7 +292,7 @@
 		form.on('submit(formDemo)', function(data){
             var _data = data.field;
             delete _data['file'];
-            _data.userList = [];
+            _data.userList = $("#tycjrmd").data("user");
             _data.adminId = localStorage.getItem("userId");
             _data.organizationId = localStorage.getItem("jgid");
             $.ajax({
