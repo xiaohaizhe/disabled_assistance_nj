@@ -108,8 +108,8 @@ public class ProjectController {
 
     @ApiOperation(value = "全区服务项目分页",notes = "分页")
     @RequestMapping(value = "/getPagesByDistrict", method = RequestMethod.GET)
-    public JSONObject getPagesByDistrict(String district,Integer page,Integer number,String sorts){
-        return projectService.getPagesByDistrict(district,page,number,sorts);
+    public JSONObject getPagesByDistrict(Integer projectTypeId,Integer organizationId,String start,String end,String district,Integer page,Integer number,String sorts){
+        return projectService.getPagesByDistrict(projectTypeId,organizationId,start,end,district,page,number,sorts);
     }
 
     @ApiOperation(value = "全区服务项目数据导出",notes = "excel导出")
