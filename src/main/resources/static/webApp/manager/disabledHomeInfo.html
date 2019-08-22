@@ -9,9 +9,7 @@
 	<link rel="stylesheet" href="../../css/init.css">
 	<link rel="stylesheet" href="../../css/search_form.css">
 	<style>
-		#tableContainer  .layui-table-header {
-			overflow-x: auto;
-		}
+
 	</style>
 </head>
 <body>
@@ -115,14 +113,15 @@
 
 
         function smail(str){
-            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
-                return '<img src="'+str+'" style="width: 30px;">'
-            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
-                return '<img src="../images/word.png" style="width: 30px;">'
-            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
-                return '<img src="../images/xls.png" style="width: 30px;">'
-            }
-
+            if(str){
+                if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                    return '<img src="'+str+'" style="width: 30px;">'
+                }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                    return '<img src="../images/word.png" style="width: 30px;">'
+                }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                    return '<img src="../images/xls.png" style="width: 30px;">'
+                }
+			}
         }
 
 	});

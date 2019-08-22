@@ -28,7 +28,7 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">残疾人服务内容大类</label>
 		<div class="layui-input-inline">
-			<select name="projectTypeId">
+			<select name="projectTypeId" lay-verify="required">
 				<option value="">请选择</option>
 				<option value="1">日间照料</option>
 				<option value="2">辅助性就业</option>
@@ -51,7 +51,7 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">所属机构名称</label>
 		<div class="layui-input-inline">
-			<input type="text" id="jg_name" placeholder="" autocomplete="off" class="layui-input">
+			<input type="text" id="jg_name" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 	<div class="layui-form-item">
@@ -84,13 +84,13 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目开始时间</label>
 		<div class="layui-input-inline">
-			<input id="startime"  placeholder="yyyy-MM-dd" type="text" name="startTime" placeholder="" autocomplete="off" class="layui-input">
+			<input id="startime"  placeholder="yyyy-MM-dd" type="text" name="startTime" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 	<div class="layui-form-item">
 		<label class="layui-form-label">项目结束时间</label>
 		<div class="layui-input-inline">
-			<input id="endtime"  placeholder="yyyy-MM-dd" type="text" name="endTime" placeholder="" autocomplete="off" class="layui-input">
+			<input id="endtime"  placeholder="yyyy-MM-dd" type="text" name="endTime" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
 		</div>
 	</div>
 
