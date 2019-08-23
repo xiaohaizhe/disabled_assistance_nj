@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @ClassName OrganizationController
@@ -84,6 +85,12 @@ public class OrganizationController {
     @RequestMapping(value = "/analysis", method = RequestMethod.GET)
     public JSONObject analysis() {
         return organizationService.analysis();
+    }
+
+    @ApiOperation(value = "区机构信息导出word", notes = "word导出")
+    @RequestMapping(value = "/export_word",method = RequestMethod.GET)
+    public void exportWord(Integer id,HttpServletRequest request, HttpServletResponse response) throws IOException {
+        organizationService.exportWord(id);
     }
 
 }

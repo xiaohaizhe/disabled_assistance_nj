@@ -59,7 +59,7 @@ public class DocumentHandlers {
      *
      * 测试
      */
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws Exception {
       Map<String, Object> dataMap=new HashMap<String, Object>();
       String img=null;
       InputStream in;
@@ -78,18 +78,24 @@ public class DocumentHandlers {
        dataMap.put("name", "张三");
        dataMap.put("city", "男");
        dataMap.put("age", "20");
-       dataMap.put("birthdayy", "1988");
-       dataMap.put("birthdaym", "9");
-       dataMap.put("education", "本科");
-       dataMap.put("marriage", "未婚");
-       dataMap.put("worklife", "7年工作经验"); //工作经验
-       dataMap.put("nowaddress", "陕西-西安");
-       dataMap.put("email", "123456@126.com");
+       dataMap.put("time", "1988");
+       dataMap.put("person", "9");
+       dataMap.put("number", "本科");
+       dataMap.put("area", "未婚");
+       dataMap.put("bed", "7年工作经验"); //工作经验
+       dataMap.put("nature", "陕西-西安");
+       dataMap.put("labor", "123456@126.com");
        dataMap.put("hkaddress", "陕西-西安"); //户口所在地
        dataMap.put("studyabord", "无"); //海外学习经历
        dataMap.put("phone", "12345678912");
-       dataMap.put("img", img); //头像
-       // 求职意向
+      List<String> images = new ArrayList<String>();
+      images.add(img);
+      images.add(img);
+      images.add(img);
+      images.add(img);
+      dataMap.put("images", images);
+
+      // 求职意向
        dataMap.put("jobintention", "全职");
        dataMap.put("salary", "1000元/月"); // 期望薪资
        dataMap.put("workaddress", "陕西-西安"); //期望工作地点
@@ -98,19 +104,12 @@ public class DocumentHandlers {
        List<Map<String,Object>> wlist = new ArrayList<Map<String,Object>>();
        for(int i=0;i<4;i++){
              Map<String,Object> map = new HashMap<String,Object>();
-             map.put("starttime", "2010/7"); //开始时间
-             map.put("endtime", "2017/7"); //结束时间
-             map.put("companyname", "陕西中建网络科技有限公司"+i); //公司名称
-             map.put("years", "1");//在职时间N年
-             map.put("months", "10");//在职时间N月
-             map.put("position", "项目经理");//职位
-             map.put("moeny", "10000元/月");//薪资
-             map.put("nature", "民营企业");//公司性质
-             map.put("scale", "100-200");//公司人数
-             map.put("content", "工作内容工作内容工作内容工作内容工作内容工作内容工作内容工作内容工作内容工作内容工作内容工作内容");//工作内容
-             wlist.add(map);
+             map.put("no", "2010/7"); //开始时间
+             map.put("name", "2017/7"); //结束时间
+             map.put("id", "陕西中建网络科技有限公司"+i); //公司名称
+           wlist.add(map);
        }
-       dataMap.put("wlist", wlist);
+       dataMap.put("list", wlist);
        //项目经验
        List<Map<String,Object>> plist = new ArrayList<Map<String,Object>>();
        for(int i=0;i<4;i++){
@@ -146,10 +145,31 @@ public class DocumentHandlers {
            clist.add(map);
        }
        dataMap.put("clist", clist);
-       //自我评价
+      //自我评价
        dataMap.put("selfevaluation", "1.自我评价自我评价自我评价自我评价自我评价2.自我评价自我评价自我评价自我评价3.自我评价自我评价自我评价自我评价自我评价");
       DocumentHandlers documentHandler=new DocumentHandlers();
-      documentHandler.createDoc(dataMap, "/com","test3.ftl", "/Users/sunyuan/develop/privateProject/out2.doc");
+      documentHandler.createDoc(dataMap, "/com","Doc5.ftl", "/Users/sunyuan/develop/out2.doc");
   }
+    public static String getImageBase(String src) throws Exception {
+            if (src == null || src == "") {
+                    return "";
+                }
+            File file = new File(src);
+            if (!file.exists()) {
+                    return "";
+                }
+            InputStream in = null;
+            byte[] data = null;
+            try {
+                    in = new FileInputStream(file);
+                    data = new byte[in.available()];
+                    in.read(data);
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            BASE64Encoder encoder = new BASE64Encoder();
+             return encoder.encode(data);
+         }
 
 }
