@@ -28,8 +28,7 @@
 				<span onclick="exportfile()" style="margin-right: 10px;"><i
 						class="layui-icon layui-icon-file"></i>导出Excel
 				</span>
-				<span><i
-						class="layui-icon layui-icon-chart-screen"></i>
+				<span><i class="layui-icon layui-icon-chart-screen"></i>
 				</span>
 			</div>
 		</div>
@@ -49,7 +48,7 @@
 <script>
 
     function exportfile() {
-        window.location = "/api/apply/export_excel1?organizationId="+localStorage.getItem("jgid");
+        window.location = "/api/apply/export_userList_excel?organizationId="+localStorage.getItem("jgid");
     }
 	layui.use('table', function(){
 		var table = layui.table;

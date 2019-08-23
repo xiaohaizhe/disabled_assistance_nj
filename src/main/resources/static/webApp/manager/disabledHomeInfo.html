@@ -9,9 +9,7 @@
 	<link rel="stylesheet" href="../../css/init.css">
 	<link rel="stylesheet" href="../../css/search_form.css">
 	<style>
-		#tableContainer  .layui-table-header {
-			overflow-x: auto;
-		}
+
 	</style>
 </head>
 <body>
@@ -88,10 +86,16 @@
 				{field:'gender', width:135, title: '性别', sort: true},
 				{field:'birthMonth', width:135, title: '出生年月', sort: true},
 				{field:'education', width:135, title: '文化程度', sort: true},
-				{field:'wealth', width:135, title: '营业执照或登记证书'},
-				{field:'openBankAccountPermitCertificate', width:135, title: '银行开户许可'},
+				{field:'wealth', width:135, title: '营业执照或登记证书',templet: function(d){
+                        return smail(d.wealth);
+                    }},
+				{field:'openBankAccountPermitCertificate', width:135, title: '银行开户许可',templet: function(d){
+                        return smail(d.openBankAccountPermitCertificate);
+                    }},
 				{field:'wealth', width:135, title: '门头及室内功能区域、无障碍设施'},
-				{field:'managementSystem', width:135, title: '管理制度'},
+				{field:'managementSystem', width:135, title: '管理制度',templet: function(d){
+                        return smail(d.managementSystem);
+                    }},
 				{field:'projectSum', width:135, title: '服务项目总数', sort: true},
 				{field:'applySum', width:135, title: '总服务人数', sort: true},
 				{field:'personCountSum', width:135, title: '总服务人次', sort: true},
@@ -103,6 +107,23 @@
 			]]
 			,page: true
 		});
+
+
+
+
+
+        function smail(str){
+            if(str){
+                if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                    return '<img src="'+str+'" style="width: 30px;">'
+                }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                    return '<img src="../images/word.png" style="width: 30px;">'
+                }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                    return '<img src="../images/xls.png" style="width: 30px;">'
+                }
+			}
+        }
+
 	});
 
 

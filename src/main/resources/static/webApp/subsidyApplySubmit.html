@@ -9,7 +9,6 @@
 	<link rel="stylesheet" href="../../css/init.css">
 	<link rel="stylesheet" href="../../css/search_form.css">
 	<style>
-
 	</style>
 </head>
 <body>
@@ -162,10 +161,12 @@
 	<div class="layui-form-item">
 		<div class="layui-inline">
 			<label class="layui-form-label">托养残疾人名单</label>
-			<div class="layui-input-inline">
+			<div class="layui-input-inline" style="width: 400px;">
 				<button type="button" class="layui-btn" id="test1">
-					<i class="layui-icon">&#xe67c;</i>选择文件
+					<i class="layui-icon">&#xe67c;</i>上传EXCEL
 				</button>
+				<a href="/api/apply/export_excel" download="模板">下载模板</a>
+
 				<input style="display: none;" id="tycjrmd" type="text" name="nursingList" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
 			</div>
 		</div>
@@ -199,32 +200,27 @@
 
 <script>
     var form = null;
-	layui.use(['laydate','form','upload','layer'], function(){
-		form = layui.form;
-		var laydate = layui.laydate;
-		var upload = layui.upload;
+    layui.use(['laydate','form','upload','layer'], function(){
+        form = layui.form;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
         var layer = layui.layer;
-		var $ = layui.$;
-
+        var $ = layui.$;
         getAddress("cityList");
         getAddress("city","110000");
         getAddress("distinct","110101",form);
         form.render('select');
-
         form.on('select(province_sele)', function(data){
             getAddress("city",data.value);
             form.render('select');
         });
-
         form.on('select(city_sele)', function(data){
             getAddress("distinct",data.value);
             form.render('select');
         });
-
         form.on('select(cdistinct_sele)', function(data){
             getAddress("distinct",data.value,form);
         });
-
         $.ajax({
             type: "GET",
             url: "/api/org/getById",
@@ -233,31 +229,64 @@
                 // console.log(data);
                 form.render();
                 form.val("org-form", data.data);
-
             }
         })
-
-		//执行实例
-		var uploadInst = upload.render({
-			elem: '#test1' //绑定元素
+        upload.render({
+            elem: '#test1'
             ,accept:"file"
-            ,url: '/api/file/upload' //上传接口
+            ,url: '/api/upload/'
+            ,auto: false //选择文件后不自动上传
+            ,bindAction: '#testListAction' //指向一个按钮触发上传
+            ,choose: function(obj){
+                //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                obj.preview(function(index, file, result){
+                    //console.log(index); //得到文件索引
+                    console.log(file); //得到文件对象
+                    //console.log(result); //得到文件base64编码，比如图片
+                    sendFile(file)
+                    //obj.resetFile(index, file, '123.jpg'); //重命名文件名，layui 2.3.0 开始新增
+                    //这里还可以做一些 append 文件列表 DOM 的操作
+                    //obj.upload(index, file); //对上传失败的单个文件重新上传，一般在某个事件中使用
+                    //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+                });
+            }
+        });
+        function sendFile(files) {
+            var formData = new FormData();
+            formData.append("file", files);
+            $.ajax({
+                type: "POST",
+                url: "/api/apply/import_excel",
+                // headers:{"Content-Type":"application/vnd.ms-excel"},
+                data: formData,
+                processData: false,
+                success: function (res) {
+                    if(res.data){
+                        layer.msg('上传成功');
+                        $("#tycjrmd").data("user",res.data).after(smail("../images/xls.png"))
+                    }
+                }
+            })
+        }
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#a' //绑定元素
+            ,accept:"file"
+            ,url: '/api/apply/import_excel' //上传接口
             ,data:{type:"nursingList"}
             ,done: function(res){
                 if(res.data){
                     layer.msg('上传成功');
-
-                    $("#tycjrmd").val(res.data.fileUrl).after(smail(res.data.fileUrl))
+                    $("#tycjrmd").data("user",res.data).after(smail("../images/xls.png"))
                 }
                 //上传完毕回调
             }
-			,error: function(){
-				//请求异常回调
-			}
-		});
-
-		var uploadInst2 = upload.render({
-			elem: '#test2' //绑定元素
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+        var uploadInst2 = upload.render({
+            elem: '#test2' //绑定元素
             ,url: '/api/file/upload' //上传接口
             ,data:{type:"lowIncomeCertificate"}
             ,done: function(res){
@@ -267,11 +296,10 @@
                 }
                 //上传完毕回调
             }
-			,error: function(){
-				//请求异常回调
-			}
-		});
-
+            ,error: function(){
+                //请求异常回调
+            }
+        });
         function smail(str){
             if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
                 return '<img src="'+str+'" style="width: 60px;">'
@@ -280,17 +308,16 @@
             }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
                 return '<img src="../images/xls.png" style="width: 60px;">'
             }
-
         }
-
-		//执行一个laydate实例
-		laydate.render({
-			elem: '#registDate' //指定元素
-		});
-		//监听提交
-		form.on('submit(formDemo)', function(data){
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#registDate' //指定元素
+        });
+        //监听提交
+        form.on('submit(formDemo)', function(data){
             var _data = data.field;
             delete _data['file'];
+            _data.userList = $("#tycjrmd").data("user");
             _data.adminId = localStorage.getItem("userId");
             _data.organizationId = localStorage.getItem("jgid");
             $.ajax({
@@ -303,19 +330,18 @@
                 success: function (data) {
                     layer.alert(data.msg, {icon: 1});
                 },
-				error:function () {
+                error:function () {
                     layer.alert('提交失败', {icon: 2});
                 }
             })
-			return false;
-		});
-	});
+            return false;
+        });
+    });
     function getAddress(type,value,_form) {
         var html = [];
         var iszxs = false;
         var zxs = [];
         var ciitys = [];
-
         for(var key in provinceList){
             if(type == "cityList" && key.indexOf("0000") !== -1){
                 html.push('<option value="'+key+'">'+provinceList[key]+'</option>');
@@ -341,7 +367,6 @@
                 }
             }
         }
-
         if(html.length == 0 && zxs.length == 0){
             $.ajax({
                 url: 'http://passer-by.com/data_location/town/' + value + '.json',
@@ -355,7 +380,6 @@
                 }
             });
         }
-
         // return html.join("");
         if(!value){
             $("#province_sele").html(html.join(""))
@@ -364,14 +388,11 @@
             getAddress("distinct",""+ciitys[0]);
         }else if(type == "city" ){
             $("#cdistinct_sele").html(zxs.join(""));
-
         }else if(type == "distinct" && html.length !== 0){
             $("#cdistinct_sele").html(html.join(""));
             getAddress("distinct",""+ciitys[0],form);
         }
-
     }
-
 </script>
 </body>
 </html>

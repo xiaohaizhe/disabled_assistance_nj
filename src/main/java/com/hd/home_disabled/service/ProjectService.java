@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -590,15 +591,52 @@ public class ProjectService {
      * @param sorts    排序调价
      * @return 结果
      */
-    public JSONObject getPagesByDistrict(String district, Integer page, Integer number, String sorts) {
+    public JSONObject getPagesByDistrict(Integer projectTypeId,Integer organizationId,String start,String end,String district, Integer page, Integer number, String sorts) {
         Pageable pageable = PageUtils.getPage(page, number, sorts);
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         List<Integer> ids = new ArrayList<>();
         List<com.hd.home_disabled.model.dto.Project> projectList = new ArrayList<>();
-        for (Organization organization : organizationList) {
-            ids.add(organization.getId());
+        if (organizationId!=null && organizationId!=0){
+            Optional<Organization> organizationOptional = organizationRepository.findById(organizationId);
+            if (organizationOptional.isPresent()) {
+                ids.add(organizationId);
+            }
+        }else{
+            for (Organization organization : organizationList) {
+                ids.add(organization.getId());
+            }
         }
-        Page<Project> projectPage = projectRepository.findByOrganizationAndStatus(ids, 1, pageable);
+        boolean flag = false;
+        Date s = null;
+        Date e = null;
+        if (!StringUtils.isEmpty(start)
+                && !StringUtils.isEmpty(start.trim())
+                && !StringUtils.isEmpty(end) && !StringUtils.isEmpty(end.trim())){
+            try {
+                s = sdf1.parse(start);
+                e = sdf1.parse(end);
+                flag = true;
+            } catch (ParseException ex) {
+                logger.error(ex.getMessage());
+                flag = false;
+            }
+        }
+        Page<Project> projectPage;
+        if (projectTypeId!=null && projectTypeId != 0){
+            if (flag){
+                projectPage = projectRepository.findByOrganizationAndStatusAndProjectTypeAndCreateTimeBetween(
+                        ids,1,projectTypeId,s,e,pageable);
+            }else {
+                projectPage = projectRepository.findByOrganizationAndStatusAndProjectType(ids,1,projectTypeId,pageable);
+            }
+        }else{
+            if (flag){
+                projectPage= projectRepository.findByOrganizationAndStatusAndCreateTimeBetween(ids, 1,s,e, pageable);
+            }else{
+                projectPage= projectRepository.findByOrganizationAndStatus(ids, 1, pageable);
+            }
+
+        }
         for (Project project : projectPage.getContent()) {
             projectList.add(getModel(project));
         }

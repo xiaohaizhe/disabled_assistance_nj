@@ -2,21 +2,22 @@ package com.hd.home_disabled.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hd.home_disabled.model.RESCODE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +35,39 @@ public class ExcelUtils {
     private static String[] type = new String[]{"java.lang.String", "java.util.Date", "java.lang.Byte",
             "java.lang.Short", "java.lang.Integer", "java.lang.Long", "java.lang.Float", "java.lang.Double"};
 
-    public static void exportExcel(String fileName,String[] columnNames, List<JSONArray> jsonArray, HttpServletRequest request, HttpServletResponse response) {
+    public static void exportExcel(HttpServletRequest request, HttpServletResponse response) {
+        //创建excel工作簿
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        //创建第一页
+        Sheet sheet = workbook.createSheet("firstSheet");
+        //创建第一行
+        Row row = sheet.createRow(0);
+        //创建第一行上第一个单元格
+        Cell cell0 = row.createCell(0);
+        Cell cell1 = row.createCell(1);
+        Cell cell2 = row.createCell(2);
+        Cell cell3 = row.createCell(3);
+        Cell cell4 = row.createCell(4);
+        Cell cell5 = row.createCell(5);
+        //设置第一个单元格内显示
+        cell0.setCellValue("姓名");
+        cell1.setCellValue("残疾证号");
+        cell2.setCellValue("家庭住址");
+        cell3.setCellValue("联系电话");
+        cell4.setCellValue("托养方式(日托/全托)");
+        cell5.setCellValue("补贴金额");
+        try {
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition", "attachment;filename=" + "model.xls");//Excel文件名
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void exportExcel(String fileName, String[] columnNames, List<JSONArray> jsonArray, HttpServletRequest request, HttpServletResponse response) {
         logger.info("Excel导出工具");
         //创建excel工作簿
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -93,7 +126,7 @@ public class ExcelUtils {
             }
         }
         try {
-            fileName = new String(fileName.getBytes(),"ISO8859-1");
+            fileName = new String(fileName.getBytes(), "ISO8859-1");
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -109,4 +142,110 @@ public class ExcelUtils {
             e.printStackTrace();
         }
     }
+    public static JSONObject importExcel(MultipartFile file) {
+        if (file.getContentType().equals("application/vnd.ms-excel")) {
+            JSONObject objectReturn = new JSONObject();
+            JSONArray array = new JSONArray();
+            HSSFWorkbook book;
+            try {
+                InputStream is = file.getInputStream();
+                book = new HSSFWorkbook(is);
+                HSSFSheet sheet = book.getSheetAt(0);
+                for (int rowNum = 1; rowNum < sheet.getLastRowNum() + 1; rowNum++) {
+                    JSONObject object = new JSONObject();
+                    HSSFRow row = sheet.getRow(rowNum);
+                    if (row == null) {
+                        continue;//此行为空，进入下一行
+                    }
+                    //遍历此行的单元格
+                    HSSFCell cell0 = row.getCell(0);
+                    if (cell0 == null) {
+                        continue;//此单元格为空，进入下一单元格
+                    }
+                    //读取单元格内值
+                    String username = readCell(cell0);
+
+                    HSSFCell cell1 = row.getCell(1);
+                    if (cell1 == null) {
+                        continue;//此单元格为空，进入下一单元格
+                    }
+                    //读取单元格内值
+                    String disabilityCertificateNumber = readCell(cell1);
+
+                    HSSFCell cell2 = row.getCell(2);
+                    if (cell2 == null) {
+                        continue;//此单元格为空，进入下一单元格
+                    }
+                    //读取单元格内值
+                    String address = readCell(cell2);
+
+                    HSSFCell cell3 = row.getCell(3);
+                    if (cell3 == null) {
+                        continue;//此单元格为空，进入下一单元格
+                    }
+                    //读取单元格内值
+                    String contactNumber = readCell(cell3);
+
+                    HSSFCell cell4 = row.getCell(4);
+                    if (cell4 == null) {
+                        continue;//此单元格为空，进入下一单元格
+                    }
+                    //读取单元格内值
+                    String nursingMode = readCell(cell4);
+
+                    HSSFCell cell5 = row.getCell(5);
+                    if (cell4 == null) {
+                        continue;//此单元格为空，进入下一单元格
+                    }
+                    //读取单元格内值
+                    Float subsidies= Float.parseFloat(readCell(cell5));
+
+                    object.put("username",username);
+                    object.put("disabilityCertificateNumber",disabilityCertificateNumber);
+                    object.put("address",address);
+                    object.put("contactNumber",contactNumber);
+                    object.put("nursingMode",nursingMode);
+                    object.put("subsidies",subsidies);
+                    array.add(object);
+                }
+                logger.debug(array);
+                return RESCODE.SUCCESS.getJSONRES(array);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                logger.error(e.getMessage());
+                return RESCODE.IO_ERROR.getJSONRES();
+            }
+        } else {
+            return RESCODE.FORMAT_ERROR.getJSONRES();
+        }
+
+    }
+
+    /**
+     * @param cell
+     * @return
+     */
+    public static String readCell(HSSFCell cell) {
+        if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
+//            System.out.println("布尔量");
+            return String.valueOf(cell.getBooleanCellValue());
+        } else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+//            System.out.println("数值型");
+            if (HSSFDateUtil.isCellDateFormatted(cell)) {
+//                System.out.println("This is date");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+            } else {
+                long value = (long) cell.getNumericCellValue();
+//                System.out.println("数值：" + value);
+                return String.valueOf(value);
+            }
+        } else {
+//            System.out.println("String型");
+            return cell.getStringCellValue();
+        }
+    }
+
+
 }

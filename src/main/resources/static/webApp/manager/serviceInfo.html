@@ -9,8 +9,11 @@
 	<link rel="stylesheet" href="../../css/init.css">
 	<link rel="stylesheet" href="../../css/search_form.css">
 	<style>
-		#tableContainer  .layui-table-header {
-			overflow-x: auto;
+		.detail-box .layui-form-item .layui-input-inline {
+			width: 300px;
+		}
+		.detail-box.layui-form-pane .layui-form-label {
+			width: 200px;
 		}
 	</style>
 </head>
@@ -25,7 +28,43 @@
 			</div>
 		</div>
 		<div class="layui-form-item operate-bar" style="margin:0;padding:0 10px;">
-			<div class="layui-input-block">
+			<div class="layui-inline">
+				<label class="layui-form-label">所属机构名称</label>
+				<div class="layui-input-inline">
+					<select id="ssjgmc">
+
+					</select>
+
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">残疾人服务内容大类</label>
+				<div class="layui-input-inline">
+					<select id="fwnrdl">
+						<option value="">请选择</option>
+						<option value="1">日间照料</option>
+						<option value="2">辅助性就业</option>
+						<option value="3">康复服务</option>
+						<option value="4">文体活动</option>
+						<option value="5">学习培训</option>
+						<option value="6">志愿者服务</option>
+						<option value="7">其他</option>
+					</select>
+
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">日期范围</label>
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input" id="projectTime" placeholder=" - ">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<button id="refreshTab" type="button" class="layui-btn layui-btn-sm layui-btn"><i
+						class="layui-icon  layui-icon-search"></i>查询
+				</button>
+			</div>
+			<div class="layui-input-block" style="float:right;">
 				<span onclick="exportfile()" id="export" style="margin-right: 10px;"><i
 						class="layui-icon layui-icon-file"></i>导出Excel
 				</span>
@@ -41,19 +80,137 @@
 	<table class="layui-hide" id="mainTable" lay-filter="test"></table>
 </div>
 
+<div id="editPanel" class="modal" style="display: none;">
+	<form class="layui-form layui-form-pane detail-box" lay-filter="org-form" action="" style="padding: 20px;">
+		<div class="layui-form-item">
+			<label class="layui-form-label">残疾人服务内容大类</label>
+			<div class="layui-input-inline">
+				<input type="text" name="projectType" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">创建项目名称</label>
+			<div class="layui-input-inline">
+				<input type="text" name="name" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">所属机构名称</label>
+			<div class="layui-input-inline">
+				<input type="text" name="organizationName" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">项目负责人</label>
+			<div class="layui-input-inline">
+				<input type="text" name="leader" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">项目简介</label>
+			<div class="layui-input-inline">
+				<input type="text" name="description" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">总服务人数</label>
+			<div class="layui-input-inline">
+				<input type="text" name="personTimeSum" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">总服务人次</label>
+			<div class="layui-input-inline">
+				<input type="text" name="personCountSum" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">总服务时长</label>
+			<div class="layui-input-inline">
+				<input type="text" name="totalTimeSum" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">平均服务时长</label>
+			<div class="layui-input-inline">
+				<input type="text" name="averageTime" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">提交人</label>
+			<div class="layui-input-inline">
+				<input type="text" name="adminName" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<!--<div class="layui-form-item">-->
+			<!--<div class="layui-inline">-->
+				<!--<label class="layui-form-label">项目图片</label>-->
+				<!--<div id="xmtp" class="layui-input-inline">-->
+				<!--</div>-->
+			<!--</div>-->
+		<!--</div>-->
+
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">提交时间</label>
+			<div class="layui-input-inline">
+				<input id="startime"  placeholder="yyyy-MM-dd" type="text" name="createTime" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">更新时间</label>
+			<div class="layui-input-inline">
+				<input id="endtime"  placeholder="yyyy-MM-dd" type="text" name="lastModifyTime" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" disabled="disabled">
+			</div>
+		</div>
+
+		
+	</form>
+</div>
+
 
 <script src="../../js/jquery.min.js"></script>
 <script src="../../layui/layui.js"></script>
 <script src="../../js/heightClient.js"></script>
 
-
+<script type="text/html" id="barDemo">
+	<a class="layui-btn layui-btn-xs" lay-event="edit">查看</a>
+</script>
 <script>
-	layui.use('table', function(){
+	layui.use(['table','form','layer','laydate'], function(){
 		var table = layui.table;
+		var laydate = layui.laydate;
+        var form = layui.form;
 
-		table.render({
+        //日期范围
+        laydate.render({
+            elem: '#projectTime'
+            ,range: true
+        });
+
+        $.ajax({
+            type: "get",
+            url: "/api/org/getListByDistrict?district=雨花台区",
+            success: function (data) {
+                if(data.data){
+                    var arry = data.data;
+                    var html = ['<option value="">请选择</option>'];
+                    for (var i = 0; i < arry.length; i++) {
+                        html.push('<option value="'+arry[i].id+'">'+arry[i].adminName+'</option>')
+                    }
+                    $("#ssjgmc").html(html.join(""));
+                    form.render();
+				}
+
+            }
+        });
+
+        var tableIns = table.render({
 			elem: '#mainTable',
-			url:'/api/project/getPagesByDistrict?district=雨花台区&sorts=modifyTime',
+			url:'/api/project/getPagesByDistrict?district=雨花台区&sorts=modifyTime&organizationId='+($("ssjgmc").val()||"")+'&projectTypeId='+($("fwnrdl").val()||""),
             request: {
                 pageName: 'page', //页码的参数名称，默认：page
                 limitName: 'number' //每页数据量的参数名，默认：limit
@@ -74,7 +231,7 @@
 				{field:'name', width:160, title: '创建项目名称', sort: true},
 				{field:'organizationName', width:200, title: '所属机构名称', sort: true},
 				{field:'leader', width:160, title: '项目负责人', sort: true},
-				{field:'description', title: '项目简介', unresize: true, sort: true},
+				{field:'description', width:200, title: '项目简介', unresize: true, sort: true},
 				{field:'personTimeSum', width:200, title: '总服务人数', sort: true},
 				{field:'personCountSum', width:200, title: '总服务人次', sort: true},
 				{field:'totalTimeSum', width:200, title: '总服务时长', sort: true},
@@ -82,10 +239,58 @@
 				{field:'adminName', width:100, title: '提交人', sort: true},
 				{field:'createTime', width:160, title: '提交时间', sort: true},
 				{field:'lastModifyTime', width:160, title: '更新时间', sort: true}
+                ,{fixed: 'right', width: 120, align:'center', toolbar: '#barDemo'}
 			]]
 			,page: true
 		});
+
+        $("#refreshTab").click(function () {
+            var start = "";
+            var end = "";
+            if($("#projectTime").val()){
+                start = $("#projectTime").val().split(" - ")[0]
+                end = $("#projectTime").val().split(" - ")[1]
+			}
+            tableIns.reload({url: '/api/project/getPagesByDistrict?district=雨花台区&sorts=modifyTime&organizationId='+($("#ssjgmc").val()||"")+'&projectTypeId='+($("#fwnrdl").val()||"")+'&start='+start+'&end='+end});
+        });
+
+        function setDown(dom,str){
+            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                dom.html('<a target="_blank" href="'+str+'"><img src="'+str+'" style="width: 100px;"></a>')
+            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                dom.html('<a target="_blank" href="'+str+'"><img src="../images/word.png" style="width: 100px;"></a>')
+            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                dom.html('<a target="_blank" href="'+str+'"><img src="../images/xls.png" style="width: 100px;"></a>')
+            }
+        }
+
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+            pageid = data.id;
+            setDown($("#xmtp"),data.image);
+            if(layEvent === 'edit'){
+                quotaIndex = layer.open({
+                    type: 1,
+                    title: "服务项目信息",
+                    content: $("#editPanel").html(),
+                    area: ['600px', '700px'],
+                    success: function(layero, index){
+
+                    }
+                });
+                form.render();
+                form.val("org-form", data);
+
+            }
+
+        });
+
 	});
+
+
 
 
     function exportfile() {

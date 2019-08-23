@@ -1,17 +1,17 @@
 package com.hd.home_disabled.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.model.dto.ApplyForm;
 import com.hd.home_disabled.service.ApplyFormService;
 import com.hd.home_disabled.utils.DealWithBindingResult;
+import com.hd.home_disabled.utils.ExcelUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +34,7 @@ public class ApplyFormController {
 
     @ApiOperation(value = "新增或修改", notes = "修改添加id")
     @RequestMapping(value = "/saveAndFlush", method = RequestMethod.POST)
-    public JSONObject add(@RequestBody @Validated ApplyForm applyForm, BindingResult br) {
-        System.out.println("进入");
+    public JSONObject add(@RequestBody @Validated ApplyForm applyForm,BindingResult br) {
         JSONObject result = DealWithBindingResult.dealWithBindingResult(br);
         if (result != null) {
             return result;
@@ -95,5 +94,25 @@ public class ApplyFormController {
     @RequestMapping(value = "/getStatistic", method = RequestMethod.GET)
     public JSONObject getStatistic(String district) {
         return applyFormService.getStatistic(district);
+    }
+
+    @ApiOperation(value = "托养残疾人名单模板", notes = "模板")
+    @RequestMapping(value = "/export_excel", method = RequestMethod.GET)
+    public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
+        ExcelUtils.exportExcel(request,response);
+    }
+
+    @ApiOperation(value = "导入托养残疾人名单", notes = "名单")
+    @RequestMapping(value = "/import_excel",method=RequestMethod.POST)
+    public JSONObject importExcel( @RequestParam(value = "file", required = false) MultipartFile file,
+                                   HttpServletRequest request, HttpServletResponse response){
+        return applyFormService.importExcel(file,request);
+    }
+
+    @ApiOperation(value = "导出托养残疾人名单", notes = "名单")
+    @RequestMapping(value = "/export_userList_excel",method=RequestMethod.GET)
+    public void exportUserListExcel( Integer applyFormId,
+                                   HttpServletRequest request, HttpServletResponse response){
+        applyFormService.exportUserListExcel(applyFormId,request,response);
     }
 }

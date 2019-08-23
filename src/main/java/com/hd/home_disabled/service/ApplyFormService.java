@@ -2,12 +2,11 @@ package com.hd.home_disabled.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hd.home_disabled.entity.Admin;
-import com.hd.home_disabled.entity.ApplyForm;
-import com.hd.home_disabled.entity.Organization;
+import com.hd.home_disabled.entity.*;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.AdminRepository;
 import com.hd.home_disabled.repository.ApplyFormRepository;
+import com.hd.home_disabled.repository.ApplyFormUserRepository;
 import com.hd.home_disabled.repository.OrganizationRepository;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
@@ -15,10 +14,12 @@ import com.test.disabled.App;
 import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,13 +39,15 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ApplyFormService {
+    private final ApplyFormUserRepository applyFormUserRepository;
     private final ApplyFormRepository applyFormRepository;
     private final OrganizationRepository organizationRepository;
     private final AdminRepository adminRepository;
-    public ApplyFormService(ApplyFormRepository applyFormRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository) {
+    public ApplyFormService(ApplyFormRepository applyFormRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository, ApplyFormUserRepository applyFormUserRepository) {
         this.applyFormRepository = applyFormRepository;
         this.organizationRepository = organizationRepository;
         this.adminRepository = adminRepository;
+        this.applyFormUserRepository = applyFormUserRepository;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ApplyFormService.class);
@@ -71,8 +74,8 @@ public class ApplyFormService {
         applyForm1.setSubsidyFundForBoardingNursery(applyForm.getSubsidyFundForBoardingNursery());
         applyForm1.setLocalInvestmentOfLastYear(applyForm.getLocalInvestmentOfLastYear());
         applyForm1.setTotalSubsidyFunds(applyForm.getTotalSubsidyFunds());
-        applyForm1.setNursingList(applyForm.getNursingList());
         applyForm1.setLowIncomeCertificate(applyForm.getLowIncomeCertificate());
+
 
         applyForm1.setReasonForRegression(applyForm.getReasonForRegression());
         applyForm1.setStatus(applyForm.getStatus());
@@ -97,11 +100,12 @@ public class ApplyFormService {
         applyForm1.setNature(applyForm.getOrganization().getNature());
         applyForm1.setAsylumLaborProjects(applyForm.getOrganization().getAsylumLaborProjects());
 
+//        applyForm1.setUserList(applyForm.getUserList());
+
         applyForm1.setSubsidyFundForDayNursery(applyForm.getSubsidyFundForDayNursery());
         applyForm1.setSubsidyFundForBoardingNursery(applyForm.getSubsidyFundForBoardingNursery());
         applyForm1.setLocalInvestmentOfLastYear(applyForm.getLocalInvestmentOfLastYear());
         applyForm1.setTotalSubsidyFunds(applyForm.getTotalSubsidyFunds());
-        applyForm1.setNursingList(applyForm.getNursingList());
         applyForm1.setLowIncomeCertificate(applyForm.getLowIncomeCertificate());
         applyForm1.setReasonForRegression(applyForm.getReasonForRegression());
         applyForm1.setStatus(applyForm.getStatus());
@@ -120,12 +124,14 @@ public class ApplyFormService {
      */
     public JSONObject saveAndFlush(com.hd.home_disabled.model.dto.ApplyForm applyForm) {
         logger.info("新建或修改补贴申请");
+        logger.info("补贴申请:"+applyForm.toString());
         ApplyForm applyForm1 = getEntity(applyForm);
         if (applyForm1.getOrganization() != null &&
                 applyForm1.getOrganization().getId() != null &&
                 organizationRepository.findByIdAndStatus(applyForm1.getOrganization().getId(), 1).isPresent()) {
             Organization organization = organizationRepository.getOne(applyForm1.getOrganization().getId());
             logger.info("补贴申请机构方为："+(organization.getName()==null?"":organization.getName()));
+
             if (applyForm1.getAdmin() != null &&
                     applyForm1.getAdmin().getId() != null &&
                     adminRepository.existsById(applyForm1.getAdmin().getId())) {
@@ -138,10 +144,34 @@ public class ApplyFormService {
                     } else {
                         organization.setApplySum(1);
                     }
+
+                    applyForm1.setStatus(1);//待审核
+                    ApplyForm applyForm2 = applyFormRepository.saveAndFlush(applyForm1);
+                    for (ApplyFormUser user:applyForm.getUserList()){
+                        user.setApplyForm(applyForm2);
+                        ApplyFormUser applyFormUser = applyFormUserRepository.save(user);
+                    }
+                    return RESCODE.SUCCESS.getJSONRES(getModel(applyForm2));
+                }else if (applyForm.getStatus()==1){
+                    //id存在且状态为有效，可修改
+                    logger.info("修改补贴申请");
+                    ApplyForm applyForm2 = applyFormRepository.saveAndFlush(applyForm1);
+                    for (ApplyFormUser user:applyForm.getUserList()){
+                        user.setApplyForm(applyForm2);
+                        Optional<ApplyFormUser> optional =applyFormUserRepository.findByDisabilityCertificateNumberAndApplyForm(
+                                user.getDisabilityCertificateNumber(),
+                                applyForm2.getId());
+                        if (optional.isPresent()){
+                            ApplyFormUser applyFormUser = optional.get();
+                            user.setId(applyFormUser.getId());
+                        }
+                        ApplyFormUser applyFormUser = applyFormUserRepository.saveAndFlush(user);
+                    }
+                    return RESCODE.SUCCESS.getJSONRES(getModel(applyForm2));
+                }else{
+                    return RESCODE.APPLY_FORM_CANT_MODIFY.getJSONRES();
                 }
-                applyForm1.setStatus(1);//待审核
-                ApplyForm applyForm2 = applyFormRepository.saveAndFlush(applyForm1);
-                return RESCODE.SUCCESS.getJSONRES(getModel(applyForm2));
+
             }
             return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
         }
@@ -353,9 +383,9 @@ public class ApplyFormService {
             object15.put("object15", applyForm.getTotalSubsidyFunds() == null ? 0 : applyForm.getTotalSubsidyFunds());
             array.add(object15);
 
-            JSONObject object16 = new JSONObject();
+            /*JSONObject object16 = new JSONObject();
             object16.put("object16", applyForm.getNursingList() == null ? "" : applyForm.getNursingList());
-            array.add(object16);
+            array.add(object16);*/
 
             JSONObject object17 = new JSONObject();
             object17.put("object17", applyForm.getLowIncomeCertificate() == null ? 0 : applyForm.getLowIncomeCertificate());
@@ -464,9 +494,9 @@ public class ApplyFormService {
                 object15.put("object15", applyForm.getTotalSubsidyFunds() == null ? 0 : applyForm.getTotalSubsidyFunds());
                 array.add(object15);
 
-                JSONObject object16 = new JSONObject();
+                /*JSONObject object16 = new JSONObject();
                 object16.put("object16", applyForm.getNursingList() == null ? "" : applyForm.getNursingList());
-                array.add(object16);
+                array.add(object16);*/
 
                 JSONObject object17 = new JSONObject();
                 object17.put("object17", applyForm.getLowIncomeCertificate() == null ? 0 : applyForm.getLowIncomeCertificate());
@@ -530,5 +560,60 @@ public class ApplyFormService {
             objectList.add(object);
         }
         return RESCODE.SUCCESS.getJSONRES(objectList);
+    }
+
+    public  JSONObject importExcel(MultipartFile file,
+                                   HttpServletRequest request){
+        return  ExcelUtils.importExcel(file);
+    }
+
+    public void exportUserListExcel(Integer applyFormId,
+                                    HttpServletRequest request, HttpServletResponse response){
+        Optional<ApplyForm> applyFormOptional = applyFormRepository.findById(applyFormId);
+
+        String fileName = "ApplyForm_userList"+"_"+sdf.format(new Date())+".xls";
+        if (applyFormOptional.isPresent()){
+
+        }
+        String[] columnNames = new String[]{"姓名", "残疾证号", "家庭住址",
+                "联系电话", "托养方式(日托/全托)","补贴金额"};
+        ExcelUtils.exportExcel(fileName,columnNames,getListsByApplyForm(applyFormId),request,response);
+    }
+
+    private List<JSONArray> getListsByApplyForm(Integer applyFormId) {
+        List<JSONArray> jsonArray = new ArrayList<>();
+        Optional<ApplyForm> applyFormOptional = applyFormRepository.findById(applyFormId);
+        if (applyFormOptional.isPresent()){
+            ApplyForm applyForm = applyFormOptional.get();
+            for (ApplyFormUser u:applyForm.getUserList()){
+                JSONArray array = new JSONArray();
+
+                JSONObject object = new JSONObject();
+                object.put("username", u.getUsername() == null ? 0 : u.getUsername());
+                array.add(object);
+
+                JSONObject object1 = new JSONObject();
+                object1.put("disabilityCertificateNumber", u.getDisabilityCertificateNumber() == null ? 0 : u.getDisabilityCertificateNumber());
+                array.add(object1);
+
+                JSONObject object2 = new JSONObject();
+                object2.put("address", u.getAddress() == null ? 0 : u.getAddress());
+                array.add(object2);
+
+                JSONObject object3 = new JSONObject();
+                object3.put("contactNumber", u.getContactNumber() == null ? 0 : u.getContactNumber());
+                array.add(object3);
+
+                JSONObject object4 = new JSONObject();
+                object4.put("nursingMode", u.getNursingMode() == null ? 0 : u.getNursingMode());
+                array.add(object4);
+
+                JSONObject object5 = new JSONObject();
+                object5.put("subsidies", u.getSubsidies() == null ? 0 : u.getSubsidies());
+                array.add(object5);
+                jsonArray.add(array);
+            }
+        }
+        return jsonArray;
     }
 }
