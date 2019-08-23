@@ -189,6 +189,10 @@ public class ApplyFormService {
         logger.info("补贴申请不存在");
         return RESCODE.APPLY_FORM_NOT_EXIST.getJSONRES();
     }
+    public ApplyForm getApplyFormById(Integer id) {
+        Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatusGreaterThanEqual(id, 1);
+        return applyFormOptional.get();
+    }
 
     /**
      * 申请表按机构分页查询
