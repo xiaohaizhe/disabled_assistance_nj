@@ -1,1 +1,1 @@
-var HOST_CONFIG = "localhost";
+var HOST_CONFIG = "106.15.35.233";
