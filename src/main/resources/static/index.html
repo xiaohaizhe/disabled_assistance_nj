@@ -171,7 +171,7 @@
 
     $.ajax({
         type: "get",
-        url: "/api/org/getByAdminId",
+			url: "/api/org/getByAdminId",
         data: {adminId:localStorage.getItem("userId")},
         success: function (data) {
             localStorage.setItem("jgid",data.data.id);
@@ -241,7 +241,7 @@
         var html = [];
         html.push('<select>');
         for (var i = 0; i < data.length; i++) {
-            html.push('<option value="'+data[i].id+'">'+data[i].adminName+'</option>');
+            html.push('<option value="'+data[i].id+'">'+data[i].name+'</option>');
         }
         html.push('</select>');
         return html.join("")
