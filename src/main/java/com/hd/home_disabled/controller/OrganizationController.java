@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
+import java.net.URLEncoder;
+
+import static java.lang.Character.toUpperCase;
 
 /**
  * @ClassName OrganizationController
@@ -71,13 +74,13 @@ public class OrganizationController {
     @ApiOperation(value = "查询区机构分页", notes = "分页")
     @RequestMapping(value = "/getPageByDistrict", method = RequestMethod.GET)
     public JSONObject getOrgList2(String district, Integer page, Integer number, String sorts) {
-        return organizationService.getPageByDistrict(district, page, number,sorts);
+        return organizationService.getPageByDistrict(district, page, number, sorts);
     }
 
     @ApiOperation(value = "区机构信息导出", notes = "excel导出")
-    @RequestMapping(value = "/export_excel",method = RequestMethod.GET)
-    public void exportExcel(String district,HttpServletRequest request, HttpServletResponse response) {
-        organizationService.exportExcel(district,request,response);
+    @RequestMapping(value = "/export_excel", method = RequestMethod.GET)
+    public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
+        organizationService.exportExcel(district, request, response);
     }
 
     //残疾人之家分析
@@ -88,9 +91,37 @@ public class OrganizationController {
     }
 
     @ApiOperation(value = "区机构信息导出word", notes = "word导出")
-    @RequestMapping(value = "/export_word",method = RequestMethod.GET)
-    public void exportWord(Integer orgId,Integer applyId,HttpServletRequest request, HttpServletResponse response) throws IOException {
-        organizationService.exportWord(orgId,applyId);
+    @RequestMapping(value = "/export_word", method = RequestMethod.GET)
+    public HttpServletResponse exportWord(Integer orgId, Integer applyId, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String path = organizationService.exportWord(orgId, applyId);
+        try {
+            // path是指欲下载的文件的路径。
+            File file = new File(path);
+            String filename = file.getName();
+            // 取得文件的后缀名。
+            String ext = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
+
+            // 以流的形式下载文件。
+            InputStream fis = new BufferedInputStream(new FileInputStream(path));
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            // 清空response
+            response.reset();
+            // 设置response的Header
+            response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+            response.addHeader("Content-Length","" + file.length());
+            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+            response.setContentType("application/octet-stream");
+
+            toClient.write(buffer);
+            toClient.flush();
+            toClient.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return response;
+
     }
 
 }

@@ -23,7 +23,7 @@ public class DocumentHandlers {
      * @param templatePackagePath 模版文件包路径
      * @param templateName 模版文件名称
      */
-    public void createDoc(Map<String, Object> dataMap, String templateName, String orgName) throws IOException {
+    public String createDoc(Map<String, Object> dataMap, String templateName, String orgName) throws IOException {
         // 设置模本装置方法和路径,FreeMarker支持多种模板装载方法。可以重servlet，classpath，数据库装载，
 //      // 这里我们的模板是放在com.havenliu.document.template包下面
         String dic=System.getProperty("user.dir");
@@ -56,6 +56,7 @@ public class DocumentHandlers {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return docPath;
     }
 
     /**

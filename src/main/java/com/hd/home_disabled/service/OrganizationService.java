@@ -422,7 +422,7 @@ public class OrganizationService {
         return RESCODE.SUCCESS.getJSONRES(object);
     }
 
-    public void exportWord(Integer orgId,Integer applyId) throws IOException {
+    public String exportWord(Integer orgId,Integer applyId) throws IOException {
         Optional<Organization> optional= organizationRepository.findById(orgId);
         Organization org=optional.get();
         List<ApplyForm> applyForms=org.getApplyFormList();
@@ -487,13 +487,6 @@ public class OrganizationService {
                 images.add(img);
 
             }
-//            in=new FileInputStream("/Users/sunyuan/develop/privateProject/oldhelp/src/main/resources/static/newsimg/025a164b-7fb6-464a-b9a7-319b5a34c5d5.jpg");
-//            picdata=new byte[in.available()];
-//            in.read(picdata);
-//            in=new FileInputStream("/Users/sunyuan/develop/privateProject/oldhelp/src/main/resources/static/images/jylc.png");
-//            picdata2=new byte[in.available()];
-//            in.read(picdata2);
-//            in.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -501,7 +494,6 @@ public class OrganizationService {
         dataMap.put("images", images);
 
         DocumentHandlers documentHandler=new DocumentHandlers();
-        documentHandler.createDoc(dataMap,"new2.ftl", org.getName());
-
+        return documentHandler.createDoc(dataMap,"new2.ftl", org.getName());
     }
 }
