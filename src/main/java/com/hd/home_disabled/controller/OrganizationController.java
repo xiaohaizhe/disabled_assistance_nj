@@ -89,8 +89,8 @@ public class OrganizationController {
 
     @ApiOperation(value = "区机构信息导出word", notes = "word导出")
     @RequestMapping(value = "/export_word",method = RequestMethod.GET)
-    public void exportWord(Integer id,HttpServletRequest request, HttpServletResponse response) throws IOException {
-        organizationService.exportWord(id);
+    public void exportWord(Integer orgId,Integer applyId,HttpServletRequest request, HttpServletResponse response) throws IOException {
+        organizationService.exportWord(orgId,applyId);
     }
 
 }

@@ -3,10 +3,7 @@ package com.hd.home_disabled.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hd.home_disabled.entity.Admin;
-import com.hd.home_disabled.entity.ApplyForm;
-import com.hd.home_disabled.entity.Organization;
-import com.hd.home_disabled.entity.User;
+import com.hd.home_disabled.entity.*;
 import com.hd.home_disabled.entity.dictionary.NatureOfHousingPropertyRight;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.AdminRepository;
@@ -425,24 +422,25 @@ public class OrganizationService {
         return RESCODE.SUCCESS.getJSONRES(object);
     }
 
-    public void exportWord(Integer id) throws IOException {
-        Optional<Organization> optional= organizationRepository.findById(id);
+    public void exportWord(Integer orgId,Integer applyId) throws IOException {
+        Optional<Organization> optional= organizationRepository.findById(orgId);
         Organization org=optional.get();
-        List<User> list=org.getUserList();
+        List<ApplyForm> applyForms=org.getApplyFormList();
         List wlist=new ArrayList();
-        ApplyForm applyForm=applyFormService.getApplyFormById(id);
+        ApplyForm applyForm=applyFormService.getApplyFormById(applyId);
+        List<ApplyFormUser> list=applyForm.getUserList();
+
         double sum=0;
         for(int i=0;i<list.size();i++){
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("userno", i+1); //
-            map.put("username",list.get(i).getName()); //结束时间
+            map.put("username",list.get(i).getUsername()); //结束时间
             map.put("userid",list.get(i).getDisabilityCertificateNumber()); //结束时间
             map.put("useraddr",list.get(i).getAddress()); //结束时间
 
             map.put("userphone",list.get(i).getContactNumber()); //结束时间
 
-            map.put("usermode",list.get(i).getNursingMode().getType()); //结束时间
-            map.put("usermonth",list.get(i).getNursingMonth()); //结束时间
+            map.put("usermode",list.get(i).getNursingMode()); //结束时间
             map.put("usermoney",list.get(i).getSubsidies()); //结束时间
             sum+=list.get(i).getSubsidies();
 
@@ -471,33 +469,39 @@ public class OrganizationService {
         dataMap.put("sum",sum);
         InputStream in;
         byte[] picdata=null;
-        byte[] picdata2=null;
         String img=null;
-        String img2=null;
-
+        String dic=System.getProperty("user.dir");
+        BASE64Encoder encoder=new BASE64Encoder();
+        List<String> images = new ArrayList<>();
         try {
-            in=new FileInputStream("/Users/sunyuan/develop/privateProject/oldhelp/src/main/resources/static/newsimg/025a164b-7fb6-464a-b9a7-319b5a34c5d5.jpg");
-            picdata=new byte[in.available()];
-            in.read(picdata);
-            in=new FileInputStream("/Users/sunyuan/develop/privateProject/oldhelp/src/main/resources/static/images/jylc.png");
-            picdata2=new byte[in.available()];
-            in.read(picdata2);
-            in.close();
+            for(int i=0;i<applyForms.size();i++)
+            {
+                String url=applyForms.get(i).getLowIncomeCertificate();
+                String[] s=url.split("lowIncomeCertificate");
+                String dir=s[1];
+                String address=dic+"/picture/lowIncomeCertificate"+dir;
+                in=new FileInputStream(address);
+                picdata=new byte[in.available()];
+                in.read(picdata);
+                img=encoder.encode(picdata);
+                images.add(img);
+
+            }
+//            in=new FileInputStream("/Users/sunyuan/develop/privateProject/oldhelp/src/main/resources/static/newsimg/025a164b-7fb6-464a-b9a7-319b5a34c5d5.jpg");
+//            picdata=new byte[in.available()];
+//            in.read(picdata);
+//            in=new FileInputStream("/Users/sunyuan/develop/privateProject/oldhelp/src/main/resources/static/images/jylc.png");
+//            picdata2=new byte[in.available()];
+//            in.read(picdata2);
+//            in.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        BASE64Encoder encoder=new BASE64Encoder();
-        img=encoder.encode(picdata);
-        img2=encoder.encode(picdata2);
-        List<String> images = new ArrayList<String>();
-        images.add(img);
-        images.add(img2);
         dataMap.put("images", images);
 
         DocumentHandlers documentHandler=new DocumentHandlers();
-        documentHandler.createDoc(dataMap, "/com","new2.ftl", "/Users/sunyuan/develop/out7.doc");
+        documentHandler.createDoc(dataMap,"new2.ftl", org.getName());
 
     }
 }

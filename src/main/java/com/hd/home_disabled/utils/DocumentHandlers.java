@@ -22,12 +22,15 @@ public class DocumentHandlers {
      * @param dataMap 载入的数据文件
      * @param templatePackagePath 模版文件包路径
      * @param templateName 模版文件名称
-     * @param docPath  写出的doc文件路径
      */
-    public void createDoc(Map<String, Object> dataMap, String templatePackagePath, String templateName, String docPath) throws IOException {
+    public void createDoc(Map<String, Object> dataMap, String templateName, String orgName) throws IOException {
         // 设置模本装置方法和路径,FreeMarker支持多种模板装载方法。可以重servlet，classpath，数据库装载，
 //      // 这里我们的模板是放在com.havenliu.document.template包下面
-        configuration.setDirectoryForTemplateLoading(new File("/Users/sunyuan/develop"));
+        String dic=System.getProperty("user.dir");
+        String path=dic+"/src/main/resources/static/template";
+        String docPath=path+"/"+orgName+".doc";
+
+        configuration.setDirectoryForTemplateLoading(new File(path));
         Template t = null;
         try {
             t = configuration.getTemplate(templateName);
@@ -148,7 +151,7 @@ public class DocumentHandlers {
       //自我评价
        dataMap.put("selfevaluation", "1.自我评价自我评价自我评价自我评价自我评价2.自我评价自我评价自我评价自我评价3.自我评价自我评价自我评价自我评价自我评价");
       DocumentHandlers documentHandler=new DocumentHandlers();
-      documentHandler.createDoc(dataMap, "/com","Doc5.ftl", "/Users/sunyuan/develop/out2.doc");
+      documentHandler.createDoc(dataMap,"Doc5.ftl", "/Users/sunyuan/develop/out2.doc");
   }
     public static String getImageBase(String src) throws Exception {
             if (src == null || src == "") {
