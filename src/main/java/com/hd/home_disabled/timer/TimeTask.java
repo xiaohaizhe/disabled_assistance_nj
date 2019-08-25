@@ -137,7 +137,7 @@ public class TimeTask {
         }
     }
 
-    @Scheduled(cron = "0 */2 * * * ?") // 每10分钟执行一次
+    @Scheduled(cron = "0 */3 * * * ?") // 每10分钟执行一次
     public void getAttendanceRecord() throws ClassNotFoundException, NoSuchFieldException, IOException {
         //获取更新用户打卡信息
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "id");
@@ -148,7 +148,7 @@ public class TimeTask {
             String accessToken = accessTokens.get(0).getAccessToken();
             Date end = new Date();
             Date start = new Date();
-            start.setMinutes(start.getMinutes() - 2);
+            start.setMinutes(start.getMinutes() - 5);
 
             String url = getAttendanceList + "?access_token=" + accessToken;
             JSONObject params = new JSONObject();
@@ -174,31 +174,31 @@ public class TimeTask {
 
                     String[] userIdss = getStrings(userIds, start_index, end_index);
                     params.put("userIds", userIdss);
-                    saveData(url,params);
+                    saveData(url, params);
                 }
 
             } else {
                 params.put("userIds", userIds);
-                saveData(url,params);
+                saveData(url, params);
 
             }
         }
-        CopyOnWriteArraySet<CheckInWebsocket> webSocketSet = (CopyOnWriteArraySet<CheckInWebsocket>)getField(websocket,websocket.getClass(),"webSocketSet");
-        for (CheckInWebsocket websocket:webSocketSet){
+        CopyOnWriteArraySet<CheckInWebsocket> webSocketSet = (CopyOnWriteArraySet<CheckInWebsocket>) getField(websocket, websocket.getClass(), "webSocketSet");
+        for (CheckInWebsocket websocket : webSocketSet) {
             Session session = websocket.getSession();
             List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserService.getDingUserAttendanceRecord();
-            logger.info("一共有"+dingUserAttendanceRecords.size()+"条数据");
+            logger.info("一共有" + dingUserAttendanceRecords.size() + "条数据");
             JSONArray array = new JSONArray();
-            for (DingUserAttendanceRecord record:
+            for (DingUserAttendanceRecord record :
                     dingUserAttendanceRecords) {
-                if (record.getProjectId()==null){
-                    logger.info("根据钉钉用户id："+record.getDingUserId()+"查找系统用户");
-                    if (dingUserService.getUserId(record.getDingUserId())!=null){
+                if (record.getProjectId() == null) {
+                    logger.info("根据钉钉用户id：" + record.getDingUserId() + "查找系统用户");
+                    if (dingUserService.getUserId(record.getDingUserId()) != null) {
                         User user = dingUserService.getUserId(record.getDingUserId());
                         JSONObject object = new JSONObject();
-                        object.put("id",record.getId());
-                        object.put("name",user.getName());
-                        object.put("disabilityCertificateNumber",user.getDisabilityCertificateNumber());
+                        object.put("id", record.getId());
+                        object.put("name", user.getName());
+                        object.put("disabilityCertificateNumber", user.getDisabilityCertificateNumber());
                         array.add(object);
                     }
                 }
@@ -246,7 +246,7 @@ public class TimeTask {
         }
     }
 
-    private void saveData(String url,JSONObject params){
+    private void saveData(String url, JSONObject params) {
         try {
             JSONObject result = HttpUtils.sendPost(url, params);
             Integer errcode = result.getInteger("errcode");
