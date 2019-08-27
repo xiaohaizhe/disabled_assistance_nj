@@ -334,7 +334,7 @@
 			data: { type: "智力残疾"},
 			success: function(res) {
 				if(res ){
-					console.log("/api/project/usersPreferenceAnalysisToday",res);
+//					console.log("/api/project/usersPreferenceAnalysisToday",res);
 					const { data = {}} = res;
 					if(JSON.stringify(data) !== "{}") {
 						const xData = Object.keys(data);
@@ -467,22 +467,41 @@
 	}
 
 
-	var cellSize = [80, 80];
-	var option3 = {
-		xAxis: {
-			type: 'category',
-			data: ['精神残疾', '视力残疾', '听力残疾', '言语残疾', '肢体残疾', '智力残疾']
-		},
-		yAxis: {
-			type: 'value'
-		},
-		series: [{
-			data: [1, 1, 1, 1, 1, 1.5],
-			type: 'line'
-		}]
-	};
-	var myChart = echarts.init(document.getElementById('disabledCount'));
-	myChart.setOption(option3);
+
+	$.ajax({
+		url: "/api/user/statisticData",
+		type: "GET",
+		success: function(res) {
+			if(res && res.data ){
+				const { analysis = {},data = {}} = res.data;
+				const x = Object.keys(data);
+				const y = x.map(function(item) {
+					return data[item];
+				});
+				analysisService(x,y);
+			}
+		}
+
+	});
+	function analysisService(x,y) {
+		var cellSize = [80, 80];
+		var option3 = {
+			xAxis: {
+				type: 'category',
+				data: x, // ['精神残疾', '视力残疾', '听力残疾', '言语残疾', '肢体残疾', '智力残疾']
+			},
+			yAxis: {
+				type: 'value'
+			},
+			series: [{
+				data:  y,// [1, 1, 1, 1, 1, 1.5],
+				type: 'line'
+			}]
+		};
+		var myChart = echarts.init(document.getElementById('disabledCount'));
+		myChart.setOption(option3);
+	}
+
 </script>
 </body>
 </html>
