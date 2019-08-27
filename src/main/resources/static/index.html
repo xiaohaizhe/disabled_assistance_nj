@@ -182,6 +182,7 @@
                 success: function (rs) {
                     seledom = setProjectList(rs.data)
                     WebSocketTest()
+                    //pushUser ([{"id":"31","name":"xixi"},{"id":"35","name":"haha"}])
                 }
             })
         }
@@ -206,10 +207,12 @@
         });
     });
 
+
+
     function pushUser (array){
         for (var i = 0; i < array.length; i++) {
             var obj = array[i];
-            $(".users-body").append('<div class="user_id'+obj.id+'" ><p style="width: 70px;">'+obj.name+'</p><p style="width: 200px;">'+obj.disabilityCertificateNumber+'</p><p class="project_list" style="width: 170px;">'+seledom+'</p><p style="width: 50px;"><input type="checkbox" onclick="setUserAction('+obj.id+')" name="" lay-skin="primary"></p></div>');
+            $(".users-body").append('<div class="user_id'+obj.id+'" ><p style="width: 70px;">'+obj.name+'</p><p style="width: 200px;">'+obj.disabilityCertificateNumber+'</p><p class="project_list" style="width: 170px;">'+seledom+'</p><p style="width: 50px;"><input style="width: 18px;height: 18px;" type="checkbox" onclick="setUserAction('+obj.id+')" name="" lay-skin="primary"></p></div>');
         }
         $(".message-box").slideDown("slow");
 	}
@@ -239,7 +242,7 @@
 
 	function setProjectList(data){
         var html = [];
-        html.push('<select>');
+        html.push('<select style="width: 160px;">');
         for (var i = 0; i < data.length; i++) {
             html.push('<option value="'+data[i].id+'">'+data[i].name+'</option>');
         }
@@ -248,7 +251,7 @@
 	}
 
 
-
+    //WebSocketTest()
     function WebSocketTest()
     {
         if ("WebSocket" in window)

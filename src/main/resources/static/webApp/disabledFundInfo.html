@@ -219,6 +219,7 @@
                 <label class="layui-form-label">低保或其他低收入证明</label>
                 <div id="dsrzm" class="layui-input-block" style="padding-right:15px;">
                 </div>
+                <button onclick="exportfile()" type="button" class="layui-btn layui-btn-normal" style="width: 100px;float: right;margin-top: -35px;margin-right: -140px;">生成word</button>
             </div>
 
         </div>
@@ -238,6 +239,8 @@
     var pageid = "";
     var tableIns = null;
     var quotaIndex = null;
+    var _ORGID = "";
+    var _APPLYID = "";
 
     function agreefn() {
         $.ajax({
@@ -338,23 +341,27 @@
 
 
         function smail(str){
-            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
-                return '<img src="'+str+'" style="width: 30px;">'
-            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
-                return '<img src="../images/word.png" style="width: 30px;">'
-            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
-                return '<img src="../images/xls.png" style="width: 30px;">'
+            if(str){
+                if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                    return '<img src="'+str+'" style="width: 30px;">'
+                }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                    return '<img src="../images/word.png" style="width: 30px;">'
+                }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                    return '<img src="../images/xls.png" style="width: 30px;">'
+                }
             }
 
         }
 
         function setDown(dom,str){
-            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
-                dom.html('<a target="_blank" href="'+str+'"><img src="'+str+'" style="width: 100px;"></a>')
-            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
-                dom.html('<a target="_blank" href="'+str+'"><img src="../images/word.png" style="width: 100px;"></a>')
-            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
-                dom.html('<a target="_blank" href="'+str+'"><img src="../images/xls.png" style="width: 100px;"></a>')
+            if(str){
+                if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                    dom.html('<a target="_blank" href="'+str+'"><img src="'+str+'" style="width: 100px;"></a>')
+                }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                    dom.html('<a target="_blank" href="'+str+'"><img src="../images/word.png" style="width: 100px;"></a>')
+                }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                    dom.html('<a target="_blank" href="'+str+'"><img src="../images/xls.png" style="width: 100px;"></a>')
+                }
             }
         }
 
@@ -380,6 +387,7 @@
                     }
                 });
                 data.spzt = ["删除","待审批","已审批","已拒绝"][data.status];
+                _APPLYID = data.id;
                 form.render();
                 form.val("edit-form", data);
 
@@ -390,6 +398,11 @@
 
 
     });
+
+    function exportfile() {
+        _ORGID = location.search.split("=")[1];
+        window.location = "/api/org/export_word?orgId="+_ORGID+"&applyId="+_APPLYID;
+    }
 </script>
 
 </body>

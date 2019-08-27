@@ -228,10 +228,10 @@
             },
 			cols: [[
 				{field:'projectType', width:160, title: '残疾人服务内容大类', sort: true},
-				{field:'name', width:160, title: '创建项目名称', sort: true},
-				{field:'organizationName', width:200, title: '所属机构名称', sort: true},
+				{field:'name', minWidth:160, title: '创建项目名称', sort: true},
+				{field:'organizationName', minWidth:200, title: '所属机构名称', sort: true},
 				{field:'leader', width:160, title: '项目负责人', sort: true},
-				{field:'description', width:200, title: '项目简介', unresize: true, sort: true},
+				{field:'description', minWidth:200, title: '项目简介', unresize: true, sort: true},
 				{field:'personTimeSum', width:200, title: '总服务人数', sort: true},
 				{field:'personCountSum', width:200, title: '总服务人次', sort: true},
 				{field:'totalTimeSum', width:200, title: '总服务时长', sort: true},
@@ -255,13 +255,15 @@
         });
 
         function setDown(dom,str){
-            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
-                dom.html('<a target="_blank" href="'+str+'"><img src="'+str+'" style="width: 100px;"></a>')
-            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
-                dom.html('<a target="_blank" href="'+str+'"><img src="../images/word.png" style="width: 100px;"></a>')
-            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
-                dom.html('<a target="_blank" href="'+str+'"><img src="../images/xls.png" style="width: 100px;"></a>')
-            }
+            if(str){
+                if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                    dom.html('<a target="_blank" href="'+str+'"><img src="'+str+'" style="width: 100px;"></a>')
+                }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                    dom.html('<a target="_blank" href="'+str+'"><img src="../images/word.png" style="width: 100px;"></a>')
+                }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                    dom.html('<a target="_blank" href="'+str+'"><img src="../images/xls.png" style="width: 100px;"></a>')
+                }
+			}
         }
 
 
