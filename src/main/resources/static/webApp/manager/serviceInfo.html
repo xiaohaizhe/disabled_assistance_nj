@@ -193,13 +193,13 @@
 
         $.ajax({
             type: "get",
-            url: "/api/org/getListByDistrict?district=320114",
+            url: "/api/org/getListByDistrict?district=雨花台区",
             success: function (data) {
                 if(data.data){
                     var arry = data.data;
                     var html = ['<option value="">请选择</option>'];
                     for (var i = 0; i < arry.length; i++) {
-                        html.push('<option value="'+arry[i].id+'">'+arry[i].adminName+'</option>')
+                        html.push('<option value="'+arry[i].id+'">'+arry[i].name+'</option>')
                     }
                     $("#ssjgmc").html(html.join(""));
                     form.render();
@@ -210,7 +210,7 @@
 
         var tableIns = table.render({
 			elem: '#mainTable',
-			url:'/api/project/getPagesByDistrict?district=320114&sorts=modifyTime&organizationId='+($("ssjgmc").val()||"")+'&projectTypeId='+($("fwnrdl").val()||""),
+			url:'/api/project/getPagesByDistrict?district=雨花台区&sorts=modifyTime&organizationId='+($("ssjgmc").val()||"")+'&projectTypeId='+($("fwnrdl").val()||""),
             request: {
                 pageName: 'page', //页码的参数名称，默认：page
                 limitName: 'number' //每页数据量的参数名，默认：limit
@@ -251,7 +251,7 @@
                 start = $("#projectTime").val().split(" - ")[0]
                 end = $("#projectTime").val().split(" - ")[1]
 			}
-            tableIns.reload({url: '/api/project/getPagesByDistrict?district=320114&sorts=modifyTime&organizationId='+($("#ssjgmc").val()||"")+'&projectTypeId='+($("#fwnrdl").val()||"")+'&start='+start+'&end='+end});
+            tableIns.reload({url: '/api/project/getPagesByDistrict?district=雨花台区&sorts=modifyTime&organizationId='+($("#ssjgmc").val()||"")+'&projectTypeId='+($("#fwnrdl").val()||"")+'&start='+start+'&end='+end});
         });
 
         function setDown(dom,str){
@@ -296,7 +296,7 @@
 
 
     function exportfile() {
-        window.location = "/api/project/projectListExport?district=320114";
+        window.location = "/api/project/projectListExport?district=雨花台区";
     }
 
 
