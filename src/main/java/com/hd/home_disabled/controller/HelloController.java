@@ -311,4 +311,22 @@ public class HelloController {
             System.out.println(record.toString());
         }
     }
+
+    @RequestMapping(value = "/resetData", method = RequestMethod.GET)
+    public void resetData(){
+        Long id1 = 31L;
+        Long id2 = 35l;
+        reset(id1);
+        reset(id2);
+    }
+
+    private void reset(Long id){
+        Optional<DingUserAttendanceRecord> record = dingUserAttendanceRecordRepository.findById(id);
+        if (record.isPresent()){
+            DingUserAttendanceRecord dingUserAttendanceRecord = record.get();
+            dingUserAttendanceRecord.setProjectId(null);
+            dingUserAttendanceRecord.setUserCheckTime(new Date());
+            dingUserAttendanceRecordRepository.saveAndFlush(dingUserAttendanceRecord);
+        }
+    }
 }
