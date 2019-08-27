@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,144 +100,152 @@ public class HelloController {
         return "失败";
     }
 
-//    @RequestMapping(value = "/getDepartmentList", method = RequestMethod.GET)
-//    public void getDepartmentList() {
-//        //1.获取token调用接口
-//        Sort.Order order = new Sort.Order(Sort.Direction.DESC, "id");
-//        Sort sort = new Sort(order);
-//        List<AccessToken> accessTokens = accessTokenRepository.findAll(sort);
-//        if (accessTokens.size() > 0) {
-//            String accessToken = accessTokens.get(0).getAccessToken();
-//            Date end = new Date();
-//            Date start = new Date();
-//            start.setMinutes(start.getMinutes() - 10);
-//
-//            String url = getAttendanceList + "?access_token=" + accessToken;
-//            JSONObject params = new JSONObject();
-////            params.put("checkDateFrom", "2019-08-24 11:10:00");
+    @RequestMapping(value = "/getDepartmentList", method = RequestMethod.GET)
+    public void getDepartmentList() {
+        try {
+            InetAddress ip4 = Inet4Address.getLocalHost();
+            System.out.println(ip4.getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        //1.获取token调用接口
+        Sort.Order order = new Sort.Order(Sort.Direction.DESC, "id");
+        Sort sort = new Sort(order);
+        List<AccessToken> accessTokens = accessTokenRepository.findAll(sort);
+        if (accessTokens.size() > 0) {
+            String accessToken = accessTokens.get(0).getAccessToken();
+            Date end = new Date();
+            Date start = new Date();
+            start.setMinutes(start.getMinutes() - 10);
+
+            String url = getAttendanceList + "?access_token=" + accessToken;
+            JSONObject params = new JSONObject();
+            params.put("checkDateFrom", "2019-08-24 11:10:00");
 //            params.put("checkDateFrom", sdf.format(start));
-//            params.put("checkDateTo", sdf.format(end));
-//            params.put("isI18n", false);
-//
-//            List<DingUser> users = dingUserRepository.findAll();
-//            List<String> userIdList = new ArrayList<>();
-//            String[] userIds = new String[users.size()];
-//            for (int i = 0; i < users.size(); i++) {
-//                userIdList.add(String.valueOf(users.get(i).getUserId()));
-//                userIds[i] = String.valueOf(users.get(i).getUserId());
-//            }
-//            int size = users.size();
-//            if (size > 50) {
-//                int count = size % 50 == 0 ? size / 50 : (size / 50 + 1);
-//                for (int j = 0; j < count; j++) {
-//                    int start_index = j * 50;
-//                    int end_index = start_index + 50;
-//                    if (end_index > size) end_index = size;
-//
-//                    String[] userIdss = getStrings(userIds, start_index, end_index);
-//                    params.put("userIds", userIdss);
-//                    try {
-//                        JSONObject result = HttpUtils.sendPost(url, params);
-//                        Integer errcode = result.getInteger("errcode");
-//                        if (errcode == 0) {
-//                            JSONArray array = result.getJSONArray("recordresult");
-//                            for (int i = 0; i < array.size(); i++) {
-//                                JSONObject object = (JSONObject) array.get(i);
-//                                if (object.getString("checkType") != null) {
-//                                    Date userCheckTime = new Date(object.getLong("userCheckTime"));
-//                                    String dingUserId = object.getString("userId");
-//                                    Byte status = (byte) 1;  //项目结束
-//                                    if (object.getString("checkType").equals("OnDuty")) {
-//                                        status = (byte) 0;   //项目开始
-//                                    }
-//                                    if (status == (byte) 1) {
-//                                        //残疾人参加项目打卡结束,参与项目时间统计录入数据库
-//                                        Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "userCheckTime");
-//                                        Sort sort1 = new Sort(order1);
-//                                        List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserAttendanceRecordRepository.findByDingUserId(dingUserId, sort1);
-//                                        logger.info(dingUserAttendanceRecords.toString());
-//                                        if (dingUserAttendanceRecords.size() > 0
-//                                                && dingUserAttendanceRecords.get(0).getStatus() == (byte) 0
-//                                                && dingUserAttendanceRecords.get(0).getProjectId() != null) {
-//                                            User user = dingUserService.getUserId(dingUserId);
-//                                            if (user != null) {
-//                                                userService.clockIn(dingUserAttendanceRecords.get(0).getProjectId(), user.getId(),
-//                                                        dingUserAttendanceRecords.get(0).getUserCheckTime(), userCheckTime, 1);
-//                                            }
-//                                        }
-//                                    }
-//                                    DingUserAttendanceRecord dingUserAttendanceRecord = new DingUserAttendanceRecord();
-//                                    dingUserAttendanceRecord.setDingUserId(dingUserId);
-//                                    dingUserAttendanceRecord.setStatus(status);
-//                                    dingUserAttendanceRecord.setUserCheckTime(userCheckTime);
-//                                    logger.info(dingUserAttendanceRecord.toString());
-//                                    Optional<DingUserAttendanceRecord> dingUserAttendanceRecordOptional = dingUserAttendanceRecordRepository.findByDingUserIdAnAndUserCheckTime(dingUserId, userCheckTime);
-//                                    if (!dingUserAttendanceRecordOptional.isPresent())
-//                                        dingUserAttendanceRecordRepository.save(dingUserAttendanceRecord);
-//
-//                                }
-//                            }
-//                        } else {
-//                            logger.error(result.toJSONString());
-//                        }
-//                    } catch (IOException e) {
-//                        logger.error(e.getMessage());
-//                    }
-//                }
-//
-//            } else {
-//                params.put("userIds", userIds);
-//                try {
-//                    JSONObject result = HttpUtils.sendPost(url, params);
-//                    Integer errcode = result.getInteger("errcode");
-//                    if (errcode == 0) {
-//                        JSONArray array = result.getJSONArray("recordresult");
-//                        for (int i = 0; i < array.size(); i++) {
-//                            JSONObject object = (JSONObject) array.get(i);
-//                            if (object.getString("checkType") != null) {
-//                                Date userCheckTime = new Date(object.getLong("userCheckTime"));
-//                                String dingUserId = object.getString("userId");
-//                                Byte status = (byte) 1;  //项目结束
-//                                if (object.getString("checkType").equals("OnDuty")) {
-//                                    status = (byte) 0;   //项目开始
-//                                }
-//                                if (status == (byte) 1) {
-//                                    //残疾人参加项目打卡结束,参与项目时间统计录入数据库
-//                                    Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "userCheckTime");
-//                                    Sort sort1 = new Sort(order1);
-//                                    List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserAttendanceRecordRepository.findByDingUserId(dingUserId, sort1);
-//                                    logger.info(dingUserAttendanceRecords.toString());
-//                                    if (dingUserAttendanceRecords.size() > 0
-//                                            && dingUserAttendanceRecords.get(0).getStatus() == (byte) 0
-//                                            && dingUserAttendanceRecords.get(0).getProjectId() != null) {
-//                                        User user = dingUserService.getUserId(dingUserId);
-//                                        if (user != null) {
-//                                            userService.clockIn(dingUserAttendanceRecords.get(0).getProjectId(), user.getId(),
-//                                                    dingUserAttendanceRecords.get(0).getUserCheckTime(), userCheckTime, 1);
-//                                        }
-//                                    }
-//                                }
-//                                DingUserAttendanceRecord dingUserAttendanceRecord = new DingUserAttendanceRecord();
-//                                dingUserAttendanceRecord.setDingUserId(dingUserId);
-//                                dingUserAttendanceRecord.setStatus(status);
-//                                dingUserAttendanceRecord.setUserCheckTime(userCheckTime);
-//                                logger.info(dingUserAttendanceRecord.toString());
-//                                Optional<DingUserAttendanceRecord> dingUserAttendanceRecordOptional = dingUserAttendanceRecordRepository.findByDingUserIdAnAndUserCheckTime(dingUserId, userCheckTime);
-//                                if (!dingUserAttendanceRecordOptional.isPresent())
-//                                    dingUserAttendanceRecordRepository.save(dingUserAttendanceRecord);
-//
-//                            }
-//                        }
-//                    } else {
-//                        logger.error(result.toJSONString());
-//                    }
-//                } catch (IOException e) {
-//                    logger.error(e.getMessage());
-//                }
-//
-//            }
-//        }
-//    }
+            params.put("checkDateTo", sdf.format(end));
+            params.put("isI18n", false);
+
+            List<DingUser> users = dingUserRepository.findAll();
+            List<String> userIdList = new ArrayList<>();
+            String[] userIds = new String[users.size()];
+            for (int i = 0; i < users.size(); i++) {
+                userIdList.add(String.valueOf(users.get(i).getUserId()));
+                userIds[i] = String.valueOf(users.get(i).getUserId());
+            }
+            int size = users.size();
+            if (size > 50) {
+                int count = size % 50 == 0 ? size / 50 : (size / 50 + 1);
+                for (int j = 0; j < count; j++) {
+                    int start_index = j * 50;
+                    int end_index = start_index + 50;
+                    if (end_index > size) end_index = size;
+
+                    String[] userIdss = getStrings(userIds, start_index, end_index);
+                    params.put("userIds", userIdss);
+                    try {
+                        JSONObject result = HttpUtils.sendPost(url, params);
+                        Integer errcode = result.getInteger("errcode");
+                        if (errcode == 0) {
+                            JSONArray array = result.getJSONArray("recordresult");
+                            for (int i = 0; i < array.size(); i++) {
+                                JSONObject object = (JSONObject) array.get(i);
+                                logger.info(object.toJSONString());
+                               /* if (object.getString("checkType") != null) {
+                                    Date userCheckTime = new Date(object.getLong("userCheckTime"));
+                                    String dingUserId = object.getString("userId");
+                                    Byte status = (byte) 1;  //项目结束
+                                    if (object.getString("checkType").equals("OnDuty")) {
+                                        status = (byte) 0;   //项目开始
+                                    }
+                                    if (status == (byte) 1) {
+                                        //残疾人参加项目打卡结束,参与项目时间统计录入数据库
+                                       *//* Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "userCheckTime");
+                                        Sort sort1 = new Sort(order1);
+                                        List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserAttendanceRecordRepository.findByDingUserId(dingUserId, sort1);
+                                        logger.info(dingUserAttendanceRecords.toString());
+                                        if (dingUserAttendanceRecords.size() > 0
+                                                && dingUserAttendanceRecords.get(0).getStatus() == (byte) 0
+                                                && dingUserAttendanceRecords.get(0).getProjectId() != null) {
+                                            User user = dingUserService.getUserId(dingUserId);
+                                            if (user != null) {
+                                                userService.clockIn(dingUserAttendanceRecords.get(0).getProjectId(), user.getId(),
+                                                        dingUserAttendanceRecords.get(0).getUserCheckTime(), userCheckTime, 1);
+                                            }
+                                        }*//*
+                                    }
+                                    DingUserAttendanceRecord dingUserAttendanceRecord = new DingUserAttendanceRecord();
+                                    dingUserAttendanceRecord.setDingUserId(dingUserId);
+                                    dingUserAttendanceRecord.setStatus(status);
+                                    dingUserAttendanceRecord.setUserCheckTime(userCheckTime);
+                                    logger.info(dingUserAttendanceRecord.toString());
+                                    Optional<DingUserAttendanceRecord> dingUserAttendanceRecordOptional = dingUserAttendanceRecordRepository.findByDingUserIdAnAndUserCheckTime(dingUserId, userCheckTime);
+                                    if (!dingUserAttendanceRecordOptional.isPresent())
+                                        dingUserAttendanceRecordRepository.save(dingUserAttendanceRecord);
+
+                                }*/
+                            }
+                        } else {
+                            logger.error(result.toJSONString());
+                        }
+                    } catch (IOException e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+
+            } else {
+                params.put("userIds", userIds);
+                try {
+                    JSONObject result = HttpUtils.sendPost(url, params);
+                    Integer errcode = result.getInteger("errcode");
+                    if (errcode == 0) {
+                        JSONArray array = result.getJSONArray("recordresult");
+                        for (int i = 0; i < array.size(); i++) {
+                            JSONObject object = (JSONObject) array.get(i);
+                            logger.info(object.toJSONString());
+                            /*if (object.getString("checkType") != null) {
+                                Date userCheckTime = new Date(object.getLong("userCheckTime"));
+                                String dingUserId = object.getString("userId");
+                                Byte status = (byte) 1;  //项目结束
+                                if (object.getString("checkType").equals("OnDuty")) {
+                                    status = (byte) 0;   //项目开始
+                                }
+                                if (status == (byte) 1) {
+                                    //残疾人参加项目打卡结束,参与项目时间统计录入数据库
+                                    Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "userCheckTime");
+                                    Sort sort1 = new Sort(order1);
+                                    List<DingUserAttendanceRecord> dingUserAttendanceRecords = dingUserAttendanceRecordRepository.findByDingUserId(dingUserId, sort1);
+                                    logger.info(dingUserAttendanceRecords.toString());
+                                    if (dingUserAttendanceRecords.size() > 0
+                                            && dingUserAttendanceRecords.get(0).getStatus() == (byte) 0
+                                            && dingUserAttendanceRecords.get(0).getProjectId() != null) {
+                                        User user = dingUserService.getUserId(dingUserId);
+                                        if (user != null) {
+                                            userService.clockIn(dingUserAttendanceRecords.get(0).getProjectId(), user.getId(),
+                                                    dingUserAttendanceRecords.get(0).getUserCheckTime(), userCheckTime, 1);
+                                        }
+                                    }
+                                }
+                                DingUserAttendanceRecord dingUserAttendanceRecord = new DingUserAttendanceRecord();
+                                dingUserAttendanceRecord.setDingUserId(dingUserId);
+                                dingUserAttendanceRecord.setStatus(status);
+                                dingUserAttendanceRecord.setUserCheckTime(userCheckTime);
+                                logger.info(dingUserAttendanceRecord.toString());
+                                Optional<DingUserAttendanceRecord> dingUserAttendanceRecordOptional = dingUserAttendanceRecordRepository.findByDingUserIdAnAndUserCheckTime(dingUserId, userCheckTime);
+                                if (!dingUserAttendanceRecordOptional.isPresent())
+                                    dingUserAttendanceRecordRepository.save(dingUserAttendanceRecord);
+
+                            }*/
+                        }
+                    } else {
+                        logger.error(result.toJSONString());
+                    }
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+
+            }
+        }
+    }
 
     private String[] getStrings(String[] s, int start, int end) {
         int size = end - start;
