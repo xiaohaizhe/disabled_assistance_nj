@@ -143,7 +143,7 @@ public class ExcelUtils {
         }
     }
     public static JSONObject importExcel(MultipartFile file) {
-        if (file.getContentType().equals("application/vnd.ms-excel")) {
+        if (file.getContentType().equals("application/octet-stream")) {
             JSONObject objectReturn = new JSONObject();
             JSONArray array = new JSONArray();
             HSSFWorkbook book;
