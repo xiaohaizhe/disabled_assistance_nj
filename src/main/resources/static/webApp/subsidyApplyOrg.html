@@ -47,6 +47,10 @@
 
 <script>
 
+    function exportWord(id) {
+        window.location = "/api/org/export_word?orgId="+localStorage.getItem("jgid")+"&applyId="+id;
+    }
+
     function exportfile() {
         window.location = "/api/apply/export_userList_excel?organizationId="+localStorage.getItem("jgid");
     }
@@ -62,6 +66,8 @@
                 }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
                     return '<img src="../images/xls.png" style="width: 30px;">'
                 }
+			}else {
+                return "";
 			}
 
 
@@ -110,7 +116,10 @@
                         return smail(d.lowIncomeCertificate);
                     }},
 				{field:'adminName', minWidth:235, title: '提交人'},
-				{field:'createTime', width:235, title: '提交时间', sort: true}
+				{field:'createTime', width:235, title: '提交时间', sort: true},
+                {field:'id', title: '操作', width:130,templet: function(d){
+                        return '<button onclick="exportWord('+d.id+')" type="button" class="layui-btn layui-btn-normal layui-btn-xs">导出word</button>';
+                    }}
 			]]
 			,page: true
 		});

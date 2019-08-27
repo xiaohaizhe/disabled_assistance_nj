@@ -52,7 +52,7 @@
 		</div>
 		<div class="layui-input-inline">
 			<select lay-filter="cdistinct_sele" id="cdistinct_sele" name="distinct">
-				<option value="雨花台区">区/县</option>
+				<option value="320114">区/县</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
@@ -289,7 +289,7 @@
             _data.userList = $("#tycjrmd").data("user");
             _data.adminId = localStorage.getItem("userId");
             _data.organizationId = localStorage.getItem("jgid");
-            _data.lowIncomeCertificate = IMGS;
+            _data.lowIncomeCertificate = IMGS.join(",");
             $.ajax({
                 type: "POST",
                 url: "/api/apply/saveAndFlush",
