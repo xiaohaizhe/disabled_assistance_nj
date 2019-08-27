@@ -28,7 +28,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构名称</label>
 			<div class="layui-input-inline">
-				<input type="text" name="name" required  lay-verify="required" placeholder="请输入机构名称" autocomplete="off" class="layui-input">
+				<input type="text" name="name" placeholder="请输入机构名称" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
@@ -42,16 +42,16 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">地址</label>
 		<div class="layui-input-inline">
-			<select lay-filter="province_sele" id="province_sele" name="province" lay-verify="required">
+			<select lay-filter="province_sele" id="province_sele" name="province">
 				<option value="">省/自治区/直辖市</option>
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select lay-filter="city_sele" id="city_sele" name="city" lay-verify="required">
+			<select lay-filter="city_sele" id="city_sele" name="city">
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select lay-filter="cdistinct_sele" id="cdistinct_sele" name="distinct" lay-verify="required">
+			<select lay-filter="cdistinct_sele" id="cdistinct_sele" name="distinct">
 				<option value="雨花台区">区/县</option>
 			</select>
 		</div>
@@ -72,13 +72,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">负责人</label>
 			<div class="layui-input-inline">
-				<input type="text" name="personInCharge" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="personInCharge" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-inline">
-				<input type="text" name="contactNumber" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="contactNumber" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -87,13 +87,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构面积</label>
 			<div class="layui-input-inline">
-				<input type="text" name="area" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="area" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">床位数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="bedNum" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="bedNum" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -102,13 +102,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">机构性质</label>
 			<div class="layui-input-inline">
-				<input type="text" name="nature" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="nature" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">庇护性劳动项目</label>
 			<div class="layui-input-inline">
-				<input type="text" name="asylumLaborProjects" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="asylumLaborProjects" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -167,7 +167,7 @@
 				</button>
 				<a href="/api/apply/export_excel" download="模板">下载模板</a>
 
-				<input style="display: none;" id="tycjrmd" type="text" name="nursingList" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+				<input style="display: none;" id="tycjrmd" type="text" name="nursingList" placeholder="请输入" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
@@ -176,7 +176,7 @@
 				<button type="button" class="layui-btn" id="test2">
 					<i class="layui-icon">&#xe67c;</i>选择图片
 				</button>
-				<input style="display: none;" id="dbhqtdsrzm" type="text" name="lowIncomeCertificate" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+				<input style="display: none;" id="dbhqtdsrzm" type="text" placeholder="请输入" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -200,6 +200,7 @@
 
 <script>
     var form = null;
+    var IMGS = [];
     layui.use(['laydate','form','upload','layer'], function(){
         form = layui.form;
         var laydate = layui.laydate;
@@ -231,46 +232,10 @@
                 form.val("org-form", data.data);
             }
         })
-        upload.render({
-            elem: '#test1'
-            ,accept:"file"
-            ,url: '/api/upload/'
-            ,auto: false //选择文件后不自动上传
-            ,bindAction: '#testListAction' //指向一个按钮触发上传
-            ,choose: function(obj){
-                //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
-                obj.preview(function(index, file, result){
-                    //console.log(index); //得到文件索引
-                    console.log(file); //得到文件对象
-                    //console.log(result); //得到文件base64编码，比如图片
-                    sendFile(file)
-                    //obj.resetFile(index, file, '123.jpg'); //重命名文件名，layui 2.3.0 开始新增
-                    //这里还可以做一些 append 文件列表 DOM 的操作
-                    //obj.upload(index, file); //对上传失败的单个文件重新上传，一般在某个事件中使用
-                    //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
-                });
-            }
-        });
-        function sendFile(files) {
-            var formData = new FormData();
-            formData.append("file", files);
-            $.ajax({
-                type: "POST",
-                url: "/api/apply/import_excel",
-                // headers:{"Content-Type":"application/vnd.ms-excel"},
-                data: formData,
-                processData: false,
-                success: function (res) {
-                    if(res.data){
-                        layer.msg('上传成功');
-                        $("#tycjrmd").data("user",res.data).after(smail("../images/xls.png"))
-                    }
-                }
-            })
-        }
+
         //执行实例
         var uploadInst = upload.render({
-            elem: '#a' //绑定元素
+            elem: '#test1' //绑定元素
             ,accept:"file"
             ,url: '/api/apply/import_excel' //上传接口
             ,data:{type:"nursingList"}
@@ -293,6 +258,7 @@
                 if(res.data){
                     layer.msg('上传成功');
                     $("#dbhqtdsrzm").val(res.data.fileUrl).after(smail(res.data.fileUrl));
+                    IMGS.push(res.data.fileUrl)
                 }
                 //上传完毕回调
             }
@@ -301,13 +267,16 @@
             }
         });
         function smail(str){
-            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
-                return '<img src="'+str+'" style="width: 60px;">'
-            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
-                return '<img src="../images/word.png" style="width: 60px;">'
-            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
-                return '<img src="../images/xls.png" style="width: 60px;">'
-            }
+            if(str){
+                if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                    return '<img src="'+str+'" style="width: 60px;">'
+                }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                    return '<img src="../images/word.png" style="width: 60px;">'
+                }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                    return '<img src="../images/xls.png" style="width: 60px;">'
+                }
+			}
+
         }
         //执行一个laydate实例
         laydate.render({
@@ -320,6 +289,7 @@
             _data.userList = $("#tycjrmd").data("user");
             _data.adminId = localStorage.getItem("userId");
             _data.organizationId = localStorage.getItem("jgid");
+            _data.lowIncomeCertificate = IMGS;
             $.ajax({
                 type: "POST",
                 url: "/api/apply/saveAndFlush",
