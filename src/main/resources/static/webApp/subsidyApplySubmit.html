@@ -78,7 +78,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">联系电话</label>
 			<div class="layui-input-inline">
-				<input type="text" name="contactNumber" autocomplete="off" class="layui-input">
+				<input type="number" name="contactNumber" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -93,7 +93,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">床位数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="bedNum" autocomplete="off" class="layui-input">
+				<input type="number" name="bedNum" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -117,13 +117,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">符合条件的全托人数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="numOfEligibleDayNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="numOfEligibleDayNursery" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">符合条件的日托人数</label>
 			<div class="layui-input-inline">
-				<input type="text" name="numOfEligibleBoardingNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="numOfEligibleBoardingNursery" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -132,13 +132,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">申请机构全托运营补贴资金总额</label>
 			<div class="layui-input-inline">
-				<input type="text" name="subsidyFundForBoardingNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="subsidyFundForBoardingNursery" placeholder="￥" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">申请机构日托运营补贴资金总额</label>
 			<div class="layui-input-inline">
-				<input type="text" name="subsidyFundForDayNursery" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="subsidyFundForDayNursery" placeholder="￥" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -147,13 +147,13 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">上年当地资金投入情况</label>
 			<div class="layui-input-inline">
-				<input type="text" name="localInvestmentOfLastYear last_year" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="localInvestmentOfLastYear" required  lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
 			<label class="layui-form-label">申请托养机构运营补贴资金总额合计</label>
 			<div class="layui-input-inline">
-				<input type="text" name="totalSubsidyFunds" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="totalSubsidyFunds"  placeholder="￥" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 	</div>
@@ -289,6 +289,8 @@
             _data.userList = $("#tycjrmd").data("user");
             _data.adminId = localStorage.getItem("userId");
             _data.organizationId = localStorage.getItem("jgid");
+            _data.organizationName = _data.name;
+            _data.registrationTime = _data.registrationCertificateNumber;
             _data.lowIncomeCertificate = IMGS.join(",");
             _data.province = provinceList[_data.province];
             _data.city = provinceList[_data.city];
