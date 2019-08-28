@@ -209,23 +209,23 @@
                 <input type="text" name="address" class="layui-input" disabled>
             </div>
         </div>
-        <div class="layui-form-item" style="min-height: 100px;">
-            <div class="layui-inline">
-                <label class="layui-form-label">托养残疾人名单</label>
-                <div id="cjrmd"  class="layui-input-block" style="padding-right:15px;">
-                </div>
-            </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">低保或其他低收入证明</label>
-                <div id="dsrzm" class="layui-input-block" style="padding-right:15px;">
-                </div>
-                <button onclick="exportfile()" type="button" class="layui-btn layui-btn-normal" style="width: 100px;float: right;margin-top: -35px;margin-right: -140px;">生成word</button>
-            </div>
+        <!--<div class="layui-form-item" style="min-height: 100px;">-->
+            <!--<div class="layui-inline">-->
+                <!--<label class="layui-form-label">托养残疾人名单</label>-->
+                <!--<div id="cjrmd"  class="layui-input-block" style="padding-right:15px;">-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="layui-inline">-->
+                <!--<label class="layui-form-label">低保或其他低收入证明</label>-->
+                <!--<div id="dsrzm" class="layui-input-block" style="padding-right:15px;">-->
+                <!--</div>-->
+            <!--</div>-->
 
-        </div>
+        <!--</div>-->
         <div class="layui-form-item" style="text-align: center;">
             <button onclick="agreefn()" type="button" class="layui-btn detail-btn" style="width: 100px;">同意</button>
             <button onclick="refusefn()" type="button" class="layui-btn detail-btn layui-btn-danger" style="width: 100px;">拒绝</button>
+            <button onclick="exportfile()" type="button" class="layui-btn layui-btn-normal" style="width: 100px;">生成word</button>
         </div>
     </form>
 </div>
@@ -377,7 +377,7 @@
                     type: 1,
                     title: "残疾人托养服务补贴资金申请",
                     content: $("#editPanel").html(),
-                    area: ['1000px', '850px'],
+                    area: ['1000px', '700px'],
                     success: function(layero, index){
                         if(data.status != 1){
                             $(".detail-btn").hide();
