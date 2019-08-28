@@ -24,6 +24,7 @@ import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -439,8 +440,8 @@ public class OrganizationService {
             map.put("useraddr",list.get(i).getAddress()); //结束时间
 
             map.put("userphone",list.get(i).getContactNumber()); //结束时间
-
             map.put("usermode",list.get(i).getNursingMode()); //结束时间
+            map.put("usermonth",1); //结束时间
             map.put("usermoney",list.get(i).getSubsidies()); //结束时间
             sum+=list.get(i).getSubsidies();
 
@@ -470,26 +471,41 @@ public class OrganizationService {
         InputStream in;
         byte[] picdata=null;
         String img=null;
-        String dic=System.getProperty("user.dir");
+//        String dic=System.getProperty("user.dir")+"/picture/lowIncomeCertificate";
+        String dic="E://disabled/picture/lowIncomeCertificate";
+        File file = new File(dic);
+        String[] fileList=file.list();
         BASE64Encoder encoder=new BASE64Encoder();
         List<String> images = new ArrayList<>();
-        try {
-            for(int i=0;i<applyForms.size();i++)
-            {
-                String url=applyForms.get(i).getLowIncomeCertificate();
-                String[] s=url.split("lowIncomeCertificate");
-                String dir=s[1];
-                String address=dic+"/picture/lowIncomeCertificate"+dir;
-                in=new FileInputStream(address);
-                picdata=new byte[in.available()];
-                in.read(picdata);
-                img=encoder.encode(picdata);
-                images.add(img);
+        for (int i=0;i<fileList.length;i++)
+        {
+            String address=dic+"/"+fileList[i];
+            in=new FileInputStream(address);
+            picdata=new byte[in.available()];
+            in.read(picdata);
+            img=encoder.encode(picdata);
+            images.add(img);
 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+//
+//        try {
+//            for(int i=0;i<applyForms.size();i++)
+//            {
+//                String url=applyForms.get(i).getLowIncomeCertificate();
+//                String[] s=url.split("lowIncomeCertificate");
+//                String dir=s[1];
+//                String address=dic+"/picture/lowIncomeCertificate"+dir;
+//                in=new FileInputStream(address);
+//                picdata=new byte[in.available()];
+//                in.read(picdata);
+//                img=encoder.encode(picdata);
+//                images.add(img);
+//
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         dataMap.put("images", images);
 
