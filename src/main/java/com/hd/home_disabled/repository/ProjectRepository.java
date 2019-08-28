@@ -24,6 +24,9 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query("select u from Project u where u.organization.id = ?1 and u.status = ?2")
     List<Project> findByOrganizationAndStatus(Integer organizationId, Integer status);
 
+    @Query("select u from Project u where u.status = ?1")
+    List<Project> findByStatus(Integer status);
+
     @QueryHints(value = {@QueryHint(name = HINT_COMMENT, value = "a query for pageable")})
     @Query("select u from Project u where u.organization.id in ?1 and u.status = ?2")
     Page<Project> findByOrganizationAndStatus(List<Integer> ids, Integer status, Pageable page);

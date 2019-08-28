@@ -726,8 +726,8 @@ public class ProjectService {
         float averageTime = 0f;      //平均服务时长：总时长/总人次
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         for (Organization organization : organizationList) {
-            if (organization.getProjectSum() != null)
-                projectSum += organization.getProjectSum();
+/*            if (organization.getProjectSum() != null)
+                projectSum += organization.getProjectSum();*/
             if (organization.getPersonCountSum() != null)
                 personCountSum += organization.getPersonCountSum();
             if (organization.getPersonTimeSum() != null)
@@ -737,6 +737,7 @@ public class ProjectService {
             if (personTimeSum != 0)
                 averageTime = (float) Math.round(((float) totalTimeSum / personTimeSum) * 100) / 100;
         }
+        projectSum = projectRepository.findByStatus(1).size();
         object.put("projectSum", projectSum);
         object.put("personCountSum", personCountSum);
         object.put("personTimeSum", personTimeSum);
