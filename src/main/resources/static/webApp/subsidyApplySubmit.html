@@ -289,7 +289,11 @@
             _data.userList = $("#tycjrmd").data("user");
             _data.adminId = localStorage.getItem("userId");
             _data.organizationId = localStorage.getItem("jgid");
-            _data.lowIncomeCertificate = IMGS;
+            _data.lowIncomeCertificate = IMGS.join(",");
+            _data.province = provinceList[_data.province];
+            _data.city = provinceList[_data.city];
+            _data.distinct = provinceList[_data.distinct];
+            _data.block = window["bloks"][_data.block];
             $.ajax({
                 type: "POST",
                 url: "/api/apply/saveAndFlush",
@@ -342,6 +346,7 @@
                 url: 'http://passer-by.com/data_location/town/' + value + '.json',
                 dataType: 'json',
                 success: function(town) {
+                    window["bloks"] = town;
                     for(var key in town){
                         html.push('<option value="'+key+'">'+town[key]+'</option>');
                     }
