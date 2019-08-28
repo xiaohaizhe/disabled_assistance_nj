@@ -638,7 +638,7 @@ public class UserService {
 
     public JSONObject statisticData(){
         //全区各类残疾人数量
-        JSONObject object1 = new JSONObject();
+        /*JSONObject object1 = new JSONObject();
         JSONObject object2 = new JSONObject();
         List<TypeOfDisability> typeOfDisabilities = typeOfDisabilityRepository.findAll();
         for (TypeOfDisability typeOfDisability : typeOfDisabilities){
@@ -669,8 +669,56 @@ public class UserService {
         }
         JSONObject object = new JSONObject();
         object.put("data",object1);
-        object.put("analysis",object3);
-        return RESCODE.SUCCESS.getJSONRES(object);
+        object.put("analysis",object3);*/
+        JSONObject object1 = new JSONObject();
+        List<TypeOfDisability> typeOfDisabilities = typeOfDisabilityRepository.findAll();
+        for (TypeOfDisability typeOfDisability : typeOfDisabilities){
+            object1.put(typeOfDisability.getName(),0);
+        }
+
+        List<User> userList = userRepository.findAll();
+        for (User user:userList){
+            String type = user.getTypeOfDisability().getName();
+            object1.merge(type, 1, (a, b) -> (int) a + (int)b);
+        }
+        JSONObject object3 = new JSONObject();
+        for (String key:object1.keySet()){
+            float value;
+            switch (key){
+                case "视力残疾":
+                    value = (float) Math.round(((float) (int)object1.get(key) / 821) * 10000) / 10000;
+                    object3.put(key,value);
+                    break;
+                case "听力残疾":
+                    value = (float) Math.round(((float) (int)object1.get(key) / 769) * 10000) / 10000;
+                    object3.put(key,value);
+                    break;
+                case "言语残疾":
+                    value = (float) Math.round(((float) (int)object1.get(key) / 49) * 10000) / 10000;
+                    object3.put(key,value);
+                    break;
+                case "肢体残疾":
+                    value = (float) Math.round(((float) (int)object1.get(key) / 2919) * 10000) / 10000;
+                    object3.put(key,value);
+                    break;
+                case "智力残疾":
+                    value = (float) Math.round(((float) (int)object1.get(key) / 648) * 10000) / 10000;
+                    object3.put(key,value);
+                    break;
+                case "精神残疾":
+                    value = (float) Math.round(((float) (int)object1.get(key) / 790) * 10000) / 10000;
+                    object3.put(key,value);
+                    break;
+                case "多重残疾":
+                    value = (float) Math.round(((float) (int)object1.get(key) / 123) * 10000) / 10000;
+                    object3.put(key,value);
+                    break;
+                case "其他":
+                    object3.put(key,1F);
+                    break;
+            }
+        }
+        return RESCODE.SUCCESS.getJSONRES(object3);
     }
 
     /**

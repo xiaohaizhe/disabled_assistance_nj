@@ -576,7 +576,7 @@ public class ApplyFormService {
 
         }
         String[] columnNames = new String[]{"姓名", "残疾证号", "家庭住址",
-                "联系电话", "托养方式(日托/全托)","补贴金额"};
+                "联系电话", "托养方式(日托/全托)","补贴金额","托养月数"};
         ExcelUtils.exportExcel(fileName,columnNames,getListsByApplyForm(applyFormId),request,response);
     }
 
@@ -611,6 +611,11 @@ public class ApplyFormService {
                 JSONObject object5 = new JSONObject();
                 object5.put("subsidies", u.getSubsidies() == null ? 0 : u.getSubsidies());
                 array.add(object5);
+
+                JSONObject object6 = new JSONObject();
+                object6.put("subsidies", u.getMonth() == null ? 0 : u.getMonth());
+                array.add(object6);
+
                 jsonArray.add(array);
             }
         }

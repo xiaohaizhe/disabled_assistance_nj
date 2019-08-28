@@ -49,6 +49,7 @@ public class ExcelUtils {
         Cell cell3 = row.createCell(3);
         Cell cell4 = row.createCell(4);
         Cell cell5 = row.createCell(5);
+        Cell cell6 = row.createCell(6);
         //设置第一个单元格内显示
         cell0.setCellValue("姓名");
         cell1.setCellValue("残疾证号");
@@ -56,6 +57,7 @@ public class ExcelUtils {
         cell3.setCellValue("联系电话");
         cell4.setCellValue("托养方式(日托/全托)");
         cell5.setCellValue("补贴金额");
+        cell6.setCellValue("托养月数");
         try {
             response.setContentType("application/octet-stream");
             response.setHeader("Content-disposition", "attachment;filename=" + "model.xls");//Excel文件名
@@ -194,11 +196,18 @@ public class ExcelUtils {
                     String nursingMode = readCell(cell4);
 
                     HSSFCell cell5 = row.getCell(5);
-                    if (cell4 == null) {
+                    if (cell5 == null) {
                         continue;//此单元格为空，进入下一单元格
                     }
                     //读取单元格内值
                     Float subsidies= Float.parseFloat(readCell(cell5));
+
+                    HSSFCell cell6 = row.getCell(6);
+                    if (cell6 == null) {
+                        continue;//此单元格为空，进入下一单元格
+                    }
+                    //读取单元格内值
+                    Integer month= Integer.parseInt(readCell(cell6));
 
                     object.put("username",username);
                     object.put("disabilityCertificateNumber",disabilityCertificateNumber);
@@ -206,6 +215,7 @@ public class ExcelUtils {
                     object.put("contactNumber",contactNumber);
                     object.put("nursingMode",nursingMode);
                     object.put("subsidies",subsidies);
+                    object.put("month",month);
                     array.add(object);
                 }
                 logger.debug(array);

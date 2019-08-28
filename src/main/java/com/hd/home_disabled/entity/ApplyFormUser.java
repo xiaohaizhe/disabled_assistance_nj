@@ -30,4 +30,5 @@ public class ApplyFormUser {
     private String contactNumber;   //联系电话
     private String nursingMode;     //托养方式
     private Float subsidies;        //补贴金额
+    private Integer month;          //托养月数
 }
