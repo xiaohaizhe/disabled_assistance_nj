@@ -114,12 +114,35 @@
         var $ = layui.$;
         var searchData = location.search || "?id=2";
         var _id = location.search.split("=");
-        $("[datakey]").each(function () {
-            var _data = JSON.parse(localStorage.getItem(_id[1]));
-            if(_data){
-                $(this).text(_data[$(this).attr("datakey")]);
+        // $("[datakey]").each(function () {
+        //     var _data = JSON.parse(localStorage.getItem(_id[1]));
+        //     if(_data){
+        //         $(this).text(_data[$(this).attr("datakey")]);
+        //     }
+        // });
+
+        function setdata(_data){
+            $("[datakey]").each(function () {
+                if(_data){
+                    $(this).text(_data[$(this).attr("datakey")]);
+                }
+            });
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/api/project/getProjectStatistic",
+            data:{organizationId:localStorage.getItem("jgid")},
+            success: function (data) {
+                var arguments = data.data;
+                for (var i = 0; i < arguments.length; i++) {
+                    if(arguments[i].id == _id[1]){
+                        setdata(arguments[i])
+                    }
+
+                }
             }
-        });
+        })
 
         var _url = "";
         if(searchData.indexOf("organizationId") == -1){
