@@ -115,13 +115,13 @@
 
 	<div class="layui-form-item">
 		<div class="layui-inline">
-			<label class="layui-form-label">符合条件的全托人数</label>
+			<label class="layui-form-label">符合条件的日托人数</label>
 			<div class="layui-input-inline">
 				<input type="text" name="numOfEligibleDayNursery" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
-			<label class="layui-form-label">符合条件的日托人数</label>
+			<label class="layui-form-label">符合条件的全托人数</label>
 			<div class="layui-input-inline">
 				<input type="text" name="numOfEligibleBoardingNursery" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
@@ -147,7 +147,7 @@
 		<div class="layui-inline">
 			<label class="layui-form-label">上年当地资金投入情况</label>
 			<div class="layui-input-inline">
-				<input type="text" name="localInvestmentOfLastYear" required  lay-verify="required" autocomplete="off" class="layui-input">
+				<input type="text" name="localInvestmentOfLastYear" required  lay-verify="required\number" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
@@ -167,7 +167,7 @@
 				</button>
 				<a href="/api/apply/export_excel" download="模板">下载模板</a>
 
-				<input style="display: none;" id="tycjrmd" type="text" name="nursingList" placeholder="请输入" autocomplete="off" class="layui-input">
+				<input style="display: none;" id="tycjrmd" type="text" placeholder="请输入" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-inline">
@@ -274,7 +274,11 @@
                     return '<img src="../images/word.png" style="width: 60px;">'
                 }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
                     return '<img src="../images/xls.png" style="width: 60px;">'
-                }
+                }else {
+                    return '<img src="'+str+'" style="width: 60px;">'
+				}
+			}else {
+                return "";
 			}
 
         }
@@ -296,6 +300,7 @@
             _data.city = provinceList[_data.city];
             _data.distinct = provinceList[_data.distinct];
             _data.block = window["bloks"][_data.block];
+            _data.address = _data.city+_data.distinct+_data.block;
             $.ajax({
                 type: "POST",
                 url: "/api/apply/saveAndFlush",

@@ -320,10 +320,10 @@
                 ,{field: 'bedNum', title: '床位数', width: 280, sort: true}
                 ,{field: 'nature', title: '机构性质', width: 180, sort: true}
                 ,{field: 'asylumLaborProjects', title: '庇护性劳动项目', width: 135, sort: true}
-                ,{field: 'numOfEligibleDayNursery', title: '符合条件的全托人数', width: 135, sort: true}
-                ,{field: 'numOfEligibleBoardingNursery', title: '符合条件的日托人数', width: 180, sort: true}
+                ,{field: 'numOfEligibleDayNursery', title: '符合条件的日托人数', width: 135, sort: true}
+                ,{field: 'numOfEligibleBoardingNursery', title: '符合条件的全托人数', width: 180, sort: true}
                 ,{field: 'subsidyFundForBoardingNursery', title: '申请机构全托运营补贴资金总额', width: 235, sort: true}
-                ,{field: 'localInvestmentOfLastYear last_year', title: '上年当地资金投入情况', width: 235, sort: true}
+                ,{field: 'localInvestmentOfLastYear', title: '上年当地资金投入情况', width: 235, sort: true}
                 ,{field: 'totalSubsidyFunds', title: '申请托养机构运营补贴资金总额合计', width: 235, sort: true}
                 ,{field: 'nursingList', title: '托养残疾人名单', width: 135, sort: true ,templet: function(d){
                         return smail(d.nursingList);
@@ -348,7 +348,11 @@
                     return '<img src="../images/word.png" style="width: 30px;">'
                 }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
                     return '<img src="../images/xls.png" style="width: 30px;">'
+                }else {
+                    return '<img src="'+str+'" style="width: 30px;">'
                 }
+            }else {
+                return "";
             }
 
         }
