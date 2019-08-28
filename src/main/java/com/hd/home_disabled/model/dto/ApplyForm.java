@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -30,21 +31,24 @@ public class ApplyForm {
     private String address;             //申请机构地址
     private String personInCharge;      //申请机构负责人
     private Float area;                 //机构面积
+    @NotNull(message = "bedNum")
     private Integer bedNum;             //床位数
+    @NotEmpty(message = "nature不能为空")
     private String nature;              //机构性质
+    @NotEmpty(message = "asylumLaborProjects不能为空")
     private String asylumLaborProjects; //庇护性劳动项目
 
-//    @NotNull(message = "符合条件的日托人数不能为空")
+    @NotNull(message = "numOfEligibleDayNursery符合条件的日托人数不能为空")
     private Integer numOfEligibleDayNursery;    //符合条件的日托人数
-//    @NotNull(message = "符合条件的全托人数不能为空")
+    @NotNull(message = "numOfEligibleBoardingNursery符合条件的全托人数不能为空")
     private Integer numOfEligibleBoardingNursery;   //符合条件的全托人数
-//    @NotNull(message = "申请机构日托运营补贴资金总额不能为空")
+    @NotNull(message = "subsidyFundForDayNursery申请机构日托运营补贴资金总额不能为空")
     private Float subsidyFundForDayNursery;     //申请机构日托运营补贴资金总额
-//    @NotNull(message = "申请机构全托运营补贴资金总额不能为空")
+    @NotNull(message = "subsidyFundForBoardingNursery申请机构全托运营补贴资金总额不能为空")
     private Float subsidyFundForBoardingNursery;    //申请机构全托运营补贴资金总额
-//    @NotNull(message = "上年当地资金投入情况不能为空")
+    @NotNull(message = "localInvestmentOfLastYear上年当地资金投入情况不能为空")
     private Float localInvestmentOfLastYear;        //上年当地资金投入
-//    @NotNull(message = "申请托养机构运营补贴资金总额合计不能为空")
+    @NotNull(message = "totalSubsidyFunds申请托养机构运营补贴资金总额合计不能为空")
     private Float totalSubsidyFunds;              //申请托养机构运营补贴资金总额合计
 
     private List<ApplyFormUser> userList;       //补贴名单
