@@ -473,7 +473,8 @@
 		type: "GET",
 		success: function(res) {
 			if(res && res.data ){
-				const { analysis = {},data = {}} = res.data;
+				// const { analysis = {},data = {}} = ;
+				var data = res.data;
 				const x = Object.keys(data);
 				const y = x.map(function(item) {
 					return data[item];
