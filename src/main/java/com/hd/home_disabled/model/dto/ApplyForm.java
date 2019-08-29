@@ -1,6 +1,7 @@
 package com.hd.home_disabled.model.dto;
 
 import com.hd.home_disabled.entity.ApplyFormUser;
+import com.hd.home_disabled.entity.LowIncomeCertificate;
 import com.hd.home_disabled.entity.Organization;
 import io.swagger.models.auth.In;
 import lombok.Data;
@@ -54,7 +55,8 @@ public class ApplyForm {
     private List<ApplyFormUser> userList;       //补贴名单
 /*    @NotBlank(message = "低保或其他低收入证明不能为空")
     @NotNull(message = "低保或其他低收入证明不能为空")*/
-    private String lowIncomeCertificate;            //低保或其他低收入证明
+//    private String lowIncomeCertificate;            //低保或其他低收入证明
+    private List<LowIncomeCertificate> lowIncomeCertificateList; //低保或其他低收入证明
 
     private String reasonForRegression;           //申请退回原因
     private Integer status;                       //申请状态:0-删除,1-有效，2-退回，3-审核完成

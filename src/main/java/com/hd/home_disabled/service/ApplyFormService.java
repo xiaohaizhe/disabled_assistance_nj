@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.*;
 import com.hd.home_disabled.model.RESCODE;
-import com.hd.home_disabled.repository.AdminRepository;
-import com.hd.home_disabled.repository.ApplyFormRepository;
-import com.hd.home_disabled.repository.ApplyFormUserRepository;
-import com.hd.home_disabled.repository.OrganizationRepository;
+import com.hd.home_disabled.repository.*;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
 import com.test.disabled.App;
@@ -39,15 +36,17 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ApplyFormService {
+    private final LowIncomeCertificateRepository lowIncomeCertificateRepository;
     private final ApplyFormUserRepository applyFormUserRepository;
     private final ApplyFormRepository applyFormRepository;
     private final OrganizationRepository organizationRepository;
     private final AdminRepository adminRepository;
-    public ApplyFormService(ApplyFormRepository applyFormRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository, ApplyFormUserRepository applyFormUserRepository) {
+    public ApplyFormService(ApplyFormRepository applyFormRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository, ApplyFormUserRepository applyFormUserRepository, LowIncomeCertificateRepository lowIncomeCertificateRepository) {
         this.applyFormRepository = applyFormRepository;
         this.organizationRepository = organizationRepository;
         this.adminRepository = adminRepository;
         this.applyFormUserRepository = applyFormUserRepository;
+        this.lowIncomeCertificateRepository = lowIncomeCertificateRepository;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ApplyFormService.class);
@@ -74,7 +73,7 @@ public class ApplyFormService {
         applyForm1.setSubsidyFundForBoardingNursery(applyForm.getSubsidyFundForBoardingNursery());
         applyForm1.setLocalInvestmentOfLastYear(applyForm.getLocalInvestmentOfLastYear());
         applyForm1.setTotalSubsidyFunds(applyForm.getTotalSubsidyFunds());
-        applyForm1.setLowIncomeCertificate(applyForm.getLowIncomeCertificate());
+//        applyForm1.setLowIncomeCertificate(applyForm.getLowIncomeCertificate());
 
 
         applyForm1.setReasonForRegression(applyForm.getReasonForRegression());
@@ -106,7 +105,7 @@ public class ApplyFormService {
         applyForm1.setSubsidyFundForBoardingNursery(applyForm.getSubsidyFundForBoardingNursery());
         applyForm1.setLocalInvestmentOfLastYear(applyForm.getLocalInvestmentOfLastYear());
         applyForm1.setTotalSubsidyFunds(applyForm.getTotalSubsidyFunds());
-        applyForm1.setLowIncomeCertificate(applyForm.getLowIncomeCertificate());
+//        applyForm1.setLowIncomeCertificateList(applyForm.getLowIncomeCertificateList());
         applyForm1.setReasonForRegression(applyForm.getReasonForRegression());
         applyForm1.setStatus(applyForm.getStatus());
 
@@ -115,6 +114,34 @@ public class ApplyFormService {
         applyForm1.setLastModifyTime(applyForm.getModifyTime());
         return applyForm1;
     }
+
+    JSONArray getApplyFormUserList(List<ApplyFormUser> applyFormUserList){
+        JSONArray array = new JSONArray();
+        for (ApplyFormUser applyFormUser :applyFormUserList ){
+            JSONObject object = new JSONObject();
+            object.put("username",applyFormUser.getUsername());
+            object.put("disabilityCertificateNumber",applyFormUser.getDisabilityCertificateNumber());
+            object.put("address",applyFormUser.getAddress());
+            object.put("contactNumber",applyFormUser.getContactNumber());
+            object.put("nursingMode",applyFormUser.getNursingMode());
+            object.put("subsidies",applyFormUser.getSubsidies());
+            object.put("month",applyFormUser.getMonth());
+            array.add(object);
+        }
+        return array;
+    }
+
+    JSONArray getLowIncomeCertificateList(List<LowIncomeCertificate> lowIncomeCertificateList){
+        JSONArray array = new JSONArray();
+        for (LowIncomeCertificate lowIncomeCertificate :lowIncomeCertificateList ){
+            JSONObject object = new JSONObject();
+            object.put("url",lowIncomeCertificate.getUrl());
+            array.add(object);
+        }
+        return array;
+    }
+
+
 
     /**
      * 新建或修改补贴申请
@@ -151,7 +178,17 @@ public class ApplyFormService {
                         user.setApplyForm(applyForm2);
                         ApplyFormUser applyFormUser = applyFormUserRepository.save(user);
                     }
-                    return RESCODE.SUCCESS.getJSONRES(getModel(applyForm2));
+                    for (LowIncomeCertificate lowIncomeCertificate : applyForm.getLowIncomeCertificateList()){
+                        lowIncomeCertificate.setApplyForm(applyForm2);
+                        lowIncomeCertificateRepository.save(lowIncomeCertificate);
+                    }
+                    List<ApplyFormUser> applyFormUsers = applyFormUserRepository.findByApplyForm(applyForm2.getId());
+                    List<LowIncomeCertificate> lowIncomeCertificateList = lowIncomeCertificateRepository.findByApplyForm(applyForm2.getId());
+                    JSONObject result = new JSONObject();
+                    result.put("applyFormUser",getApplyFormUserList(applyFormUsers));
+                    result.put("applyForm",getModel(applyForm2));
+                    result.put("lowIncomeCertificate",getLowIncomeCertificateList(lowIncomeCertificateList));
+                    return RESCODE.SUCCESS.getJSONRES(result);
                 }else if (applyForm.getStatus()==1){
                     //id存在且状态为有效，可修改
                     logger.info("修改补贴申请");
@@ -167,7 +204,21 @@ public class ApplyFormService {
                         }
                         ApplyFormUser applyFormUser = applyFormUserRepository.saveAndFlush(user);
                     }
-                    return RESCODE.SUCCESS.getJSONRES(getModel(applyForm2));
+                    List<LowIncomeCertificate> lowIncomeCertificates = lowIncomeCertificateRepository.findByApplyForm(applyForm2.getId());
+                    for (LowIncomeCertificate lowIncomeCertificate:lowIncomeCertificates){
+                        lowIncomeCertificateRepository.delete(lowIncomeCertificate);
+                    }
+                    for (LowIncomeCertificate lowIncomeCertificate : applyForm.getLowIncomeCertificateList()){
+                        lowIncomeCertificate.setApplyForm(applyForm2);
+                        lowIncomeCertificateRepository.save(lowIncomeCertificate);
+                    }
+                    List<ApplyFormUser> applyFormUsers = applyFormUserRepository.findByApplyForm(applyForm2.getId());
+                    List<LowIncomeCertificate> lowIncomeCertificateList = lowIncomeCertificateRepository.findByApplyForm(applyForm2.getId());
+                    JSONObject result = new JSONObject();
+                    result.put("applyFormUser",getApplyFormUserList(applyFormUsers));
+                    result.put("applyForm",getModel(applyForm2));
+                    result.put("lowIncomeCertificate",getLowIncomeCertificateList(lowIncomeCertificateList));
+                    return RESCODE.SUCCESS.getJSONRES(result);
                 }else{
                     return RESCODE.APPLY_FORM_CANT_MODIFY.getJSONRES();
                 }
@@ -214,7 +265,13 @@ public class ApplyFormService {
         logger.info("根据id:"+id+"查询补贴申请");
         Optional<ApplyForm> applyFormOptional = applyFormRepository.findByIdAndStatusGreaterThanEqual(id, 1);
         if (applyFormOptional.isPresent()) {
-            return RESCODE.SUCCESS.getJSONRES(getModel(applyFormOptional.get()));
+            List<ApplyFormUser> applyFormUserList = applyFormUserRepository.findByApplyForm(id);
+            List<LowIncomeCertificate> lowIncomeCertificateList = lowIncomeCertificateRepository.findByApplyForm(id);
+            JSONObject result = new JSONObject();
+            result.put("applyFormUser",getApplyFormUserList(applyFormUserList));
+            result.put("applyForm",getModel(applyFormOptional.get()));
+            result.put("lowIncomeCertificate",getLowIncomeCertificateList(lowIncomeCertificateList));
+            return RESCODE.SUCCESS.getJSONRES(result);
         }
         logger.info("补贴申请不存在");
         return RESCODE.APPLY_FORM_NOT_EXIST.getJSONRES();
@@ -388,7 +445,7 @@ public class ApplyFormService {
             array.add(object16);*/
 
             JSONObject object17 = new JSONObject();
-            object17.put("object17", applyForm.getLowIncomeCertificate() == null ? 0 : applyForm.getLowIncomeCertificate());
+            object17.put("object17", applyForm.getLowIncomeCertificateList() == null ? 0 : applyForm.getLowIncomeCertificateList());
             array.add(object17);
 
             JSONObject object18 = new JSONObject();
@@ -499,7 +556,7 @@ public class ApplyFormService {
                 array.add(object16);*/
 
                 JSONObject object17 = new JSONObject();
-                object17.put("object17", applyForm.getLowIncomeCertificate() == null ? 0 : applyForm.getLowIncomeCertificate());
+                object17.put("object17", applyForm.getLowIncomeCertificateList() == null ? 0 : applyForm.getLowIncomeCertificateList());
                 array.add(object17);
 
                 JSONObject object18 = new JSONObject();
