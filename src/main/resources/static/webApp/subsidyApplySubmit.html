@@ -263,7 +263,7 @@
                 if(res.data){
                     layer.msg('上传成功');
                     $("#dbhqtdsrzm").val(res.data.fileUrl).after(smail(res.data.fileUrl));
-                    IMGS.push(res.data.fileUrl)
+                    IMGS.push({"url":res.data.fileUrl})
                 }
                 //上传完毕回调
             }
@@ -300,7 +300,7 @@
             _data.organizationId = localStorage.getItem("jgid");
             _data.organizationName = _data.name;
             _data.registrationTime = _data.registrationCertificateNumber;
-            _data.lowIncomeCertificate = IMGS.join(",");
+            _data.lowIncomeCertificateList = IMGS;//.join(",");
             _data.province = provinceList[_data.province];
             _data.city = provinceList[_data.city];
             _data.distinct = provinceList[_data.distinct];
