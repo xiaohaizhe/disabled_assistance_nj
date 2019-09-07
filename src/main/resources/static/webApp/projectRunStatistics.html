@@ -209,6 +209,7 @@ layui.use(['table', 'form'], function () {
             html.push(' <div class="project-info">');
             html.push('<div>');
             html.push('<button onclick="gotoDetail('+array[i].id+')" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>');
+            html.push('<button onclick="" style="float: right;margin-right: 5px;" type="button" class="layui-btn layui-btn-danger layui-btn-xs">删除</button>');
             html.push('<h2>'+array[i].name+'</h2>');
             html.push('<div class="numbers">');
             html.push('<p>总服务人数: <span class="bold-text">'+array[i].personCountSum+'</span></p>');
