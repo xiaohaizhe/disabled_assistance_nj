@@ -1,11 +1,13 @@
 package com.hd.home_disabled.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hd.home_disabled.entity.dictionary.OperationalNature;
 import com.hd.home_disabled.utils.validation.phonevalidation.PhoneValidation;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -35,6 +37,8 @@ public class Organization {
 /*    @NotBlank(message = "机构性质不能为空")
     @NotNull(message = "机构性质不能为空")*/
     private String nature;          //机构性质
+    private Integer operationalNatureId;
+    private String operationalNature;    //运营性质
     @NotNull(message = "房屋产权性质不能为空")
     private Integer natureOfHousingPropertyRightId;  //房屋产权性质
     private String natureOfHousingPropertyRight;

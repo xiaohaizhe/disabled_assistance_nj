@@ -1,6 +1,7 @@
 package com.hd.home_disabled.entity;
 
 import com.hd.home_disabled.entity.dictionary.NatureOfHousingPropertyRight;
+import com.hd.home_disabled.entity.dictionary.OperationalNature;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,6 +29,8 @@ public class Organization {
     private String registrationCertificateNumber;    //注册证书编号
     private String registrationDepartment;  //注册部门
     private String nature;          //机构性质
+    @OneToOne
+    private OperationalNature operationalNature;    //运营性质
     @OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
     @JoinColumn(name = "nature_of_housing_property_right_id", referencedColumnName = "id", nullable = false)
     private NatureOfHousingPropertyRight natureOfHousingPropertyRight;  //房屋产权性质

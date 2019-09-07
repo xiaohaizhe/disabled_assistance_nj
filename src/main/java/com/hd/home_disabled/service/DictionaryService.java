@@ -25,13 +25,15 @@ public class DictionaryService {
     private final TypeOfDisabilityRepository typeOfDisabilityRepository;
     private final NursingModeRepository nursingModeRepository;
     private final DisabilityDegreeRepository disabilityDegreeRepository;
+    private final OperationalNatureRepository operationalNatureRepository;
 
-    public DictionaryService(NatureOfHousingPropertyRightRepository natureOfHousingPropertyRightRepository, ProjectTypeRepository projectTypeRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, NursingModeRepository nursingModeRepository, DisabilityDegreeRepository disabilityDegreeRepository) {
+    public DictionaryService(NatureOfHousingPropertyRightRepository natureOfHousingPropertyRightRepository, ProjectTypeRepository projectTypeRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, NursingModeRepository nursingModeRepository, DisabilityDegreeRepository disabilityDegreeRepository, OperationalNatureRepository operationalNatureRepository) {
         this.natureOfHousingPropertyRightRepository = natureOfHousingPropertyRightRepository;
         this.projectTypeRepository = projectTypeRepository;
         this.typeOfDisabilityRepository = typeOfDisabilityRepository;
         this.nursingModeRepository = nursingModeRepository;
         this.disabilityDegreeRepository = disabilityDegreeRepository;
+        this.operationalNatureRepository = operationalNatureRepository;
     }
 
     public JSONObject getList(String name){
@@ -52,6 +54,8 @@ public class DictionaryService {
             case "level":
                 list = disabilityDegreeRepository.findAll();
                 break;
+            case "nature":
+                list =operationalNatureRepository.findAll();
                 default:
                     break;
         }

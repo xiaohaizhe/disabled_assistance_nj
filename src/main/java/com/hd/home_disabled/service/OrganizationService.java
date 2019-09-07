@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.*;
 import com.hd.home_disabled.entity.dictionary.NatureOfHousingPropertyRight;
+import com.hd.home_disabled.entity.dictionary.OperationalNature;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.AdminRepository;
 import com.hd.home_disabled.repository.NatureOfHousingPropertyRightRepository;
@@ -70,6 +71,9 @@ public class OrganizationService {
         org.setRegistrationDepartment(organization.getRegistrationDepartment());
         org.setNature(organization.getNature());
 
+        OperationalNature operationalNature = new OperationalNature();
+        operationalNature.setId(organization.getOperationalNatureId());
+        org.setOperationalNature(operationalNature);
         NatureOfHousingPropertyRight natureOfHousingPropertyRight = new NatureOfHousingPropertyRight();
         natureOfHousingPropertyRight.setId(organization.getNatureOfHousingPropertyRightId());
         org.setNatureOfHousingPropertyRight(natureOfHousingPropertyRight);
@@ -127,6 +131,7 @@ public class OrganizationService {
         org.setManagementSystem(organization.getManagementSystem());
         org.setName(organization.getName());
         org.setNature(organization.getNature());
+        org.setOperationalNature(organization.getOperationalNature().getNature());
         org.setNatureOfHousingPropertyRight(organization.getNatureOfHousingPropertyRight().getName());
         org.setOpenBankAccountPermitCertificate(organization.getOpenBankAccountPermitCertificate());
         org.setPersonCountSum(organization.getPersonCountSum());
