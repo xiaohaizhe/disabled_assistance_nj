@@ -195,30 +195,35 @@ function delebox(id){
         url: "/api/project/delete",
         data:{id:id},
         success: function (data) {
-            $("uid_"+id).remove();
+            initbox()
         }
     })
 }
 
 layui.use(['table', 'form'], function () {
     $ = layui.$;
-    $.ajax({
-        type: "GET",
-        url: "/api/project/getProjectStatistic",
-        data:{organizationId:localStorage.getItem("jgid")},
-        success: function (data) {
-            console.log(data);
-            setBox(data.data,$("#projects"))
-        }
-    })
+    initbox();
 })
+
+
+    function initbox() {
+        $.ajax({
+            type: "GET",
+            url: "/api/project/getProjectStatistic",
+            data:{organizationId:localStorage.getItem("jgid")},
+            success: function (data) {
+                console.log(data);
+                setBox(data.data,$("#projects"))
+            }
+        })
+    }
 
 
     function setBox(array,dom) {
         var html = [];
         for (var i = 0; i < array.length; i++) {
             localStorage.setItem(array[i].id,JSON.stringify(array[i]));
-            html.push('<div id="uid_'+array[i].id+'" class="layui-col-sm3">');
+            html.push('<div class="layui-col-sm3">');
             html.push(' <div class="grid-project">');
             html.push(' <div class="project-info">');
             html.push('<div>');
