@@ -117,7 +117,7 @@
 			</select>
 		</div>
 		<div class="layui-input-inline">
-			<select lay-filter="cdistinct_sele" id="cdistinct_sele" name="district" lay-verify="required">
+			<select lay-filter="cdistrict_sele" id="cdistrict_sele" name="district" lay-verify="required">
 				<option value="雨花台区">区/县</option>
 			</select>
 		</div>
@@ -259,7 +259,7 @@
 
         getAddress("cityList");
         getAddress("city","110000");
-        getAddress("distinct","110101",form);
+        getAddress("district","110101",form);
         form.render('select');
 
         form.on('select(province_sele)', function(data){
@@ -268,12 +268,12 @@
         });
 
         form.on('select(city_sele)', function(data){
-            getAddress("distinct",data.value);
+            getAddress("district",data.value);
             form.render('select');
         });
 
-        form.on('select(cdistinct_sele)', function(data){
-            getAddress("distinct",data.value,form);
+        form.on('select(cdistrict_sele)', function(data){
+            getAddress("district",data.value,form);
         });
 
         $.ajax({
@@ -398,7 +398,7 @@
 			}
             _data.province = provinceList[_data.province];
             _data.city = provinceList[_data.city];
-            _data.distinct = provinceList[_data.distinct];
+            _data.district = provinceList[_data.district];
             _data.block = window["bloks"][_data.block];
             $.ajax({
                 type: "POST",
@@ -456,7 +456,7 @@
                 }else {
                     zxs.push('<option value="'+key+'">'+provinceList[key]+'</option>');
                 }
-			}else if(type == "distinct"
+			}else if(type == "district"
 				&& key.indexOf("0000") == -1
                 && value.slice(-2) == "00"
                 && key.slice(0,4) == value.slice(0,4)
@@ -488,13 +488,13 @@
             $("#province_sele").html(html.join(""))
 		}else if(iszxs && type == "city"){
             $("#city_sele").html(html.join(""));
-            getAddress("distinct",""+ciitys[0]);
+            getAddress("district",""+ciitys[0]);
         }else if(type == "city" ){
-            $("#cdistinct_sele").html(zxs.join(""));
+            $("#cdistrict_sele").html(zxs.join(""));
 
-        }else if(type == "distinct" && html.length !== 0){
-            $("#cdistinct_sele").html(html.join(""));
-            getAddress("distinct",""+ciitys[0],form);
+        }else if(type == "district" && html.length !== 0){
+            $("#cdistrict_sele").html(html.join(""));
+            getAddress("district",""+ciitys[0],form);
         }
 
     }
