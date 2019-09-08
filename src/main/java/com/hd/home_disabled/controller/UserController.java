@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "删除", notes = "删除")
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete")
     public JSONObject delete(Long id) {
         return userService.delete(id);
     }

@@ -46,7 +46,7 @@ public class ProjectController {
     }
 
     @ApiOperation(value = "删除", notes = "删除")
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete")
     public JSONObject delete(Integer id) {
         return projectService.delete(id);
     }
