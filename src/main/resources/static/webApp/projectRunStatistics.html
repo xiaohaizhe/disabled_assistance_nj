@@ -183,11 +183,25 @@
 <script src="../layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script>
+    var $ = null;
+
 function gotoDetail(id) {
     window.open("projectInfo.html?id="+id)
 }
+
+function delebox(id){
+    $.ajax({
+        type: "GET",
+        url: "/api/project/delete",
+        data:{id:id},
+        success: function (data) {
+            $("uid_"+id).remove();
+        }
+    })
+}
+
 layui.use(['table', 'form'], function () {
-    var $ = layui.$;
+    $ = layui.$;
     $.ajax({
         type: "GET",
         url: "/api/project/getProjectStatistic",
@@ -204,12 +218,12 @@ layui.use(['table', 'form'], function () {
         var html = [];
         for (var i = 0; i < array.length; i++) {
             localStorage.setItem(array[i].id,JSON.stringify(array[i]));
-            html.push('<div class="layui-col-sm3">');
+            html.push('<div id="uid_'+array[i].id+'" class="layui-col-sm3">');
             html.push(' <div class="grid-project">');
             html.push(' <div class="project-info">');
             html.push('<div>');
             html.push('<button onclick="gotoDetail('+array[i].id+')" style="float: right;" type="button" class="layui-btn layui-btn-primary layui-btn-xs">详情</button>');
-            html.push('<button onclick="" style="float: right;margin-right: 5px;" type="button" class="layui-btn layui-btn-danger layui-btn-xs">删除</button>');
+            html.push('<button onclick="delebox('+array[i].id+')" style="float: right;margin-right: 5px;" type="button" class="layui-btn layui-btn-danger layui-btn-xs">删除</button>');
             html.push('<h2>'+array[i].name+'</h2>');
             html.push('<div class="numbers">');
             html.push('<p>总服务人数: <span class="bold-text">'+array[i].personCountSum+'</span></p>');
