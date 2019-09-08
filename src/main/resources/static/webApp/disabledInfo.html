@@ -411,10 +411,10 @@
 <script src="../js/heightClient.js"></script>
 
 <script type="text/html" id="barDemo">
-	<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">详情</a>
+	<!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">详情</a>-->
 	<!--<a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>-->
 	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-	<a class="layui-btn layui-btn-xs" lay-event="location">定位</a>
+	<!--<a class="layui-btn layui-btn-xs" lay-event="location">定位</a>-->
 </script>
 <script>
     var jsons = {
@@ -565,14 +565,14 @@
 //                {field: 'subsidies', title: '补贴金额', align: 'center', unresize: true},
                 {field: 'createTime', title: '提交时间', align: 'center', unresize: true},
                 {field: 'lastModifyTime', title: '更新时间', align: 'center', unresize: true},
-                {field: 'adminName', title: '提交人', align: 'center', unresize: true}
+                {field: 'adminName', title: '提交人', align: 'center', unresize: true},
 
 
 
 
 
 
-//                {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 250}
+               {fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 100}
             ]]
             , page: true
         }
@@ -616,9 +616,9 @@
                     layer.confirm('确定删除？', function (index) {
                         $.ajax({
                             type: "post",
-                            url: "/old/delete",
+                            url: "/api/user/delete",
                             data: {
-                                id: rowdata.uid
+                                id: rowdata.id
                             },
                             success: function (data) {
                                 obj.del();
