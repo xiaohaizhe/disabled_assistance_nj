@@ -121,7 +121,9 @@
                     return '<img src="../images/word.png" style="width: 30px;">'
                 }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
                     return '<img src="../images/xls.png" style="width: 30px;">'
-                }
+                }else {
+                    return '<a title="点击查看原图" target="_blank" href="'+str+'"><img src="'+str+'" style="width: 30px;"></a>'
+				}
 			}else {
                 return "";
 			}
