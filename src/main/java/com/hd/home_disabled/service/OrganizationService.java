@@ -131,7 +131,9 @@ public class OrganizationService {
         org.setManagementSystem(organization.getManagementSystem());
         org.setName(organization.getName());
         org.setNature(organization.getNature());
-        org.setOperationalNature(organization.getOperationalNature().getNature());
+        if (organization.getOperationalNature()!=null && organization.getOperationalNature().getNature()!=null){
+            org.setOperationalNature(organization.getOperationalNature().getNature());
+        }
         org.setNatureOfHousingPropertyRight(organization.getNatureOfHousingPropertyRight().getName());
         org.setOpenBankAccountPermitCertificate(organization.getOpenBankAccountPermitCertificate());
         org.setPersonCountSum(organization.getPersonCountSum());
