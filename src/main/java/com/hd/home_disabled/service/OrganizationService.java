@@ -16,6 +16,7 @@ import com.hd.home_disabled.utils.PageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -48,6 +49,9 @@ public class OrganizationService {
     private final OrganizationRepository organizationRepository;
 
     private final AdminRepository adminRepository;
+
+    @Value("${server.port}")
+    private String port;
     @Autowired
     private ApplyFormService applyFormService;
 
@@ -479,20 +483,21 @@ public class OrganizationService {
         byte[] picdata=null;
         String img=null;
 //        String dic=System.getProperty("user.dir")+"/picture/lowIncomeCertificate";
-        String dic="E://disabled/picture/lowIncomeCertificate";
-        File file = new File(dic);
-        String[] fileList=file.list();
+//        String dic="E://disabled/picture/lowIncomeCertificate";
+        String dic = System.getProperty("user.dir");
+        List<LowIncomeCertificate> imageList=applyForm.getLowIncomeCertificateList();
         BASE64Encoder encoder=new BASE64Encoder();
         List<String> images = new ArrayList<>();
-        for (int i=0;i<fileList.length;i++)
+        for (int i=0;i<imageList.size();i++)
         {
-            String address=dic+"/"+fileList[i];
-            in=new FileInputStream(address);
+            String url=imageList.get(i).getUrl();
+            String[] strings=url.split(port);
+            String path=dic+strings[1];
+            in=new FileInputStream(path);
             picdata=new byte[in.available()];
             in.read(picdata);
             img=encoder.encode(picdata);
             images.add(img);
-
         }
 
 //
