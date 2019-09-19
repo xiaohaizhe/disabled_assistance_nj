@@ -254,6 +254,8 @@ public class TimeTask {
                 JSONArray array = result.getJSONArray("recordresult");
                 for (int i = 0; i < array.size(); i++) {
                     JSONObject object = (JSONObject) array.get(i);
+                    logger.info("钉钉接口返回打卡数据：");
+                    logger.info(object.toJSONString());
                     if (object.getString("checkType") != null) {
                         Date userCheckTime = new Date(object.getLong("userCheckTime"));
                         String dingUserId = object.getString("userId");

@@ -17,6 +17,6 @@ public class App
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println(sdf.format(from));
         System.out.println(sdf.format(to));*/
-        System.out.println( "Hello World!" );
+        System.out.println( System.getProperty("user.home") );
     }
 }

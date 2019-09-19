@@ -1,12 +1,8 @@
 package com.hd.home_disabled.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hd.home_disabled.entity.Admin;
-import com.hd.home_disabled.entity.Organization;
-import com.hd.home_disabled.entity.Project;
-import com.hd.home_disabled.entity.User;
+import com.hd.home_disabled.entity.*;
 import com.hd.home_disabled.entity.dictionary.DisabilityDegree;
 import com.hd.home_disabled.entity.dictionary.NursingMode;
 import com.hd.home_disabled.entity.dictionary.ProjectType;
@@ -19,7 +15,6 @@ import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.*;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +39,9 @@ import java.util.Optional;
 @Service
 @Transactional
 public class UserService {
+    private final DingUserService dingUserService;
+    private final DingUserAttendanceRecordRepository dingUserAttendanceRecordRepository;
+    private final DingUserRepository dingUserRepository;
     private final UserRepository userRepository;
 
     private final OrganizationRepository organizationRepository;
@@ -67,7 +64,7 @@ public class UserService {
 
     private final ProjectTypeStatisticRepository projectTypeStatisticRepository;
 
-    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserblockStatisticRepository userblockStatisticRepository, ProjectUserRepository projectUserRepository, ProjectRepository projectRepository, ProjectUserDetailRepository projectUserDetailRepository, ProjectTypeStatisticRepository projectTypeStatisticRepository) {
+    public UserService(UserRepository userRepository, OrganizationRepository organizationRepository, TypeOfDisabilityRepository typeOfDisabilityRepository, DisabilityDegreeRepository disabilityDegreeRepository, AdminRepository adminRepository, NursingModeRepository nursingModeRepository, UserblockStatisticRepository userblockStatisticRepository, ProjectUserRepository projectUserRepository, ProjectRepository projectRepository, ProjectUserDetailRepository projectUserDetailRepository, ProjectTypeStatisticRepository projectTypeStatisticRepository, DingUserRepository dingUserRepository, DingUserAttendanceRecordRepository dingUserAttendanceRecordRepository, DingUserService dingUserService) {
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
         this.typeOfDisabilityRepository = typeOfDisabilityRepository;
@@ -79,6 +76,9 @@ public class UserService {
         this.projectRepository = projectRepository;
         this.projectUserDetailRepository = projectUserDetailRepository;
         this.projectTypeStatisticRepository = projectTypeStatisticRepository;
+        this.dingUserRepository = dingUserRepository;
+        this.dingUserAttendanceRecordRepository = dingUserAttendanceRecordRepository;
+        this.dingUserService = dingUserService;
     }
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -173,8 +173,8 @@ public class UserService {
                                 user1.getNursingMode().getId() != null &&
                                 nursingModeRepository.existsById(user1.getNursingMode().getId())) {
                             if (user1.getId() == null) {
-                                Optional<User> userOptional = userRepository.findByIdNumberAndStatus(user1.getIdNumber(),1);
-                                if (userOptional.isPresent()){
+                                Optional<User> userOptional = userRepository.findByIdNumberAndStatus(user1.getIdNumber(), 1);
+                                if (userOptional.isPresent()) {
                                     return RESCODE.USER_EXIST.getJSONRES();
                                 }
                                 //user模型不带id，表示新增
@@ -545,17 +545,17 @@ public class UserService {
             mentalDisabilitys += mentalDisability;
             multipleDisabilitys += multipleDisability;
             others += other;
-            array.add(getJSONObject(userBlockStatistic.getBlock(),sum,visualDisability,hearingDisability,speechDisability,
-                    physicalDisability,intellectualDisability,mentalDisability,multipleDisability,other));
+            array.add(getJSONObject(userBlockStatistic.getBlock(), sum, visualDisability, hearingDisability, speechDisability,
+                    physicalDisability, intellectualDisability, mentalDisability, multipleDisability, other));
         }
-        array.add(getJSONObject("总计",sums,visualDisabilitys,hearingDisabilitys,speechDisabilitys,
-                physicalDisabilitys,intellectualDisabilitys,mentalDisabilitys,multipleDisabilitys,others));
+        array.add(getJSONObject("总计", sums, visualDisabilitys, hearingDisabilitys, speechDisabilitys,
+                physicalDisabilitys, intellectualDisabilitys, mentalDisabilitys, multipleDisabilitys, others));
         return array;
     }
 
-    private JSONObject getJSONObject(String block,Long sums, Long visualDisability, Long hearingDisability,
-                                      Long speechDisability, Long physicalDisability, Long intellectualDisability,
-                                      Long mentalDisability, Long multipleDisability, Long others){
+    private JSONObject getJSONObject(String block, Long sums, Long visualDisability, Long hearingDisability,
+                                     Long speechDisability, Long physicalDisability, Long intellectualDisability,
+                                     Long mentalDisability, Long multipleDisability, Long others) {
         JSONObject object = new JSONObject();
         object.put("block", block);
         object.put("visualDisability", visualDisability);
@@ -576,7 +576,7 @@ public class UserService {
         return RESCODE.SUCCESS.getJSONRES(array);
     }
 
-    private JSONArray getStatisticArray(JSONObject object){
+    private JSONArray getStatisticArray(JSONObject object) {
         JSONArray array = new JSONArray();
         JSONObject object1 = new JSONObject();
         object1.put("name", object.get("block"));
@@ -616,12 +616,12 @@ public class UserService {
         List<UserBlockStatistic> userBlockStatistics = userblockStatisticRepository.findAll();
         JSONArray array = getUserBlockStatistic(userBlockStatistics);
         System.out.println(array);
-        JSONObject object = (JSONObject)array.get(array.size()-1);
+        JSONObject object = (JSONObject) array.get(array.size() - 1);
         jsonArray.add(getStatisticArray(object));
         System.out.println(array.size());
-        for (int i = 0; i < array.size()-1; i++) {
+        for (int i = 0; i < array.size() - 1; i++) {
             System.out.println(i);
-            JSONObject object1 = (JSONObject)array.get(i);
+            JSONObject object1 = (JSONObject) array.get(i);
             System.out.println(object1);
             jsonArray.add(getStatisticArray(object1));
         }
@@ -631,12 +631,12 @@ public class UserService {
 
     public void getStatisticExcel(HttpServletRequest request, HttpServletResponse response) {
         String[] columnNames = new String[]{"街道名称", "视力残疾", "听力残疾", "言语残疾", "肢体残疾",
-                "智力残疾", "精神残疾", "多重残疾","其他", "合计"};
-        String fileName = "UserListStatistic"+"_" + sdf.format(new Date()) + ".xls";
+                "智力残疾", "精神残疾", "多重残疾", "其他", "合计"};
+        String fileName = "UserListStatistic" + "_" + sdf.format(new Date()) + ".xls";
         ExcelUtils.exportExcel(fileName, columnNames, getStatisticData(), request, response);
     }
 
-    public JSONObject statisticData(){
+    public JSONObject statisticData() {
         //全区各类残疾人数量
         /*JSONObject object1 = new JSONObject();
         JSONObject object2 = new JSONObject();
@@ -672,49 +672,49 @@ public class UserService {
         object.put("analysis",object3);*/
         JSONObject object1 = new JSONObject();
         List<TypeOfDisability> typeOfDisabilities = typeOfDisabilityRepository.findAll();
-        for (TypeOfDisability typeOfDisability : typeOfDisabilities){
-            object1.put(typeOfDisability.getName(),0);
+        for (TypeOfDisability typeOfDisability : typeOfDisabilities) {
+            object1.put(typeOfDisability.getName(), 0);
         }
 
         List<User> userList = userRepository.findAll();
-        for (User user:userList){
+        for (User user : userList) {
             String type = user.getTypeOfDisability().getName();
-            object1.merge(type, 1, (a, b) -> (int) a + (int)b);
+            object1.merge(type, 1, (a, b) -> (int) a + (int) b);
         }
         JSONObject object3 = new JSONObject();
-        for (String key:object1.keySet()){
+        for (String key : object1.keySet()) {
             float value;
-            switch (key){
+            switch (key) {
                 case "视力残疾":
-                    value = (float) Math.round(((float) (int)object1.get(key) / 821) * 10000) / 10000;
-                    object3.put(key,value);
+                    value = (float) Math.round(((float) (int) object1.get(key) / 821) * 10000) / 10000;
+                    object3.put(key, value);
                     break;
                 case "听力残疾":
-                    value = (float) Math.round(((float) (int)object1.get(key) / 769) * 10000) / 10000;
-                    object3.put(key,value);
+                    value = (float) Math.round(((float) (int) object1.get(key) / 769) * 10000) / 10000;
+                    object3.put(key, value);
                     break;
                 case "言语残疾":
-                    value = (float) Math.round(((float) (int)object1.get(key) / 49) * 10000) / 10000;
-                    object3.put(key,value);
+                    value = (float) Math.round(((float) (int) object1.get(key) / 49) * 10000) / 10000;
+                    object3.put(key, value);
                     break;
                 case "肢体残疾":
-                    value = (float) Math.round(((float) (int)object1.get(key) / 2919) * 10000) / 10000;
-                    object3.put(key,value);
+                    value = (float) Math.round(((float) (int) object1.get(key) / 2919) * 10000) / 10000;
+                    object3.put(key, value);
                     break;
                 case "智力残疾":
-                    value = (float) Math.round(((float) (int)object1.get(key) / 648) * 10000) / 10000;
-                    object3.put(key,value);
+                    value = (float) Math.round(((float) (int) object1.get(key) / 648) * 10000) / 10000;
+                    object3.put(key, value);
                     break;
                 case "精神残疾":
-                    value = (float) Math.round(((float) (int)object1.get(key) / 790) * 10000) / 10000;
-                    object3.put(key,value);
+                    value = (float) Math.round(((float) (int) object1.get(key) / 790) * 10000) / 10000;
+                    object3.put(key, value);
                     break;
                 case "多重残疾":
-                    value = (float) Math.round(((float) (int)object1.get(key) / 123) * 10000) / 10000;
-                    object3.put(key,value);
+                    value = (float) Math.round(((float) (int) object1.get(key) / 123) * 10000) / 10000;
+                    object3.put(key, value);
                     break;
                 case "其他":
-                    object3.put(key,1F);
+                    object3.put(key, 1F);
                     break;
             }
         }
@@ -723,14 +723,15 @@ public class UserService {
 
     /**
      * 残疾人打卡项目
+     *
      * @param projectId 项目id
      * @param userId    残疾人id
-     * @param start    打卡开始时间
-     * @param end      打卡结束时间
-     * @return  结果
+     * @param start     打卡开始时间
+     * @param end       打卡结束时间
+     * @return 结果
      */
     @Transactional
-    public JSONObject clockIn(Integer projectId, Long userId, Date start,Date end,Integer adminId){
+    public JSONObject clockIn(Integer projectId, Long userId, Date start, Date end, Integer adminId) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         /*Date start;
         Date end;
@@ -740,12 +741,12 @@ public class UserService {
         } catch (ParseException ex) {
             return RESCODE.TIME_PARSE_FAILURE.getJSONRES();
         }*/
-        Optional<Project> projectOptional = projectRepository.findByIdAndStatus(projectId,1);
-        if (projectOptional.isPresent()){
-            Optional<Admin> adminOptional =adminRepository.findById(adminId);
-            if (adminOptional.isPresent()){
-                Optional<User> userOptional = userRepository.findByStatusAndId(1,userId);
-                if (userOptional.isPresent()){
+        Optional<Project> projectOptional = projectRepository.findByIdAndStatus(projectId, 1);
+        if (projectOptional.isPresent()) {
+            Optional<Admin> adminOptional = adminRepository.findById(adminId);
+            if (adminOptional.isPresent()) {
+                Optional<User> userOptional = userRepository.findByStatusAndId(1, userId);
+                if (userOptional.isPresent()) {
                     //project-user-detail:残疾人打卡详情记录
                     Project project = projectOptional.get();
                     User user = userOptional.get();
@@ -754,28 +755,28 @@ public class UserService {
                     projectUserDetail.setProject(project);
                     projectUserDetail.setUser(user);
                     projectUserDetail.setAdmin(admin);
-                    if (end.getTime()<start.getTime()){
+                    if (end.getTime() < start.getTime()) {
                         return RESCODE.CLOCK_IN_WRONG.getJSONRES();
                     }
                     projectUserDetail.setStart(start);
                     projectUserDetail.setEnd(end);
-                    Float value = (float) Math.round(((end.getTime()-start.getTime())/1000f/60f/60f) * 100) / 100;
+                    Float value = (float) Math.round(((end.getTime() - start.getTime()) / 1000f / 60f / 60f) * 100) / 100;
                     projectUserDetail.setLengthOfService(value);
                     projectUserDetailRepository.save(projectUserDetail);
                     //project-user:残疾人打卡总览记录
                     boolean flag = false;//记录残疾人之前是否在项目中打卡
-                    List<ProjectUser> projectUsers = projectUserRepository.findByProjectAndUser(projectId,userId);
-                    if (projectUsers.size()>0){
-                        for (ProjectUser projectUser:projectUsers){
+                    List<ProjectUser> projectUsers = projectUserRepository.findByProjectAndUser(projectId, userId);
+                    if (projectUsers.size() > 0) {
+                        for (ProjectUser projectUser : projectUsers) {
                             flag = true;
                             projectUser.setStart(start);
                             projectUser.setEnd(end);
-                            projectUser.setServicesNum(projectUser.getServicesNum()+1);
+                            projectUser.setServicesNum(projectUser.getServicesNum() + 1);
                             projectUser.setLengthOfService(value);
-                            projectUser.setTotalLengthOfService(projectUser.getTotalLengthOfService()+value);
+                            projectUser.setTotalLengthOfService(projectUser.getTotalLengthOfService() + value);
                             projectUserRepository.saveAndFlush(projectUser);
                         }
-                    }else {
+                    } else {
                         ProjectUser projectUser = new ProjectUser();
                         projectUser.setProject(project);
                         projectUser.setUser(user);
@@ -789,18 +790,18 @@ public class UserService {
                     }
                     //project-type-statistic,服务项目类型数据统计
                     Integer typeId = project.getProjectType().getId();
-                    Optional<ProjectTypeStatistic> projectTypeStatisticOptional =projectTypeStatisticRepository.findByProjectType(typeId);
-                    if (projectTypeStatisticOptional.isPresent()){
+                    Optional<ProjectTypeStatistic> projectTypeStatisticOptional = projectTypeStatisticRepository.findByProjectType(typeId);
+                    if (projectTypeStatisticOptional.isPresent()) {
                         ProjectTypeStatistic projectTypeStatistic = projectTypeStatisticOptional.get();
-                        if (!flag){
-                            projectTypeStatistic.setPersonCountSum(projectTypeStatistic.getPersonCountSum()+1);
+                        if (!flag) {
+                            projectTypeStatistic.setPersonCountSum(projectTypeStatistic.getPersonCountSum() + 1);
                         }
-                        projectTypeStatistic.setPersonTimeSum(projectTypeStatistic.getPersonTimeSum()+1);
-                        projectTypeStatistic.setTotalTimeSum(projectTypeStatistic.getTotalTimeSum()+value);
-                        float averageTime = (float) Math.round((projectTypeStatistic.getTotalTimeSum()/projectTypeStatistic.getPersonTimeSum()) * 100) / 100;
+                        projectTypeStatistic.setPersonTimeSum(projectTypeStatistic.getPersonTimeSum() + 1);
+                        projectTypeStatistic.setTotalTimeSum(projectTypeStatistic.getTotalTimeSum() + value);
+                        float averageTime = (float) Math.round((projectTypeStatistic.getTotalTimeSum() / projectTypeStatistic.getPersonTimeSum()) * 100) / 100;
                         projectTypeStatistic.setAverageTime(averageTime);
                         projectTypeStatisticRepository.saveAndFlush(projectTypeStatistic);
-                    }else{
+                    } else {
                         ProjectTypeStatistic projectTypeStatistic = new ProjectTypeStatistic();
                         ProjectType projectType = new ProjectType();
                         projectType.setId(typeId);
@@ -812,34 +813,34 @@ public class UserService {
                         projectTypeStatisticRepository.saveAndFlush(projectTypeStatistic);
                     }
                     //project数据统计
-                    if (project.getPersonTimeSum()!=null)
-                        project.setPersonTimeSum(project.getPersonTimeSum()+1);
+                    if (project.getPersonTimeSum() != null)
+                        project.setPersonTimeSum(project.getPersonTimeSum() + 1);
                     else project.setPersonTimeSum(1);
-                    if (!flag){
-                        if (project.getPersonCountSum()!=null)
-                            project.setPersonCountSum(project.getPersonCountSum()+1);
+                    if (!flag) {
+                        if (project.getPersonCountSum() != null)
+                            project.setPersonCountSum(project.getPersonCountSum() + 1);
                         else project.setPersonCountSum(1);
                     }
-                    if (project.getTotalTimeSum()!=null)
-                        project.setTotalTimeSum(project.getTotalTimeSum()+value);
+                    if (project.getTotalTimeSum() != null)
+                        project.setTotalTimeSum(project.getTotalTimeSum() + value);
                     else project.setTotalTimeSum(value);
-                    float averageTime_project = (float) Math.round((project.getTotalTimeSum()/project.getPersonTimeSum()) * 100) / 100;
+                    float averageTime_project = (float) Math.round((project.getTotalTimeSum() / project.getPersonTimeSum()) * 100) / 100;
                     project.setAverageTime(averageTime_project);
                     projectRepository.saveAndFlush(project);
                     //organization数据统计
                     Organization organization = project.getOrganization();
-                    if (!flag){
-                        if (organization.getPersonCountSum()!=null)
-                            organization.setPersonCountSum(organization.getPersonCountSum()+1);
+                    if (!flag) {
+                        if (organization.getPersonCountSum() != null)
+                            organization.setPersonCountSum(organization.getPersonCountSum() + 1);
                         else organization.setPersonCountSum(1);
                     }
-                    if (organization.getPersonTimeSum()!=null)
-                        organization.setPersonTimeSum(organization.getPersonTimeSum()+1);
+                    if (organization.getPersonTimeSum() != null)
+                        organization.setPersonTimeSum(organization.getPersonTimeSum() + 1);
                     else organization.setPersonTimeSum(1);
-                    if (organization.getTotalTimeSum()!=null)
-                        organization.setTotalTimeSum(organization.getTotalTimeSum()+value);
+                    if (organization.getTotalTimeSum() != null)
+                        organization.setTotalTimeSum(organization.getTotalTimeSum() + value);
                     else organization.setTotalTimeSum(value);
-                    float averageTime_organization = (float) Math.round((organization.getTotalTimeSum()/organization.getPersonTimeSum()) * 100) / 100;
+                    float averageTime_organization = (float) Math.round((organization.getTotalTimeSum() / organization.getPersonTimeSum()) * 100) / 100;
                     organization.setAverageTime(averageTime_organization);
                     organizationRepository.saveAndFlush(organization);
                     return RESCODE.SUCCESS.getJSONRES();
@@ -849,5 +850,41 @@ public class UserService {
             return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
         }
         return RESCODE.PROJECT_ID_NOT_EXIST.getJSONRES();
+    }
+
+    private JSONObject getUserDetail(DingUserAttendanceRecord record){
+        User user = dingUserService.getUserId(record.getDingUserId());
+        JSONObject object = new JSONObject();
+        object.put("id", record.getId());
+        object.put("name", user.getName());
+        object.put("organizationName",user.getOrganization().getName());
+        object.put("disabilityCertificateNumber", user.getDisabilityCertificateNumber());
+        if (record.getProjectId()!= null && projectRepository.findById(record.getProjectId()).isPresent()){
+            object.put("projectName",projectRepository.findById(record.getProjectId()).get().getName());
+        }else{
+            object.put("projectName",null);
+        }
+        object.put("userCheckTime",record.getUserCheckTime());
+        return object;
+    }
+
+    public JSONObject userClockInRecord(Integer organizationId, Integer page, Integer number, String sorts) {
+        Pageable pageable = PageUtils.getPage(page, number, sorts);
+        List<User> userList = userRepository.findByOrganizationAndStatus(organizationId, 1);
+        List<String> userMobiles = new ArrayList<>();
+        for (User user :
+                userList) {
+            userMobiles.add(user.getContactNumber());
+        }
+        List<String> dingUserList = dingUserRepository.findByMobile(userMobiles);
+        Page<DingUserAttendanceRecord> dingUserAttendanceRecordPage = dingUserAttendanceRecordRepository
+                .findByDingUserIdIn(dingUserList, pageable);
+        List<JSONObject> records = new ArrayList<>();
+        for (DingUserAttendanceRecord record:
+                dingUserAttendanceRecordPage.getContent()) {
+            records.add(getUserDetail(record));
+        }
+        return RESCODE.SUCCESS.getJSONRES(records,
+                dingUserAttendanceRecordPage.getTotalPages(),dingUserAttendanceRecordPage.getTotalElements());
     }
 }

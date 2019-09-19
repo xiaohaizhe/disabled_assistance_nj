@@ -90,4 +90,9 @@ public class UserController {
     public JSONObject clockIn(Integer projectId, Long userId, String start,String end,Integer adminId) {
         return  userService.clockIn(projectId,userId,start,end,adminId);
     }*/
+    @ApiOperation(value = "打卡数据分页", notes = "分页")
+    @RequestMapping(value = "/userClockInRecord",method = RequestMethod.GET)
+    public JSONObject UserClockInRecord(Integer organizationId,Integer page,Integer number,String sorts){
+        return  userService.userClockInRecord(organizationId,page, number, sorts);
+    }
 }
