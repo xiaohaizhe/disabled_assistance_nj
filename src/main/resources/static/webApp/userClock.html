@@ -125,11 +125,19 @@
                 {field: 'organizationName', title: '所属机构', align: 'center', width: 200, fixed: 'left', unresize: true},
                 {field: 'name', title: '姓名', align: 'center', width: 200, unresize: true},
                 {field: 'disabilityCertificateNumber', title: '残疾人号码', align: 'center', width: 300, unresize: true},
-                {field: 'typeOfDisability', title: '项目列表', align: 'center', width: 360,templet:function () {
+                {field: 'typeOfDisability', title: '项目列表', align: 'center', width: 360,templet:function (data) {
+                    if(data.projectName){
+                        return data.projectName
+                    }else {
                         return seledom
+                    }
                     }},
                 {field: 'id', title: '操作', align: 'center', width: 160,templet:function (data) {
-                        return '<input style="width: 18px;height: 18px;" type="checkbox" onclick="setUserAction('+data.id+','+data.LAY_INDEX+')" name="" lay-skin="primary">';
+                        if(data.projectName){
+                            return ""
+                        }else {
+                            return '<input style="width: 18px;height: 18px;" type="checkbox" onclick="setUserAction('+data.id+','+data.LAY_INDEX+')" name="" lay-skin="primary">';
+                        }
                     }}
 
             ]]
