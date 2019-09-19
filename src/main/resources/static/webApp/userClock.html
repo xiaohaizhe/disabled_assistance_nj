@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/init.css">
+    <link rel="stylesheet" href="../css/search_form.css">
+    <style>
+        /*能力评估样式*/
+        #quotaTable tbody tr td,
+        #quotaTable thead tr th,
+        #evaledTable tbody tr td,
+        #evaledTable thead tr th {
+            text-align: center;
+        }
+
+
+        .layui-form-radio{
+            display: block;
+            text-align: left;
+        }
+        .layui-form-radio>div{
+            display: inline;
+        }
+
+        .quota-title{
+            font-size:18px;
+            font-weight:bold;
+        }
+
+        .layui-form-select {
+            display: none !important;
+        }
+        .layui-form select {
+            display: block !important;
+        }
+        .layui-form input[type=checkbox], .layui-form input[type=radio], .layui-form select {
+             display: block;
+        }
+        .layui-table-view .layui-form-checkbox {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div  style="padding: 20px;text-align: right;">
+    <button onclick="senData()" type="button" class="layui-btn layui-btn-sm layui-btn">提交操作
+    </button>
+</div>
+<div id="tableBox">
+    <table class="layui-hide" id="mainTable" lay-filter="test"></table>
+</div>
+<script src="../js/jquery.min.js"></script>
+<!--获取地区列表的函数以及切换城市的地区切换函数-->
+<script src="../js/beforeInit.js"></script>
+<script src="../layui/layui.js"></script>
+<script src="../js/heightClient.js"></script>
+
+<script>
+
+    var seledom = "";
+
+    var tableIns = null;
+
+    var SENDATA = [];
+
+    function setUserAction (id,index){
+        var sq = "[data-index="+(index-1)+"] .projectids";
+        SENDATA.push({id:id,projectId:$(sq).val()-0})
+    }
+
+    function senData() {
+        $.ajax({
+            type: "POST",
+            url: "/api/admin/chooseProjectForUser",
+            data: JSON.stringify(SENDATA),
+            dataType:"json",
+            contentType : 'application/json;charset=utf-8',
+            processData: false,
+            success: function (data) {
+               alert("操作成功")
+                tableIns.reload()
+            }
+        })
+
+    }
+
+    layui.use(['table', 'layer', "upload"], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+
+        var upload = layui.upload;
+        $ = layui.$;
+
+        var options = {
+            elem: '#mainTable'
+            , url: '/api/user/userClockInRecord?sorts=userCheckTime&'+("")+'organizationId='+localStorage.getItem("jgid")
+            , request: {
+                pageName: 'page', //页码的参数名称，默认：page
+                limitName: 'number' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            }
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": 200, //解析接口状态
+//                    "msg": res.message, //解析提示文本
+                    "count": res.realSize, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            }
+            , title: '用户打卡记录'
+            , cols: [[
+//                {type: 'checkbox', fixed: 'left'},
+                {
+                    field: 'id', title: '序号', align: 'center', width: 160, fixed: 'left', unresize: true,
+                    templet: function (data) {
+                        return data.LAY_INDEX
+                    }
+                },
+                {field: 'organizationName', title: '所属机构', align: 'center', width: 200, fixed: 'left', unresize: true},
+                {field: 'name', title: '姓名', align: 'center', width: 200, unresize: true},
+                {field: 'disabilityCertificateNumber', title: '残疾人号码', align: 'center', width: 300, unresize: true},
+                {field: 'typeOfDisability', title: '项目列表', align: 'center', width: 360,templet:function () {
+                        return seledom
+                    }},
+                {field: 'id', title: '操作', align: 'center', width: 160,templet:function (data) {
+                        return '<input style="width: 18px;height: 18px;" type="checkbox" onclick="setUserAction('+data.id+','+data.LAY_INDEX+')" name="" lay-skin="primary">';
+                    }}
+
+            ]]
+            , page: true
+        }
+
+        $.ajax({
+            type: "get",
+            url: "/api/org/getByAdminId",
+            data: {adminId:localStorage.getItem("userId")},
+            success: function (data) {
+                $.ajax({
+                    type: "get",
+                    url: "/api/project/getProjectList",
+                    data: {organizationId:data.data.id},
+                    success: function (rs) {
+                        seledom = setProjectList(rs.data)
+                        tableIns = table.render(options);
+
+                    }
+                })
+            }
+        })
+
+
+
+        function setProjectList(data){
+            var html = [];
+            html.push('<select class="projectids" style="width: 160px;">');
+            for (var i = 0; i < data.length; i++) {
+                html.push('<option value="'+data[i].id+'">'+data[i].name+'</option>');
+            }
+            html.push('</select>');
+            return html.join("")
+        }
+
+    })
+    ;
+
+
+</script>
+</body>
+</html>
