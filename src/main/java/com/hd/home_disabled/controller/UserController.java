@@ -92,7 +92,7 @@ public class UserController {
     }*/
     @ApiOperation(value = "打卡数据分页", notes = "分页")
     @RequestMapping(value = "/userClockInRecord",method = RequestMethod.GET)
-    public JSONObject UserClockInRecord(Integer organizationId,Integer page,Integer number,String sorts){
-        return  userService.userClockInRecord(organizationId,page, number, sorts);
+    public JSONObject UserClockInRecord(Integer organizationId,Integer hasProject,Integer page,Integer number,String sorts){
+        return  userService.userClockInRecord(organizationId,hasProject,page, number, sorts);
     }
 }

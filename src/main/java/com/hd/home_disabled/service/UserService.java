@@ -868,7 +868,7 @@ public class UserService {
         return object;
     }
 
-    public JSONObject userClockInRecord(Integer organizationId, Integer page, Integer number, String sorts) {
+    public JSONObject userClockInRecord(Integer organizationId,Integer hasProject, Integer page, Integer number, String sorts) {
         Pageable pageable = PageUtils.getPage(page, number, sorts);
         List<User> userList = userRepository.findByOrganizationAndStatus(organizationId, 1);
         List<String> userMobiles = new ArrayList<>();
@@ -877,8 +877,17 @@ public class UserService {
             userMobiles.add(user.getContactNumber());
         }
         List<String> dingUserList = dingUserRepository.findByMobile(userMobiles);
-        Page<DingUserAttendanceRecord> dingUserAttendanceRecordPage = dingUserAttendanceRecordRepository
-                .findByDingUserIdIn(dingUserList, pageable);
+        Page<DingUserAttendanceRecord> dingUserAttendanceRecordPage = null;
+        switch (hasProject){
+            case 1:     //全部
+                dingUserAttendanceRecordPage = dingUserAttendanceRecordRepository
+                        .findByDingUserIdIn(dingUserList, pageable);
+                break;
+            case 0:     //未选择项目
+                dingUserAttendanceRecordPage = dingUserAttendanceRecordRepository
+                        .findByDingUserIdInAndProjectId(dingUserList,pageable);
+
+        }
         List<JSONObject> records = new ArrayList<>();
         for (DingUserAttendanceRecord record:
                 dingUserAttendanceRecordPage.getContent()) {
