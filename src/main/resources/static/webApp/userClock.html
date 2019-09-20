@@ -43,10 +43,24 @@
         .layui-table-view .layui-form-checkbox {
             display: none;
         }
+        .tabbox {
+            float: left;
+            margin-bottom: -10px;
+        }
+        .tabbox span {
+            display: inline-block;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .tabbox span.active {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
 <div  style="padding: 20px;text-align: right;">
+    <p class="tabbox"><span class="active" onclick="resetTabel('all')">全部记录</span><span onclick="resetTabel('unsele')">未选项目</span></p>
     <button onclick="senData()" type="button" class="layui-btn layui-btn-sm layui-btn">提交操作
     </button>
 </div>
@@ -71,6 +85,18 @@
         var sq = "[data-index="+(index-1)+"] .projectids";
         SENDATA.push({id:id,projectId:$(sq).val()-0})
     }
+
+    function resetTabel(type){
+        if(type == "all"){
+            tableIns.reload({url: '/api/user/userClockInRecord?sorts=userCheckTime&hasProject=1&'+("")+'organizationId='+localStorage.getItem("jgid")})
+        }else {
+            tableIns.reload({url: '/api/user/userClockInRecord?sorts=userCheckTime&hasProject=0&'+("")+'organizationId='+localStorage.getItem("jgid")})
+        }
+    }
+
+    $(".tabbox span").click(function () {
+        $(this).addClass("active").siblings().removeClass("active")
+    })
 
     function senData() {
         $.ajax({
@@ -97,7 +123,7 @@
 
         var options = {
             elem: '#mainTable'
-            , url: '/api/user/userClockInRecord?sorts=userCheckTime&'+("")+'organizationId='+localStorage.getItem("jgid")
+            , url: '/api/user/userClockInRecord?sorts=userCheckTime&hasProject=1&'+("")+'organizationId='+localStorage.getItem("jgid")
             , request: {
                 pageName: 'page', //页码的参数名称，默认：page
                 limitName: 'number' //每页数据量的参数名，默认：limit
