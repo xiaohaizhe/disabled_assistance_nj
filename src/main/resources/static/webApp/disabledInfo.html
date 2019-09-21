@@ -175,8 +175,8 @@
 			<label class="layui-form-label">托养方式</label>
 			<div class="layui-input-block" style="padding-right:15px;">
 				<select name="nursingModeId">
-					<option value="1">全托</option>
-					<option value="2">日托</option>
+					<option value="1">日托</option>
+					<option value="2">全托</option>
 				</select>
 			</div>
 		</div>
@@ -559,7 +559,7 @@
                 {field: 'address', title: '家庭住址', align: 'center', unresize: true},
 				{field: 'contactNumber', title: '联系电话', align: 'center', unresize: true},
                 {field: 'nursingModeId', title: '托养方式', align: 'center', unresize: true,templet: function(d){
-                        return ["其他","全托","日托"][d.nursingModeId]
+                        return ["其他","日托","全托"][d.nursingModeId]
                     }},
 //                {field: 'nursingMonth', title: '托养月数', align: 'center', unresize: true},
 //                {field: 'subsidies', title: '补贴金额', align: 'center', unresize: true},
