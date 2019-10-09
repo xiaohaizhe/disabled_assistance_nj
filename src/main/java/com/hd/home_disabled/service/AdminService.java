@@ -1,23 +1,19 @@
 package com.hd.home_disabled.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hd.home_disabled.entity.Admin;
-import com.hd.home_disabled.entity.DingUser;
-import com.hd.home_disabled.entity.DingUserAttendanceRecord;
-import com.hd.home_disabled.entity.User;
+import com.hd.home_disabled.entity.*;
 import com.hd.home_disabled.entity.dictionary.AdminType;
 import com.hd.home_disabled.model.RESCODE;
-import com.hd.home_disabled.repository.AdminRepository;
-import com.hd.home_disabled.repository.DingUserAttendanceRecordRepository;
-import com.hd.home_disabled.repository.DingUserRepository;
-import com.hd.home_disabled.repository.UserRepository;
+import com.hd.home_disabled.repository.*;
 import com.hd.home_disabled.utils.JasyptUtil;
+import com.hd.home_disabled.utils.PageUtils;
 import com.hd.home_disabled.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +32,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class AdminService {
+    private final OrganizationRepository organizationRepository;
     private final UserRepository userRepository;
     private final DingUserRepository dingUserRepository;
     private final UserService userService;
@@ -46,7 +43,7 @@ public class AdminService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminService.class);
 
-    public AdminService(AdminRepository adminRepository, JasyptUtil jasyptUtil, DingUserService dingUserService, DingUserAttendanceRecordRepository dingUserAttendanceRecordRepository, UserService userService, DingUserRepository dingUserRepository, UserRepository userRepository) {
+    public AdminService(AdminRepository adminRepository, JasyptUtil jasyptUtil, DingUserService dingUserService, DingUserAttendanceRecordRepository dingUserAttendanceRecordRepository, UserService userService, DingUserRepository dingUserRepository, UserRepository userRepository, OrganizationRepository organizationRepository) {
         this.adminRepository = adminRepository;
         this.jasyptUtil = jasyptUtil;
         this.dingUserService = dingUserService;
@@ -54,9 +51,10 @@ public class AdminService {
         this.userService = userService;
         this.dingUserRepository = dingUserRepository;
         this.userRepository = userRepository;
+        this.organizationRepository = organizationRepository;
     }
 
-    public JSONObject addAdmin(String name,String pwd){
+    public JSONObject addAdmin(String name, String pwd) {
         if (checkName(name)) return RESCODE.ADMIN_ID_EXIST.getJSONRES();
         Admin admin = new Admin();
         admin.setName(name);
@@ -68,9 +66,63 @@ public class AdminService {
         return RESCODE.SUCCESS.getJSONRES(adminNew);
     }
 
-    boolean checkName(String name){
+    public JSONObject update(Admin admin) {
+        if (admin.getId() != null) {
+            Optional<Admin> adminOptional = adminRepository.findById(admin.getId());
+            if (adminOptional.isPresent()) {
+                Admin adminOld = adminOptional.get();
+                if (admin.getName() != null && !admin.getName().equals(adminOld.getName())) {
+                    if (checkName(admin.getName())) return RESCODE.ADMIN_ID_EXIST.getJSONRES();
+                    adminOld.setName(admin.getName());
+                }
+                if (admin.getPassword() != null && !StringUtil.isBlank(admin.getPassword()))
+                    adminOld.setPassword(jasyptUtil.encrypt(admin.getPassword()));
+                adminRepository.saveAndFlush(adminOld);
+                return RESCODE.SUCCESS.getJSONRES(adminOld);
+            }
+        }
+        return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
+    }
+
+    public JSONObject delete(Integer adminId) {
+        Optional<Admin> adminOptional = adminRepository.findById(adminId);
+        if (adminOptional.isPresent()) {
+            adminRepository.deleteById(adminId);
+            return RESCODE.SUCCESS.getJSONRES();
+        }
+        return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
+    }
+
+    public JSONObject getAdmin(Admin admin) {
+        JSONObject object = new JSONObject();
+        object.put("id", admin.getId());
+        object.put("name", admin.getName());
+        if (admin.getOrganization()!=null) object.put("organization", admin.getOrganization().getName());
+        return object;
+    }
+
+    public JSONObject showAdmins(Integer page, Integer number, String sorts) {
+        Pageable pageable = PageUtils.getPage(page, number, sorts);
+        Page<Admin> adminPage = adminRepository.findByAdminType(pageable);
+        JSONArray array = new JSONArray();
+        for (Admin admin : adminPage.getContent()) {
+            array.add(getAdmin(admin));
+        }
+        return RESCODE.SUCCESS.getJSONRES(array, adminPage.getTotalPages(), adminPage.getTotalElements());
+    }
+
+    boolean checkName(String name) {
         return adminRepository.findByName(name).isPresent();
     }
+
+/*    public void updateData() {
+        List<Organization> organizationList =  organizationRepository.findAll();
+        for (Organization organization:organizationList) {
+            Admin admin =  organization.getAdmin();
+            admin.setOrganization(organization);
+            adminRepository.saveAndFlush(admin);
+        }
+    }*/
 
     /**
      * 管理员登陆
@@ -120,20 +172,20 @@ public class AdminService {
                     //检查打卡结束是否录入
                     Sort.Order order = new Sort.Order(Sort.Direction.DESC, "userCheckTime");
                     Sort sort = new Sort(order);
-                    List<DingUserAttendanceRecord> recordList = dingUserAttendanceRecordRepository.findByDingUserId(dingUserAttendanceRecord.getDingUserId(),sort);
+                    List<DingUserAttendanceRecord> recordList = dingUserAttendanceRecordRepository.findByDingUserId(dingUserAttendanceRecord.getDingUserId(), sort);
                     for (int j = 0; j < recordList.size(); j++) {
-                        if (recordList.get(j).getId()==id){
-                            if (j>0){
-                                int z = j-1;
-                                while(z>=0){
-                                    if (recordList.get(z).getStatus()==1){
+                        if (recordList.get(j).getId() == id) {
+                            if (j > 0) {
+                                int z = j - 1;
+                                while (z >= 0) {
+                                    if (recordList.get(z).getStatus() == 1) {
                                         String dingUserId = dingUserAttendanceRecord.getDingUserId();
                                         Optional<DingUser> dingUserOptional = dingUserRepository.findById(dingUserId);
-                                        if (dingUserOptional.isPresent()){
+                                        if (dingUserOptional.isPresent()) {
                                             Optional<User> userOptional = userRepository.findByContactNumber(dingUserOptional.get().getMobile());
-                                            if (userOptional.isPresent()){
-                                                userService.clockIn(projectId,userOptional.get().getId(),dingUserAttendanceRecord.getUserCheckTime(),
-                                                        recordList.get(z).getUserCheckTime(),userOptional.get().getAdmin().getId());
+                                            if (userOptional.isPresent()) {
+                                                userService.clockIn(projectId, userOptional.get().getId(), dingUserAttendanceRecord.getUserCheckTime(),
+                                                        recordList.get(z).getUserCheckTime(), userOptional.get().getAdmin().getId());
                                             }
                                         }
                                         break;
@@ -161,7 +213,7 @@ public class AdminService {
 
     }
 
-    public JSONObject numbersChange(String month, byte type){
+    public JSONObject numbersChange(String month, byte type) {
         Date today = new Date();
         Date date = StringUtil.getDate(month);
         if (date.after(today)) {
@@ -176,7 +228,7 @@ public class AdminService {
             System.out.println(date.getHours());
             System.out.println(date.getMinutes());
             System.out.println(date.getSeconds());*/
-            if (date.getDate() != 1 || date.getHours()!=0|| date.getMinutes()!=0||date.getSeconds()!=0) {
+            if (date.getDate() != 1 || date.getHours() != 0 || date.getMinutes() != 0 || date.getSeconds() != 0) {
                 return RESCODE.FAILURE.getJSONRES("请使用月初时间");
             }
             //判断是否为当月
@@ -185,13 +237,13 @@ public class AdminService {
                 end = new Date();
             } else {
                 end = (Date) date.clone();
-                end.setMonth(end.getMonth()+1);
+                end.setMonth(end.getMonth() + 1);
             }
             long result = 0;
-            if (type==0){
-                result = userRepository.countValidByStartBetween(date,end);
-            }else{
-                result = userRepository.countInvalidByStartBetween(date,end);
+            if (type == 0) {
+                result = userRepository.countValidByStartBetween(date, end);
+            } else {
+                result = userRepository.countInvalidByStartBetween(date, end);
             }
             JSONObject object = new JSONObject();
             object.put("result", result);

@@ -177,16 +177,21 @@ public class OrganizationService {
             return RESCODE.TIME_PARSE_FAILURE.getJSONRES();
         }
         if (org.getAdmin() != null &&
-                org.getAdmin().getId() != null &&
-                adminRepository.existsById(org.getAdmin().getId())) {
-            if (org.getNatureOfHousingPropertyRight() != null &&
-                    org.getNatureOfHousingPropertyRight().getId() != null &&
-                    natureOfHousingPropertyRightRepository.existsById(org.getNatureOfHousingPropertyRight().getId())) {
-                org.setStatus(1);
-                Organization organization1 = organizationRepository.saveAndFlush(org);
-                return RESCODE.SUCCESS.getJSONRES(dealWithOrganization(organization1));
+                org.getAdmin().getId() != null) {
+            Optional<Admin> adminOptional = adminRepository.findById(org.getAdmin().getId());
+            if (adminOptional.isPresent()){
+                Admin admin = adminOptional.get();
+                if (org.getNatureOfHousingPropertyRight() != null &&
+                        org.getNatureOfHousingPropertyRight().getId() != null &&
+                        natureOfHousingPropertyRightRepository.existsById(org.getNatureOfHousingPropertyRight().getId())) {
+                    org.setStatus(1);
+                    Organization organization1 = organizationRepository.saveAndFlush(org);
+                    admin.setOrganization(organization1);
+                    adminRepository.saveAndFlush(admin);
+                    return RESCODE.SUCCESS.getJSONRES(dealWithOrganization(organization1));
+                }
+                return RESCODE.NATURE_OF_HOUSING_PROPERTY_RIGHT_ID_NOT_EXIST.getJSONRES();
             }
-            return RESCODE.NATURE_OF_HOUSING_PROPERTY_RIGHT_ID_NOT_EXIST.getJSONRES();
         }
         return RESCODE.ADMIN_ID_NOT_EXIST.getJSONRES();
     }
