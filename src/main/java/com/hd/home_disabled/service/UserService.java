@@ -408,9 +408,9 @@ public class UserService {
         return RESCODE.USER_ID_NOT_EXIST.getJSONRES();
     }
 
-    public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number, String sorts) {
+    public JSONObject getPageByOrganizationId(Integer organizationId,String userName, Integer page, Integer number, String sorts) {
         Pageable pageable = PageUtils.getPage(page, number, sorts);
-        Page<User> userPage = userRepository.findByOrganizationAndStatus(organizationId, 1, pageable);
+        Page<User> userPage = userRepository.findByOrganizationAndStatusAndNameLike(organizationId, 1, userName==null?"":userName,pageable);
         List<com.hd.home_disabled.model.dto.User> userList = new ArrayList<>();
         for (User user :
                 userPage.getContent()) {

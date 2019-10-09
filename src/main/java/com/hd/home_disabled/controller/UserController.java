@@ -57,8 +57,8 @@ public class UserController {
 
     @ApiOperation(value = "查询机构下残疾人分页", notes = "分页")
     @RequestMapping(value = "/getPageByOrganization", method = RequestMethod.GET)
-    public JSONObject getPageByOrganizationId(Integer organizationId, Integer page, Integer number,String sorts) {
-        return userService.getPageByOrganizationId(organizationId, page, number,sorts);
+    public JSONObject getPageByOrganizationId(Integer organizationId,String name, Integer page, Integer number,String sorts) {
+        return userService.getPageByOrganizationId(organizationId,name, page, number,sorts);
     }
 
     @ApiOperation(value = "机构下残疾人信息导出", notes = "excel导出")

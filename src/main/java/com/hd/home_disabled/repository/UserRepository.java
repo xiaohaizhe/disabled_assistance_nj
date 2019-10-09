@@ -26,6 +26,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.organization.id = ?1 and u.status = ?2")
     Page<User> findByOrganizationAndStatus(Integer organizationId, Integer status, Pageable page);
 
+    @QueryHints(value = {@QueryHint(name = HINT_COMMENT, value = "a query for pageable")})
+    @Query("select u from User u where u.organization.id = ?1 and u.status = ?2 and u.name like concat('%' ,?3,'%') ")
+    Page<User> findByOrganizationAndStatusAndNameLike(Integer organizationId,Integer status,String name,  Pageable page);
+
     Optional<User> findByStatusAndId(Integer status, Long id);
 
     @Query("select u from User u where u.organization.id = ?1 and u.status = ?2")
