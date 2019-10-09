@@ -1,6 +1,5 @@
 package com.hd.home_disabled.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.*;
@@ -10,9 +9,11 @@ import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.AdminRepository;
 import com.hd.home_disabled.repository.NatureOfHousingPropertyRightRepository;
 import com.hd.home_disabled.repository.OrganizationRepository;
+import com.hd.home_disabled.repository.ProjectUserDetailRepository;
 import com.hd.home_disabled.utils.DocumentHandlers;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
+import com.hd.home_disabled.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +44,7 @@ import java.util.*;
 @Service
 @Transactional
 public class OrganizationService {
+    private final ProjectUserDetailRepository projectUserDetailRepository;
     private final NatureOfHousingPropertyRightRepository natureOfHousingPropertyRightRepository;
 
     private final OrganizationRepository organizationRepository;
@@ -52,13 +53,14 @@ public class OrganizationService {
 
     @Value("${server.port}")
     private String port;
-    @Autowired
-    private ApplyFormService applyFormService;
+    private final ApplyFormService applyFormService;
 
-    public OrganizationService(NatureOfHousingPropertyRightRepository natureOfHousingPropertyRightRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository) {
+    public OrganizationService(NatureOfHousingPropertyRightRepository natureOfHousingPropertyRightRepository, OrganizationRepository organizationRepository, AdminRepository adminRepository, ProjectUserDetailRepository projectUserDetailRepository, ApplyFormService applyFormService) {
         this.natureOfHousingPropertyRightRepository = natureOfHousingPropertyRightRepository;
         this.organizationRepository = organizationRepository;
         this.adminRepository = adminRepository;
+        this.projectUserDetailRepository = projectUserDetailRepository;
+        this.applyFormService = applyFormService;
     }
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -135,7 +137,7 @@ public class OrganizationService {
         org.setManagementSystem(organization.getManagementSystem());
         org.setName(organization.getName());
         org.setNature(organization.getNature());
-        if (organization.getOperationalNature()!=null && organization.getOperationalNature().getNature()!=null){
+        if (organization.getOperationalNature() != null && organization.getOperationalNature().getNature() != null) {
             org.setOperationalNature(organization.getOperationalNature().getNature());
         }
         org.setNatureOfHousingPropertyRight(organization.getNatureOfHousingPropertyRight().getName());
@@ -160,6 +162,7 @@ public class OrganizationService {
     /**
      * 添加或修改机构
      * 修改机构--数据中需要id
+     *
      * @param organization 机构
      * @return 添加或修改结果
      */
@@ -231,7 +234,7 @@ public class OrganizationService {
      */
     public JSONObject getByAdminId(Integer adminId) {
         logger.info("查询单个机构");
-        Optional<Organization> optional = organizationRepository.findByAdmin_IdAndStatus(adminId,1);
+        Optional<Organization> optional = organizationRepository.findByAdmin_IdAndStatus(adminId, 1);
         if (optional.isPresent()) {
             com.hd.home_disabled.model.dto.Organization organization = dealWithOrganization(optional.get());
             return RESCODE.SUCCESS.getJSONRES(organization);
@@ -344,10 +347,10 @@ public class OrganizationService {
             else object25.put("adminName", "");
             array.add(object25);
             JSONObject object26 = new JSONObject();
-            object26.put("createTime", o.getCreateTime()==null?"":o.getCreateTime());
+            object26.put("createTime", o.getCreateTime() == null ? "" : o.getCreateTime());
             array.add(object26);
             JSONObject object27 = new JSONObject();
-            object27.put("lastModifyTime", o.getModifyTime()==null?"":o.getModifyTime());
+            object27.put("lastModifyTime", o.getModifyTime() == null ? "" : o.getModifyTime());
             array.add(object27);
             jsonArray.add(array);
         }
@@ -364,7 +367,7 @@ public class OrganizationService {
      * @return 结果
      */
     public JSONObject getPageByDistrict(String district, Integer page, Integer number, String sorts) {
-        logger.info("区:"+district+"机构分页");
+        logger.info("区:" + district + "机构分页");
         Pageable pageable = PageUtils.getPage(page, number, sorts);
         Page<Organization> organizationPage = organizationRepository.findByDistrictAndStatus(district, 1, pageable);
         List<Organization> organizationList = organizationPage.getContent();
@@ -377,30 +380,30 @@ public class OrganizationService {
         return RESCODE.SUCCESS.getJSONRES(organizationList1, organizationPage.getTotalPages(), organizationPage.getTotalElements());
     }
 
-    public void exportExcel(String district,HttpServletRequest request, HttpServletResponse response) {
+    public void exportExcel(String district, HttpServletRequest request, HttpServletResponse response) {
         String[] columnNames = new String[]{"机构名称", "登记注册时间", "注册证书编号", "注册部门", "机构性质",
                 "房屋产权性质", "机构面积", "床位数", "庇护性劳动项目", "地址",
                 "负责人", "性别", "出生年月", "文化程度", "营业执照或登记证书",
                 "银行开户许可", "门头及室内功能区域、无障碍设施", "专职工作人员名单", "管理制度", "服务项目总数",
                 "总服务人数", "总服务人次", "总服务时长", "平均服务时长", "提交人",
                 "提交时间", "更新时间"};
-        String fileName = "OrganizationList"+"_"+sdf.format(new Date())+".xls";
-        ExcelUtils.exportExcel(fileName,columnNames, getListsByDistrict(district), request, response);
+        String fileName = "OrganizationList" + "_" + sdf.format(new Date()) + ".xls";
+        ExcelUtils.exportExcel(fileName, columnNames, getListsByDistrict(district), request, response);
     }
 
-    private List<JSONObject> getOrganization(List<Organization> organizationList){
+    private List<JSONObject> getOrganization(List<Organization> organizationList) {
         List<JSONObject> objectList = new ArrayList<>();
-        for (Organization organization : organizationList){
+        for (Organization organization : organizationList) {
             JSONObject object = new JSONObject();
-            object.put("id",organization.getId());
-            object.put("name",organization.getName());
-            object.put("userNum",organization.getUserList().size());
+            object.put("id", organization.getId());
+            object.put("name", organization.getName());
+            object.put("userNum", organization.getUserList().size());
             objectList.add(object);
         }
         return objectList;
     }
 
-    public JSONObject analysis(){
+    public JSONObject analysis() {
         JSONObject object = new JSONObject();
         Sort sort1 = new Sort(new Sort.Order(Sort.Direction.DESC, "projectSum"));
         Sort sort2 = new Sort(new Sort.Order(Sort.Direction.DESC, "personCountSum"));
@@ -408,95 +411,94 @@ public class OrganizationService {
         Sort sort4 = new Sort(new Sort.Order(Sort.Direction.DESC, "totalTimeSum"));
         Sort sort5 = new Sort(new Sort.Order(Sort.Direction.DESC, "averageTime"));
         List<Organization> organizationList1 = organizationRepository.findAll(sort1);
-        if (organizationList1.size()>3) organizationList1 = organizationList1.subList(0,3);
+        if (organizationList1.size() > 3) organizationList1 = organizationList1.subList(0, 3);
         List<Organization> organizationList2 = organizationRepository.findAll(sort2);
-        if (organizationList2.size()>3) organizationList2 = organizationList2.subList(0,3);
+        if (organizationList2.size() > 3) organizationList2 = organizationList2.subList(0, 3);
         List<Organization> organizationList3 = organizationRepository.findAll(sort3);
-        if (organizationList3.size()>3) organizationList3 = organizationList3.subList(0,3);
+        if (organizationList3.size() > 3) organizationList3 = organizationList3.subList(0, 3);
         List<Organization> organizationList4 = organizationRepository.findAll(sort4);
-        if (organizationList4.size()>3) organizationList4 = organizationList4.subList(0,3);
+        if (organizationList4.size() > 3) organizationList4 = organizationList4.subList(0, 3);
         List<Organization> organizationList5 = organizationRepository.findAll(sort5);
-        if (organizationList5.size()>3) organizationList5 = organizationList5.subList(0,3);
-        object.put("projectSum",getOrganization(organizationList1));
-        object.put("personCountSum",getOrganization(organizationList2));
-        object.put("personTimeSum",getOrganization(organizationList3));
-        object.put("totalTimeSum",getOrganization(organizationList4));
-        object.put("averageTime",getOrganization(organizationList5));
+        if (organizationList5.size() > 3) organizationList5 = organizationList5.subList(0, 3);
+        object.put("projectSum", getOrganization(organizationList1));
+        object.put("personCountSum", getOrganization(organizationList2));
+        object.put("personTimeSum", getOrganization(organizationList3));
+        object.put("totalTimeSum", getOrganization(organizationList4));
+        object.put("averageTime", getOrganization(organizationList5));
         List<Sort.Order> orders = new ArrayList<>();
         String sorts = "projectSum,personCountSum,personTimeSum,totalTimeSum,averageTime";
-        for(String sort : sorts.split(",") ){
+        for (String sort : sorts.split(",")) {
             orders.add(new Sort.Order(Sort.Direction.DESC, sort));
         }
         Sort sort6 = new Sort(orders);
         List<Organization> organizationList6 = organizationRepository.findAll(sort6);
-        if (organizationList6.size()>3) organizationList6 = organizationList6.subList(0,3);
-        object.put("ranking",getOrganization(organizationList6));
+        if (organizationList6.size() > 3) organizationList6 = organizationList6.subList(0, 3);
+        object.put("ranking", getOrganization(organizationList6));
         return RESCODE.SUCCESS.getJSONRES(object);
     }
 
-    public String exportWord(Integer orgId,Integer applyId) throws IOException {
-        Optional<Organization> optional= organizationRepository.findById(orgId);
-        Organization org=optional.get();
-        List<ApplyForm> applyForms=org.getApplyFormList();
-        List wlist=new ArrayList();
-        ApplyForm applyForm=applyFormService.getApplyFormById(applyId);
-        List<ApplyFormUser> list=applyForm.getUserList();
+    public String exportWord(Integer orgId, Integer applyId) throws IOException {
+        Optional<Organization> optional = organizationRepository.findById(orgId);
+        Organization org = optional.get();
+        List<ApplyForm> applyForms = org.getApplyFormList();
+        List wlist = new ArrayList();
+        ApplyForm applyForm = applyFormService.getApplyFormById(applyId);
+        List<ApplyFormUser> list = applyForm.getUserList();
 
-        double sum=0;
-        for(int i=0;i<list.size();i++){
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("userno", i+1); //
-            map.put("username",list.get(i).getUsername()); //结束时间
-            map.put("userid",list.get(i).getDisabilityCertificateNumber()); //结束时间
-            map.put("useraddr",list.get(i).getAddress()); //结束时间
+        double sum = 0;
+        for (int i = 0; i < list.size(); i++) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("userno", i + 1); //
+            map.put("username", list.get(i).getUsername()); //结束时间
+            map.put("userid", list.get(i).getDisabilityCertificateNumber()); //结束时间
+            map.put("useraddr", list.get(i).getAddress()); //结束时间
 
-            map.put("userphone",list.get(i).getContactNumber()); //结束时间
-            map.put("usermode",list.get(i).getNursingMode()); //结束时间
-            map.put("usermonth",1); //结束时间
-            map.put("usermoney",list.get(i).getSubsidies()); //结束时间
-            sum+=list.get(i).getSubsidies();
+            map.put("userphone", list.get(i).getContactNumber()); //结束时间
+            map.put("usermode", list.get(i).getNursingMode()); //结束时间
+            map.put("usermonth", 1); //结束时间
+            map.put("usermoney", list.get(i).getSubsidies()); //结束时间
+            sum += list.get(i).getSubsidies();
 
             wlist.add(map);
         }
 
 
-        Map<String, Object> dataMap=new HashMap<String, Object>();
+        Map<String, Object> dataMap = new HashMap<String, Object>();
 
-        dataMap.put("name",org.getName());
-        dataMap.put("time",org.getRegistrationTime());
-        dataMap.put("city",org.getDetailedAddress());
-        dataMap.put("person",org.getPersonInCharge());
-        dataMap.put("number",org.getContactNumber());
-        dataMap.put("area",org.getArea());
-        dataMap.put("bed",org.getBedNum());
-        dataMap.put("nature",org.getNature());
-        dataMap.put("labor",org.getAsylumLaborProjects());
-        dataMap.put("daycare",applyForm.getNumOfEligibleDayNursery());
-        dataMap.put("allcare",applyForm.getNumOfEligibleBoardingNursery());
-        dataMap.put("daycaremoney",applyForm.getSubsidyFundForDayNursery());
-        dataMap.put("allcaremoney",applyForm.getSubsidyFundForBoardingNursery());
-        dataMap.put("lastyearmoney",applyForm.getLocalInvestmentOfLastYear());
-        dataMap.put("totalmoney",applyForm.getTotalSubsidyFunds());
-        dataMap.put("list",wlist);
-        dataMap.put("sum",sum);
+        dataMap.put("name", org.getName());
+        dataMap.put("time", org.getRegistrationTime());
+        dataMap.put("city", org.getDetailedAddress());
+        dataMap.put("person", org.getPersonInCharge());
+        dataMap.put("number", org.getContactNumber());
+        dataMap.put("area", org.getArea());
+        dataMap.put("bed", org.getBedNum());
+        dataMap.put("nature", org.getNature());
+        dataMap.put("labor", org.getAsylumLaborProjects());
+        dataMap.put("daycare", applyForm.getNumOfEligibleDayNursery());
+        dataMap.put("allcare", applyForm.getNumOfEligibleBoardingNursery());
+        dataMap.put("daycaremoney", applyForm.getSubsidyFundForDayNursery());
+        dataMap.put("allcaremoney", applyForm.getSubsidyFundForBoardingNursery());
+        dataMap.put("lastyearmoney", applyForm.getLocalInvestmentOfLastYear());
+        dataMap.put("totalmoney", applyForm.getTotalSubsidyFunds());
+        dataMap.put("list", wlist);
+        dataMap.put("sum", sum);
         InputStream in;
-        byte[] picdata=null;
-        String img=null;
+        byte[] picdata = null;
+        String img = null;
 //        String dic=System.getProperty("user.dir")+"/picture/lowIncomeCertificate";
 //        String dic="E://disabled/picture/lowIncomeCertificate";
         String dic = System.getProperty("user.dir");
-        List<LowIncomeCertificate> imageList=applyForm.getLowIncomeCertificateList();
-        BASE64Encoder encoder=new BASE64Encoder();
+        List<LowIncomeCertificate> imageList = applyForm.getLowIncomeCertificateList();
+        BASE64Encoder encoder = new BASE64Encoder();
         List<String> images = new ArrayList<>();
-        for (int i=0;i<imageList.size();i++)
-        {
-            String url=imageList.get(i).getUrl();
-            String[] strings=url.split(port);
-            String path=dic+strings[1];
-            in=new FileInputStream(path);
-            picdata=new byte[in.available()];
+        for (int i = 0; i < imageList.size(); i++) {
+            String url = imageList.get(i).getUrl();
+            String[] strings = url.split(port);
+            String path = dic + strings[1];
+            in = new FileInputStream(path);
+            picdata = new byte[in.available()];
             in.read(picdata);
-            img=encoder.encode(picdata);
+            img = encoder.encode(picdata);
             images.add(img);
         }
 
@@ -521,7 +523,52 @@ public class OrganizationService {
 
         dataMap.put("images", images);
 
-        DocumentHandlers documentHandler=new DocumentHandlers();
-        return documentHandler.createDoc(dataMap,"new2.ftl", org.getName());
+        DocumentHandlers documentHandler = new DocumentHandlers();
+        return documentHandler.createDoc(dataMap, "new2.ftl", org.getName());
+    }
+
+    /**
+     * 机构每月服务人数/人次
+     *
+     * @param month
+     * @param type 0-人数，1-人次
+     * @return
+     */
+    public JSONObject numberOfServicePerMonth(Integer organizationId,String month, byte type) {
+        Date today = new Date();
+        Date date = StringUtil.getDate(month);
+        if (date.after(today)) {
+            //查询时间在当前时间之后
+            JSONObject object = new JSONObject();
+            object.put("result", 0);
+            return RESCODE.SUCCESS.getJSONRES(object);
+        } else {
+            //查询时间在当前时间之前
+            //判断时间是否为月初
+    /*        System.out.println(date.getDate());
+            System.out.println(date.getHours());
+            System.out.println(date.getMinutes());
+            System.out.println(date.getSeconds());*/
+            if (date.getDate() != 1 || date.getHours()!=0|| date.getMinutes()!=0||date.getSeconds()!=0) {
+                return RESCODE.FAILURE.getJSONRES("请使用月初时间");
+            }
+            //判断是否为当月
+            Date end = null;
+            if (date.getMonth() == today.getMonth()) {
+                end = new Date();
+            } else {
+                end = (Date) date.clone();
+                end.setMonth(end.getMonth()+1);
+            }
+            long result = 0;
+            if (type==0){
+                result = projectUserDetailRepository.countByOrganizationIdAndStartBetween(organizationId,date,end);
+            }else{
+                result = projectUserDetailRepository.countDistinctByOrganizationIdAndStartBetween(organizationId,date,end);
+            }
+            JSONObject object = new JSONObject();
+            object.put("result", result);
+            return RESCODE.SUCCESS.getJSONRES(object);
+        }
     }
 }

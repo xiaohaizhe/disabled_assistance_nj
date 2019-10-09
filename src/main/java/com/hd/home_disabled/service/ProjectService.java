@@ -16,6 +16,7 @@ import com.hd.home_disabled.model.statistic.ProjectStatistic;
 import com.hd.home_disabled.repository.*;
 import com.hd.home_disabled.utils.ExcelUtils;
 import com.hd.home_disabled.utils.PageUtils;
+import com.hd.home_disabled.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -295,7 +296,7 @@ public class ProjectService {
                 if (project.getTotalTimeSum() != null) totalTimeSum += project.getTotalTimeSum();
             }
             if (personTimeSum != 0)
-                averageTime = (float) Math.round(( totalTimeSum / personTimeSum) * 100) / 100;
+                averageTime = (float) Math.round((totalTimeSum / personTimeSum) * 100) / 100;
             projectStatistic.setPersonCountSum(personCountSum);
             projectStatistic.setPersonTimeSum(personTimeSum);
             projectStatistic.setTotalTimeSum(totalTimeSum);
@@ -591,17 +592,17 @@ public class ProjectService {
      * @param sorts    排序调价
      * @return 结果
      */
-    public JSONObject getPagesByDistrict(Integer projectTypeId,Integer organizationId,String start,String end,String district, Integer page, Integer number, String sorts) {
+    public JSONObject getPagesByDistrict(Integer projectTypeId, Integer organizationId, String start, String end, String district, Integer page, Integer number, String sorts) {
         Pageable pageable = PageUtils.getPage(page, number, sorts);
         List<Organization> organizationList = organizationRepository.findByDistrictAndStatus(district, 1);
         List<Integer> ids = new ArrayList<>();
         List<com.hd.home_disabled.model.dto.Project> projectList = new ArrayList<>();
-        if (organizationId!=null && organizationId!=0){
+        if (organizationId != null && organizationId != 0) {
             Optional<Organization> organizationOptional = organizationRepository.findById(organizationId);
             if (organizationOptional.isPresent()) {
                 ids.add(organizationId);
             }
-        }else{
+        } else {
             for (Organization organization : organizationList) {
                 ids.add(organization.getId());
             }
@@ -611,7 +612,7 @@ public class ProjectService {
         Date e = null;
         if (!StringUtils.isEmpty(start)
                 && !StringUtils.isEmpty(start.trim())
-                && !StringUtils.isEmpty(end) && !StringUtils.isEmpty(end.trim())){
+                && !StringUtils.isEmpty(end) && !StringUtils.isEmpty(end.trim())) {
             try {
                 s = sdf1.parse(start);
                 e = sdf1.parse(end);
@@ -622,18 +623,18 @@ public class ProjectService {
             }
         }
         Page<Project> projectPage;
-        if (projectTypeId!=null && projectTypeId != 0){
-            if (flag){
+        if (projectTypeId != null && projectTypeId != 0) {
+            if (flag) {
                 projectPage = projectRepository.findByOrganizationAndStatusAndProjectTypeAndCreateTimeBetween(
-                        ids,1,projectTypeId,s,e,pageable);
-            }else {
-                projectPage = projectRepository.findByOrganizationAndStatusAndProjectType(ids,1,projectTypeId,pageable);
+                        ids, 1, projectTypeId, s, e, pageable);
+            } else {
+                projectPage = projectRepository.findByOrganizationAndStatusAndProjectType(ids, 1, projectTypeId, pageable);
             }
-        }else{
-            if (flag){
-                projectPage= projectRepository.findByOrganizationAndStatusAndCreateTimeBetween(ids, 1,s,e, pageable);
-            }else{
-                projectPage= projectRepository.findByOrganizationAndStatus(ids, 1, pageable);
+        } else {
+            if (flag) {
+                projectPage = projectRepository.findByOrganizationAndStatusAndCreateTimeBetween(ids, 1, s, e, pageable);
+            } else {
+                projectPage = projectRepository.findByOrganizationAndStatus(ids, 1, pageable);
             }
 
         }
@@ -1219,7 +1220,7 @@ public class ProjectService {
         return RESCODE.SUCCESS.getJSONRES(array);
     }
 
-    public JSONObject getProjectList(Integer organizationId){
+    public JSONObject getProjectList(Integer organizationId) {
         List<Project> projectList = projectRepository.findByOrganizationAndStatus(organizationId, 1);
         List<com.hd.home_disabled.model.dto.Project> projectList2 = new ArrayList<>();
         for (Project project :
@@ -1227,5 +1228,47 @@ public class ProjectService {
             projectList2.add(getModel(project));
         }
         return RESCODE.SUCCESS.getJSONRES(projectList2);
+    }
+
+    public void updateClockInData() {
+        List<ProjectUserDetail> projectUserDetailList = projectUserDetailRepository.findAll();
+        for (ProjectUserDetail o :
+                projectUserDetailList) {
+            o.setOrganizationId(o.getProject().getOrganization().getId());
+        }
+    }
+
+    public JSONObject numberOfServicePerMonth(Integer projectId,String month, byte type){
+        Date today = new Date();
+        Date date = StringUtil.getDate(month);
+        if (date.after(today)) {
+            //查询时间在当前时间之后
+            JSONObject object = new JSONObject();
+            object.put("result", 0);
+            return RESCODE.SUCCESS.getJSONRES(object);
+        } else {
+            //查询时间在当前时间之前
+            //判断时间是否为月初
+            if (date.getDate() != 1 || date.getHours()!=0|| date.getMinutes()!=0||date.getSeconds()!=0) {
+                return RESCODE.FAILURE.getJSONRES("请使用月初时间");
+            }
+            //判断是否为当月
+            Date end = null;
+            if (date.getMonth() == today.getMonth()) {
+                end = new Date();
+            } else {
+                end = (Date) date.clone();
+                end.setMonth(end.getMonth()+1);
+            }
+            long result = 0;
+            if (type==0){
+                result = projectUserDetailRepository.countByProjectAndStartBetween(projectId,date,end);
+            }else{
+                result = projectUserDetailRepository.countDistinctByProjectAndStartBetween(projectId,date,end);
+            }
+            JSONObject object = new JSONObject();
+            object.put("result", result);
+            return RESCODE.SUCCESS.getJSONRES(object);
+        }
     }
 }

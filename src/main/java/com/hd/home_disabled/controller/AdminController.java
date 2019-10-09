@@ -25,22 +25,34 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    @ApiOperation(value = "添加机构管理员")
+    @RequestMapping(value = "/addAdmin", method = RequestMethod.GET)
+    public JSONObject addAdmin(String name,String password){
+        return adminService.addAdmin(name,password);
+    }
+
     @ApiOperation(value = "登陆", notes = "测试管理员密码：测试-5jNKlzcC，测试机构-8icyJpM6")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public JSONObject login(String name,String password) {
+    public JSONObject login(String name, String password) {
         return adminService.login(name, password);
     }
 
     @ApiOperation(value = "加密", notes = "管理员密码加密")
     @RequestMapping(value = "/encrypt", method = RequestMethod.GET)
-    public String encrypt(String password){
+    public String encrypt(String password) {
         return adminService.encrypt(password);
     }
 
     @ApiOperation(value = "用户选择项目", notes = "管理员为用户选择项目")
     @RequestMapping(value = "/chooseProjectForUser", method = RequestMethod.POST)
-    public JSONObject dealWithUserInfo(@RequestBody JSONArray array){
+    public JSONObject dealWithUserInfo(@RequestBody JSONArray array) {
         return adminService.dealWithUserInfo(array);
+    }
+
+    @ApiOperation(value = "每月用户新增/注销数量", notes = "type：0-新增，1-注销")
+    @RequestMapping(value = "/numbersChange", method = RequestMethod.POST)
+    public JSONObject numbersChange(String month, byte type) {
+        return adminService.numbersChange(month,type);
     }
 
 }

@@ -6,7 +6,6 @@ import com.hd.home_disabled.model.dto.Organization;
 import com.hd.home_disabled.service.OrganizationService;
 import com.hd.home_disabled.utils.DealWithBindingResult;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-
-import static java.lang.Character.toUpperCase;
 
 /**
  * @ClassName OrganizationController
@@ -110,7 +107,7 @@ public class OrganizationController {
             response.reset();
             // 设置response的Header
             response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-            response.addHeader("Content-Length","" + file.length());
+            response.addHeader("Content-Length", "" + file.length());
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");
 
@@ -122,6 +119,12 @@ public class OrganizationController {
         }
         return response;
 
+    }
+
+    @ApiOperation(value = "机构每月服务人数/人次", notes = "查询，month-月初，格式yyyy-MM-dd HH:mm:ss;type-0:人数、1:人次")
+    @RequestMapping(value = "/numberOfServicePerMonth", method = RequestMethod.GET)
+    public JSONObject numberOfServicePerMonth(Integer organizationId,String month, byte type) {
+        return organizationService.numberOfServicePerMonth(organizationId,month,type);
     }
 
 }

@@ -752,6 +752,7 @@ public class UserService {
                     User user = userOptional.get();
                     Admin admin = adminOptional.get();
                     ProjectUserDetail projectUserDetail = new ProjectUserDetail();
+                    projectUserDetail.setOrganizationId(project.getOrganization().getId());
                     projectUserDetail.setProject(project);
                     projectUserDetail.setUser(user);
                     projectUserDetail.setAdmin(admin);

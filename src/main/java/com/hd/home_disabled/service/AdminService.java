@@ -1,17 +1,20 @@
 package com.hd.home_disabled.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hd.home_disabled.entity.Admin;
 import com.hd.home_disabled.entity.DingUser;
 import com.hd.home_disabled.entity.DingUserAttendanceRecord;
 import com.hd.home_disabled.entity.User;
+import com.hd.home_disabled.entity.dictionary.AdminType;
 import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.repository.AdminRepository;
 import com.hd.home_disabled.repository.DingUserAttendanceRecordRepository;
 import com.hd.home_disabled.repository.DingUserRepository;
 import com.hd.home_disabled.repository.UserRepository;
 import com.hd.home_disabled.utils.JasyptUtil;
+import com.hd.home_disabled.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +54,22 @@ public class AdminService {
         this.userService = userService;
         this.dingUserRepository = dingUserRepository;
         this.userRepository = userRepository;
+    }
+
+    public JSONObject addAdmin(String name,String pwd){
+        if (checkName(name)) return RESCODE.ADMIN_ID_EXIST.getJSONRES();
+        Admin admin = new Admin();
+        admin.setName(name);
+        admin.setPassword(jasyptUtil.encrypt(pwd));
+        AdminType type = new AdminType();
+        type.setId(2);
+        admin.setAdminType(type);
+        Admin adminNew = adminRepository.save(admin);
+        return RESCODE.SUCCESS.getJSONRES(adminNew);
+    }
+
+    boolean checkName(String name){
+        return adminRepository.findByName(name).isPresent();
     }
 
     /**
@@ -139,5 +159,43 @@ public class AdminService {
             return RESCODE.FAILURE.getJSONRES(array1);
         }
 
+    }
+
+    public JSONObject numbersChange(String month, byte type){
+        Date today = new Date();
+        Date date = StringUtil.getDate(month);
+        if (date.after(today)) {
+            //查询时间在当前时间之后
+            JSONObject object = new JSONObject();
+            object.put("result", 0);
+            return RESCODE.SUCCESS.getJSONRES(object);
+        } else {
+            //查询时间在当前时间之前
+            //判断时间是否为月初
+    /*        System.out.println(date.getDate());
+            System.out.println(date.getHours());
+            System.out.println(date.getMinutes());
+            System.out.println(date.getSeconds());*/
+            if (date.getDate() != 1 || date.getHours()!=0|| date.getMinutes()!=0||date.getSeconds()!=0) {
+                return RESCODE.FAILURE.getJSONRES("请使用月初时间");
+            }
+            //判断是否为当月
+            Date end = null;
+            if (date.getMonth() == today.getMonth()) {
+                end = new Date();
+            } else {
+                end = (Date) date.clone();
+                end.setMonth(end.getMonth()+1);
+            }
+            long result = 0;
+            if (type==0){
+                result = userRepository.countValidByStartBetween(date,end);
+            }else{
+                result = userRepository.countInvalidByStartBetween(date,end);
+            }
+            JSONObject object = new JSONObject();
+            object.put("result", result);
+            return RESCODE.SUCCESS.getJSONRES(object);
+        }
     }
 }

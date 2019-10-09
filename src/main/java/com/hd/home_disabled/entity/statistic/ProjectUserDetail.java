@@ -31,6 +31,7 @@ public class ProjectUserDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer organizationId;
     @ManyToOne(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
     private Project project;
     @ManyToOne(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)

@@ -25,4 +25,8 @@ public class Admin {
     @OneToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
     private AdminType adminType;    //管理员权限
+
+    @OneToOne
+    @JoinColumn(referencedColumnName = "id")
+    private Organization organization;    //管理员权限
 }
