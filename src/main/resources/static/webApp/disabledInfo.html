@@ -590,7 +590,7 @@
         var tableIns =table.render(options);
 
         $("#refreshTab").click(function () {
-            tableIns.reload({url: '/old/list?name='+($("#oldname").val()||"")});
+            tableIns.reload({url: '/api/user/getPageByOrganization?sorts=id&name='+($("#oldname").val()||"")+'&organizationId='+localStorage.getItem("jgid")});
         })
 
 

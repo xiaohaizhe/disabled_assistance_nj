@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <style>
+        html {
+            background-color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<div class="layui-fluid">
+    <div style="text-align: right;padding: 10px;">
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal adduser"><i
+                class="layui-icon layui-icon-add-1"></i>新增
+        </button>
+    </div>
+    <div style="padding: 10px;">
+        <div class="table-box">
+            <table id="demo" lay-filter="test"></table>
+        </div>
+    </div>
+</div>
+<!--新增模态框-->
+<div id="addPanel" class="modal" style="display: none">
+    <form id="addForm" class="layui-form " lay-filter="add-form" target="asyncFormSunmit" method="post"
+          enctype="multipart/form-data" style="margin-top:15px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block" style="padding-right:15px;">
+                <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder=""
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block" style="padding-right:15px;">
+                <input type="text" name="password" lay-verify="required" placeholder="" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block" style="margin:30px 0;text-align: center">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="addNew">添加</button>
+                <!--<button type="submit" class="layui-btn">添加</button>-->
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="../layui/layui.js" charset="utf-8"></script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    layui.use(['table', 'form', 'layer', "upload"], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var $ = layui.$;
+        var addIndex = null;
+
+        $(".adduser").click(function () {
+            var addForm = $("#addPanel").html();
+            addIndex = layer.open({
+                type: 1,
+                title: "新增信息",
+                shadeClose: true,
+                area: ["600px", "500px"],
+                content: addForm
+            });
+            form.render();
+        })
+
+        form.on("submit(addNew)", function (data) {
+            var _obj = data.field;
+
+            $.ajax({
+                type: "GET",
+                url: "/api/admin/addAdmin?name="+_obj.name+"&password="+_obj.password,
+                data: "",
+                dataType:"json",
+                contentType : 'application/json;charset=utf-8',
+                processData: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.msg == "成功") {
+                        layer.close(addIndex);
+                    } else {
+                        layer.alert(data.msg, {icon: 2})
+                    }
+                }
+            })
+        })
+
+        //第一个实例
+        table.render({
+            elem: '#demo'
+            ,height: 400
+            ,url: "/api/admin/show?sorts=id"
+            , request: {
+                pageName: 'page', //页码的参数名称，默认：page
+                limitName: 'number' //每页数据量的参数名，默认：limit
+            }
+            , response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            }
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": 200, //解析接口状态
+//                    "msg": res.message, //解析提示文本
+                    "count": res.realSize, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            }
+            ,page: true //开启分页
+            ,cols: [[ //表头
+                {field: 'id', title: '序号', width:80, sort: true,templet: function (data) {
+                        return data.LAY_INDEX
+                    }}
+                ,{field: 'name', title: '姓名', width:280, sort: true}
+                ,{field: 'organization', title: '所属残疾人之家', width:280, sort: true}
+                ,{ title: '操作', align: 'center', toolbar: '#barDemo', width: 200}
+
+            ]]
+        });
+
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var rowdata = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    layer.confirm('确定删除？', function (index) {
+                        $.ajax({
+                            type: "post",
+                            url: "/api/admin/delete",
+                            data: {
+                                adminId: rowdata.id
+                            },
+                            success: function (data) {
+                                obj.del();
+                                layer.close(index);
+                            }
+                        })
+                    });
+                    break;
+            }
+        });
+
+    });
+
+    function smail(str){
+        if(str){
+            var _html = "";
+            var _array = str.split(",");
+            for (var i = 0; i < _array.length; i++) {
+                _html += '<a title="点击查看原图" target="_blank" href="'+_array[i]+'"><img src="'+_array[i]+'" style="width: 30px;"></a>'
+            }
+            if(str.indexOf(".jpg") != -1 || str.indexOf(".png") != -1){
+                return _html;
+            }else if(str.indexOf(".doc") != -1 || str.indexOf(".docx") != -1){
+                return '<img src="../images/word.png" style="width: 30px;">'
+            }else if(str.indexOf(".xls") != -1 || str.indexOf(".xlsx") != -1){
+                return '<img src="../images/xls.png" style="width: 30px;">'
+            }else {
+                return _html;
+            }
+        }else {
+            return "";
+        }
+    }
+</script>
+
+</body>
+</html>
