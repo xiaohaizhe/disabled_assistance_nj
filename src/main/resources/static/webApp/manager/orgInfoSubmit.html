@@ -392,8 +392,9 @@
 			var _data = data.field;
             delete _data['file'];
 			_data.adminId = localStorage.getItem("userId");
-			_data.id = localStorage.jgid;
-
+			if(localStorage.jgid){
+                _data.id = localStorage.jgid;
+            }
             _data.addressId = "雨花台区";
             if(!_data.city){
                 _data.city = _data.province

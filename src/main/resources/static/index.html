@@ -180,17 +180,22 @@
 			url: "/api/org/getByAdminId",
         data: {adminId:localStorage.getItem("userId")},
         success: function (data) {
-            localStorage.setItem("jgid",data.data.id);
-            $.ajax({
-                type: "get",
-                url: "api/project/getProjectList",
-                data: {organizationId:data.data.id},
-                success: function (rs) {
-                    seledom = setProjectList(rs.data)
-                    WebSocketTest()
-                    //pushUser ([{"id":"31","name":"xixi"},{"id":"35","name":"haha"}])
-                }
-            })
+            if(data.data){
+                localStorage.setItem("jgid",data.data.id);
+                $.ajax({
+                    type: "get",
+                    url: "api/project/getProjectList",
+                    data: {organizationId:data.data.id},
+                    success: function (rs) {
+                        seledom = setProjectList(rs.data)
+                        WebSocketTest()
+                        //pushUser ([{"id":"31","name":"xixi"},{"id":"35","name":"haha"}])
+                    }
+                })
+			}else {
+                localStorage.setItem("jgid","");
+			}
+
         }
     })
 
