@@ -12,6 +12,9 @@
         html {
             background-color: #fff;
         }
+        .layui-form-label {
+            width: 120px;
+        }
 
     </style>
 </head>
@@ -60,6 +63,239 @@
         </div>
     </form>
 </div>
+<div id="editPanel" class="modal" style="display: none">
+    <form class="layui-form" action=""  lay-filter="user-form">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" required  lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="password"  lay-verify="required" class="layui-input"  autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <p style="background-color: #eaeaea;margin-bottom: 10px;">所属机构：</p>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">机构名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="organization" required  placeholder="请输入机构名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">登记注册时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="registrationTime" class="layui-input" id="registDate"  autocomplete="off"  placeholder="yyyy-MM-dd" placeholder="请选择时间">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">注册证书编号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="registrationCertificateNumber" required autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">注册部门</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="registrationDepartment" required autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">机构性质</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="nature" required autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">房屋产权性质</label>
+                <div class="layui-input-inline">
+                    <select id="fwcqxz" name="natureOfHousingPropertyRightId">
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">机构面积</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="area" autocomplete="off" class="layui-input">
+                    <span style="float: right;position: absolute;right: 10px;top:10px;">m²</span>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">床位数</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="bedNum" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">庇护性劳动项目</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="asylumLaborProjects" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">机构运营性质</label>
+                <div class="layui-input-inline">
+                    <select id="jgyyxz" name="operationalNatureId">
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-inline">
+                <select lay-filter="province_sele" id="province_sele" name="province">
+                    <option value="">省/自治区/直辖市</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select lay-filter="city_sele" id="city_sele" name="city">
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select lay-filter="cdistrict_sele" id="cdistrict_sele" name="district">
+                    <option value="雨花台区">区/县</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select id="block_sele" name="block">
+                </select>
+            </div>
+
+        </div>
+
+        <div class="layui-form-item" style="padding-left:50px;">
+            <div class="layui-input-inline">
+                <textarea name="detailedAddress" placeholder="详细地址" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">负责人</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="personInCharge" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="gender" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">出生年月</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="birthMonth" autocomplete="off" class="layui-input" id="birthDate" placeholder="yyyy-MM-dd">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">文化程度</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="education" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="contactNumber"  autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">营业执照或登记证书</label>
+                <div class="layui-input-inline">
+                    <button type="button" class="layui-btn" id="test1">
+                        <i class="layui-icon">&#xe67c;</i>选择文件
+                    </button>
+                    <input id="yyzzhdjzs" type="text" name="certification" autocomplete="off" class="layui-input" style="display:none;">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">银行开户许可证</label>
+                <div class="layui-input-inline">
+                    <button type="button" class="layui-btn" id="test2">
+                        <i class="layui-icon">&#xe67c;</i>选择文件
+                    </button>
+                    <input id="yhkhxkz" type="text" name="openBankAccountPermitCertificate" autocomplete="off" class="layui-input" style="display:none;">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">门头及室内功能区域、无障碍设施</label>
+                <div class="layui-input-inline">
+                    <button type="button" class="layui-btn" id="test3">
+                        <i class="layui-icon">&#xe67c;</i>选择文件
+                    </button>
+                    <input id="mtjslgnjy" type="text" name="facilitiesPictures" autocomplete="off" class="layui-input" style="display:none;">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">专职工作人员名单</label>
+                <div class="layui-input-inline">
+                    <button type="button" class="layui-btn" id="test4">
+                        <i class="layui-icon">&#xe67c;</i>选择文件
+                    </button>
+                    <input id="zzgzrymd" type="text" name="staffList" autocomplete="off" class="layui-input" style="display:none;">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">管理制度
+                </label>
+                <div class="layui-input-inline">
+                    <button type="button" class="layui-btn" id="test5">
+                        <i class="layui-icon">&#xe67c;</i>选择文件
+                    </button>
+                    <input id="glzd" type="text" name="managementSystem" autocomplete="off" class="layui-input" style="display:none;">
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 <script src="../layui/layui.js" charset="utf-8"></script>
 <script type="text/html" id="barDemo">
@@ -81,7 +317,7 @@
                 type: 1,
                 title: "新增信息",
                 shadeClose: true,
-                area: ["600px", "500px"],
+                area: ["600px", "300px"],
                 content: addForm
             });
             form.render();
@@ -108,8 +344,32 @@
             })
         })
 
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            // layer.msg(JSON.stringify(data.field));
+            var _data = data.field;
+                _data.id = window["userid"];
+            $.ajax({
+                type: "POST",
+                url: "/api/admin/update",
+                data: JSON.stringify(_data),
+                dataType:"json",
+                contentType : 'application/json;charset=utf-8',
+                processData: false,
+                success: function (data) {
+                    layer.alert(data.msg, {icon: 1});
+                    layer.close(addIndex);
+                    tableIns.reload({url: "/api/admin/show?sorts=id"})
+                },
+                error:function () {
+                    layer.msg('提交失败');
+                }
+            })
+            return false;
+        });
+
         //第一个实例
-        table.render({
+        var tableIns = table.render({
             elem: '#demo'
             ,height: 400
             ,url: "/api/admin/show?sorts=id"
@@ -160,6 +420,19 @@
                             }
                         })
                     });
+                    break;
+                case 'edit':
+                    var editForm = $("#editPanel").html();
+                    addIndex = layer.open({
+                        type: 1,
+                        title: "修改信息",
+                        shadeClose: true,
+                        area: ["1000px", "600px"],
+                        content: editForm
+                    });
+                    form.render();
+                    window["userid"] = rowdata.id;
+                    form.val("user-form", rowdata);
                     break;
             }
         });
