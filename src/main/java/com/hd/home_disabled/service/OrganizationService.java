@@ -403,6 +403,11 @@ public class OrganizationService {
             object.put("id", organization.getId());
             object.put("name", organization.getName());
             object.put("userNum", organization.getUserList().size());
+            object.put("averageTime",organization.getAverageTime());
+            object.put("projectSum",organization.getProjectSum());
+            object.put("personTimeSum",organization.getPersonTimeSum());
+            object.put("personCountSum",organization.getPersonCountSum());
+            object.put("totalTimeSum",organization.getTotalTimeSum());
             objectList.add(object);
         }
         return objectList;
