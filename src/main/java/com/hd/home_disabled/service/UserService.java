@@ -410,6 +410,7 @@ public class UserService {
 
     public JSONObject getPageByOrganizationId(Integer organizationId,String userName, Integer page, Integer number, String sorts) {
         Pageable pageable = PageUtils.getPage(page, number, sorts);
+
         Page<User> userPage = userRepository.findByOrganizationAndStatusAndNameLike(organizationId, 1, userName==null?"":userName,pageable);
         List<com.hd.home_disabled.model.dto.User> userList = new ArrayList<>();
         for (User user :

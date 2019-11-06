@@ -1,6 +1,7 @@
 package com.hd.home_disabled.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hd.home_disabled.model.RESCODE;
 import com.hd.home_disabled.model.dto.User;
 import com.hd.home_disabled.service.UserService;
 import com.hd.home_disabled.utils.DealWithBindingResult;
@@ -58,6 +59,7 @@ public class UserController {
     @ApiOperation(value = "查询机构下残疾人分页", notes = "分页")
     @RequestMapping(value = "/getPageByOrganization", method = RequestMethod.GET)
     public JSONObject getPageByOrganizationId(Integer organizationId,String name, Integer page, Integer number,String sorts) {
+        if (organizationId==null) return RESCODE.FAILURE.getJSONRES();
         return userService.getPageByOrganizationId(organizationId,name, page, number,sorts);
     }
 

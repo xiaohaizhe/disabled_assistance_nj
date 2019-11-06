@@ -75,13 +75,13 @@ public class HelloController {
     private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
     private final static SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 
-    @ApiOperation(value = "测试", notes = "测试")
+/*    @ApiOperation(value = "测试", notes = "测试")
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String hello() throws IOException {
 
 //        getField()
         return "Hello!";
-    }
+    }*/
 
 
     @RequestMapping(value = "/updateToken", method = RequestMethod.GET)
