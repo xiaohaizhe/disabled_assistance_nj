@@ -20,9 +20,9 @@
 			bottom: 5px;
 			right: 0;
 			height: 300px;
-			width: 515px;
+			width: 575px;
 			z-index: 2000;
-			display: none;
+			display: block;
 			background-color: #fff;
 		}
 		.users-body p,
@@ -140,7 +140,7 @@
 </div>
 <div class="message-box">
 	<div class="users-head">
-		<p style="width: 70px;">姓名</p>
+		<p style="width: 140px;">姓名</p>
 		<p style="width: 200px;">身份证号</p>
 		<p style="width: 170px;">项目</p>
 		<p style="width: 50px;">操作</p>
@@ -223,7 +223,7 @@
     function pushUser (array){
         for (var i = 0; i < array.length; i++) {
             var obj = array[i];
-            $(".users-body").append('<div class="user_id'+obj.id+'" ><p style="width: 70px;">'+obj.name+'</p><p style="width: 200px;">'+obj.disabilityCertificateNumber+'</p><p class="project_list" style="width: 170px;">'+seledom+'</p><p style="width: 50px;"><input style="width: 18px;height: 18px;" type="checkbox" onclick="setUserAction('+obj.id+')" name="" lay-skin="primary"></p></div>');
+            $(".users-body").append('<div class="user_id'+obj.id+'" ><p style="width: 140px;">'+obj.name+'</p><p style="width: 200px;">'+obj.disabilityCertificateNumber+'</p><p class="project_list" style="width: 170px;">'+seledom+'</p><p style="width: 50px;"><input style="width: 18px;height: 18px;" type="checkbox" onclick="setUserAction('+obj.id+')" name="" lay-skin="primary"></p></div>');
         }
         $(".message-box").slideDown("slow");
 	}
