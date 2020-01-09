@@ -232,14 +232,20 @@
 
     function setUserAction (id){
         var sq = ".user_id"+id+" select";
-        SENDATA.push({id:id,projectId:$(sq).val()-0})
+        //SENDATA.push({id:id,projectId:$(sq).val()-0})
+        SENDATA.push(sq);
 	}
 
 	function senData() {
+        var senuser = [];
+        for (var i = 0; i < SENDATA.length; i++) {
+            senuser.push({id:id,projectId:$(SENDATA[i]).val()-0})
+        }
+
         $.ajax({
             type: "POST",
             url: "/api/admin/chooseProjectForUser",
-            data: JSON.stringify(SENDATA),
+            data: JSON.stringify(senuser),
             dataType:"json",
             contentType : 'application/json;charset=utf-8',
             processData: false,
